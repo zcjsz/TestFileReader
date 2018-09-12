@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<!--please use Standard Format for XmlNode name " LowerCase -->
+<root>
+    <LockFilePath>./testdata</LockFilePath>
+    
+    <!--convert the long time to human readable date time stamper-->
+    <ConvertTime>1</ConvertTime>
+    
+    <!--rename kdf, append .done to kdf file-->
+    <RenameKDF>0</RenameKDF>
+    
+    <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
+    <SourceType name= "HTEST1" enabled = "1" >
+        <LogToFile>0</LogToFile>
+        <Customer>AMD</Customer>
+        <Factory>Suzhou</Factory>
+        <KDFPath>/home/ghfan/kdf/</KDFPath>
+        <XmlPath>/data/xml_suz/</XmlPath>
+        <DataType>ATE</DataType>
+        <DebugMode>0</DebugMode>
+        
+        <!--comma seperated filters-->
+        <FilterOut>sbo</FilterOut><!--filter out kdf whose name contains sbo-->
+        <!--comma seperated selectors-->
+        <Selector>htest</Selector> <!--select kdf whose name contains drs-->
+        
+        <!--tester type field-->
+        <TesterTypeIndex>2</TesterTypeIndex>
+        <TesterType>P:93k_data,S:sapphire_data</TesterType>
+        
+        
+        <!--list length while kdf name is split by underline-->
+        <UnderLineCnt>9</UnderLineCnt>
+        <!--below params are filed name index in the kdf name-->
+        <LotNumberIndex>4</LotNumberIndex>
+        <TesterNumberIndex>3</TesterNumberIndex>
+        <MfgStepIndex>5</MfgStepIndex>
+        <TestCodeIndex></TestCodeIndex>
+        <WaferNumberIndex>7</WaferNumberIndex>
+        <SiteIndex></SiteIndex>
+        <KDFMonthIndex>7</KDFMonthIndex>
+        <!--comma seperated file open time indices -->
+        <FileOpenTimeIndex>7,8</FileOpenTimeIndex>
+        
+        <!--falg to enable/diable ulsd test-->
+        <ULSDNodeEnabled></ULSDNodeEnabled>
+        <!-- comma seperated ulsd fields-->
+        <ULSDNodeFilter></ULSDNodeFilter>
+        
+        <!--comma seperated filters and selectors for sub and main class-->
+        <BaseClasFilter></BaseClasFilter>
+        <BaseClasSelector></BaseClasSelector>
+        <SubClasFilter></SubClasFilter>
+        <SubClasSelector></SubClasSelector>
+        
+        <!--comma seperated Node Type filters-->
+        <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
+        <!--comma seperated Node Type selectors-->
+        <NodeTypeSelector></NodeTypeSelector>
+        
+        <FieldValueLength>8192</FieldValueLength>
+    </SourceType>
+    
+    <SourceType name= "GFDRS" enabled = "1" >
+        <Customer>Hygon</Customer>
+        <Factory>GFDRS</Factory>
+        <KDFPath>/home/ghfan/kdf/</KDFPath>
+        <XmlPath>/data/wafer_sort_xml/</XmlPath>
+        <DataType>WaferSort</DataType>
+        <DebugMode>0</DebugMode>
+        
+        <!--comma seperated filters-->
+        <FilterOut>sbo</FilterOut><!--filter out kdf whose name contains sbo-->
+        <!--comma seperated selectors-->
+        <Selector>gfdrs</Selector> <!--select kdf whose name contains drs-->
+        
+        <!--tester type field-->
+        <TesterTypeIndex>2</TesterTypeIndex>
+        <TesterType>P:93k_data,S:sapphire_data</TesterType>
+        
+        
+        <!--list length while kdf name is split by underline-->
+        <UnderLineCnt>11</UnderLineCnt>
+        <!--below params are filed name index in the kdf name-->
+        <LotNumberIndex>4</LotNumberIndex>
+        <TesterNumberIndex>3</TesterNumberIndex>
+        <MfgStepIndex>5</MfgStepIndex>
+        <TestCodeIndex></TestCodeIndex>
+        <WaferNumberIndex>7</WaferNumberIndex>
+        <SiteIndex></SiteIndex>
+        <KDFMonthIndex>7</KDFMonthIndex>
+        <!--comma seperated file open time indices -->
+        <FileOpenTimeIndex>9,10</FileOpenTimeIndex>
+        
+        <!--falg to enable/diable ulsd test-->
+        <ULSDNodeEnabled></ULSDNodeEnabled>
+        <!-- comma seperated ulsd fields-->
+        <ULSDNodeFilter></ULSDNodeFilter>
+        
+        <!--comma seperated filters and selectors for sub and main class-->
+        <BaseClasFilter></BaseClasFilter>
+        <BaseClasSelector></BaseClasSelector>
+        <SubClasFilter></SubClasFilter>
+        <SubClasSelector></SubClasSelector>
+        <!--comma seperated Node Type filters-->
+        <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
+        <!--comma seperated Node Type selectors-->
+        <NodeTypeSelector></NodeTypeSelector>
+        
+        <!--the field whose value length beyonds this limit will be skipped-->
+        <FieldValueLength>8192</FieldValueLength>
+    </SourceType>
+        
+    <!--lot head info for whole xml-->
+    <Head>
+        <XmlNode name= "lot_open_time">
+            <Field>dateFileOpened</Field>
+            <Field>fileOpenedTimestamp</Field>
+            <Time>1</Time><!--never change this one-->
+            <LotOpenTime>1</LotOpenTime>
+
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+
+        <XmlNode name= "lot_start_time" enabled = "1">
+            <Field>dateTestStarted</Field>
+            <Field>startTimestamp</Field>
+            <Time>1</Time><!--never change this one-->
+            <LotStartTime>1</LotStartTime>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+
+        <XmlNode name= "lot_end_time" enabled = "1">
+            <Field>dateTestFinished</Field>
+            <Field>endTimestamp</Field>
+            <Time>1</Time><!--never change this one-->
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+
+        <XmlNode name= "operator_id" enabled = "0">
+            <Field>Operator_ID</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "lot_number" enabled = "1">
+            <Field>lotId</Field>
+            <Field>LOT_ID</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "package" enabled = "1">
+            <Field>package</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "device" enabled = "1">
+            <Field>IDV</Field>
+            <Field>internalDevVer</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "die_type" enabled = "0">
+            <Field>dieType</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+
+
+        <XmlNode name= "test_program" enabled = "1">
+            <Field>testProgramName</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "program_path" enabled = "1">
+            <Field>testProgramPatch</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "program_version" enabled = "1">
+            <Field>testProgramRev</Field>
+            <Field>testProgramVersion</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "kdf_version" enabled = "0">
+            <Field>kdfFieldDescripRev</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "client_version" enabled = "0">
+            <Field>ClientVersion</Field>
+            <Field>Software_Name</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "test_time_units" enabled = "0">
+            <Field>testTimeUnits</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "factory" enabled = "0">
+            <Field>TEST_HOUSE_ID</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "part_number" enabled = "0">
+            <Field>PART_NUMBER</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "tester_number" enabled = "1">
+            <Field>TESTER_ID</Field>
+            <Field>equipmentId</Field>
+            <LowerCase>1</LowerCase>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "handler_id" enabled = "0">
+            <Field>PROBERHANDLERID</Field>
+            <Field>PROBERID_HANDLERID</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "dib_id" enabled = "1">
+            <Field>PROBECARDLOADBOARDID</Field>
+            <Field>PROBECARDID_LOADBOARDID</Field>
+            <LowerCase>1</LowerCase>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            
+        </XmlNode>
+
+        <XmlNode name= "test_code" enabled = "1">
+            <Field>TESTCODE</Field>
+            <Field>testCode</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "mfg_step" enabled = "1">
+            <Field>TESTPHASE</Field>
+            <Field>mfgStepName</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+
+        <XmlNode name= "file_seq_number" enabled = "0">
+            <Field>seqNumber</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "total_test_time" enabled = "0">
+            <Field>testTime</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "wafer_number" enabled = "0">
+            <Field>waferNumber</Field>
+            <Field>virtualWaferNumber</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+
+        </XmlNode>
+
+
+        <XmlNode name= "wafer_test_date" enabled = "0">
+            <Field>waferTestDate</Field>
+            <Field>WAFER_TIMESTAMP</Field>
+            <Time>1</Time>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "temp" enabled = "0">
+            <Field>testTemperature</Field>
+            <Field>TEMPERATURE</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+    </Head>
+    <!--unit level details info for this kdf -->
+    <Unit>
+
+        <XmlNode name= "unit_sequence" enabled = "1">
+            <Field>seqNumber</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "site" enabled = "1">
+            <Field>siteIndex</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+
+        </XmlNode>
+
+
+        <XmlNode name= "test_time" enabled = "1">
+            <Field>testTime</Field>
+            <TestTime>1</TestTime> <!--never change this one-->
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "end_test_time" enabled = "1">
+            <Field>unitEndTimestamp</Field>
+            <Field>endTimestamp</Field>
+            <Time>1</Time><!--never change this one-->
+            <EndTime>1</EndTime><!--never change this one-->
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "start_test_time" enabled = "1">
+            <Field>unitTimestamp</Field>
+            <Field>startTimestamp</Field>
+            <Time>1</Time><!--never change this one-->
+            <StartTime>1</StartTime><!--never change this one-->
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+
+        <XmlNode name= "unit_id" enabled = "1">
+            <Field>unitSerialNumber</Field>
+            <Field>serialNumber</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "wafer_number" enabled = "0">
+            <Field>wafer</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "x_coord" enabled = "0">
+            <Field>xCoord</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "y_coord" enabled = "0">
+            <Field>yCoord</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "hard_bin" enabled = "1">
+            <Field>hardBin</Field><!--never change this one-->
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+
+        <XmlNode name= "soft_bin" enabled = "1">
+            <Field>softBin</Field><!--never change this one-->
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+    </Unit>
+    
+    
+</root>
