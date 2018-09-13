@@ -474,13 +474,14 @@ public
 					continue;
 				}
 				this.nodeHead = unitDataHead;
-//				this.nodeHead = "";
 				flowResultField = "";
 				subBaseClassField = "";
-				String nodeContent = printNodeInfo(item, 0);
-				dataContent.append(nodeContent);
+				String nodeKVString = printNodeInfo(item, 0);
+				dataContent.append(nodeKVString);
 				// log for debugging
-//				System.out.println(nodeContent);
+				if(this.getFormat().isDebugMode()) {
+					System.out.println(nodeKVString);
+				}
 
 			}
 			if (this.getFormat().isLogToFile()) {
