@@ -127,11 +127,11 @@ public
 				Element sourceTypeNode = path.getCurrent();
 				DataFormat dataFormat = new DataFormat(sourceTypeNode);
 				sourceTypeNode.detach();
-				if (Config.dataFormats.containsKey(dataFormat.getSourceTypeName())) {
-					System.out.println("Fatal Error: duplicate source data found " + dataFormat.getSourceTypeName());
+				if (Config.dataFormats.containsKey(dataFormat.getSourceType())) {
+					System.out.println("Fatal Error: duplicate source data found " + dataFormat.getSourceType());
 					System.exit(1);
 				}
-				Config.dataFormats.put(dataFormat.getSourceTypeName(), dataFormat);
+				Config.dataFormats.put(dataFormat.getSourceType(), dataFormat);
 			}
 
 			@Override
@@ -264,7 +264,7 @@ public
 			for (DataFormat dataFormat : Config.dataFormats.values()) {
 				XmlNode xmlNode = dataFormat.getLotHead().get(xmlNodeName);
 				if (xmlNode == null) {
-					System.out.printf("Fatal Error: please setup the head xml node: %s property for source type: %s\n", xmlNodeName, dataFormat.getSourceTypeName());
+					System.out.printf("Fatal Error: please setup the head xml node: %s property for source type: %s\n", xmlNodeName, dataFormat.getSourceType());
 					System.exit(1);
 				}
 				if (xmlNode.isEnabled()) {
@@ -304,6 +304,15 @@ public
 
 			boolean nodeEnabled = false;
 			boolean enabledLog = true;
+			boolean isWaferNumber = false;
+			boolean isUnitId = false;
+			boolean isXCoord = false;
+			boolean isYCoord = false;
+			boolean isHardBin = false;
+			boolean isSoftBin = false;
+			boolean isWaferLot = false;
+			int isCnt = 0;
+			String subString = null;
 
 			for (Element node : nodes) {
 				String nodeName = node.getName().trim().toLowerCase();
@@ -319,19 +328,53 @@ public
 					case "lowercase":
 						isLowerCase = value.equals("1");
 						break;
-					case "starttime":
+					case "isstarttime":
 						isStartTime = value.equals("1");
+						isCnt++;
 						break;
-					case "endtime":
+					case "isendtime":
 						isEndTime = value.equals("1");
+						isCnt++;
 						break;
-					case "testtime":
+					case "istesttime":
 						isTestTime = value.equals("1");
+						isCnt++;
 						break;
 					case "field":
 						if (!fieldNames.contains(value)) {
 							fieldNames.add(value);
 						}
+						break;
+					case "iswafernumber":
+						isWaferNumber = value.endsWith("1");
+						isCnt++;
+						break;
+					case "isunitid":
+						isUnitId = value.endsWith("1");
+						isCnt++;
+						break;
+					case "isxcoord":
+						isXCoord = value.endsWith("1");
+						isCnt++;
+						break;
+					case "isycoord":
+						isYCoord = value.endsWith("1");
+						isCnt++;
+						break;
+					case "ishardbin":
+						isHardBin = value.endsWith("1");
+						isCnt++;
+						break;
+					case "issoftbin":
+						isSoftBin = value.endsWith("1");
+						isCnt++;
+						break;
+					case "substring":
+						subString = value;
+						break;
+					case "iswaferlot":
+						isWaferLot = value.endsWith("1");
+						isCnt++;
 						break;
 					case "sourcetype":
 						String sourceType = node.attributeValue("name").trim();
@@ -357,11 +400,15 @@ public
 						System.exit(1);
 				}
 			}
-
+			if (isCnt > 1) {
+				System.out.printf("Fatal Error, only one of those properties can be set in unit xml node: %s\n",
+					"IsStartTime, IsEndTime, IsTestTime, IsUnitId, IsWaferNumber, IsXCoord, IsYCoord, IsHardBin, IsSoftBin, IsWaferLot");
+				System.exit(1);
+			}
 			for (DataFormat dataFormat : Config.dataFormats.values()) {
 				XmlNode xmlNode = dataFormat.getUnit().getNodes().get(xmlNodeName);
 				if (xmlNode == null) {
-					System.out.printf("Fatal Error: please setup the unit xml node: %s property for source type: %s\n", xmlNodeName, dataFormat.getSourceTypeName());
+					System.out.printf("Fatal Error: please setup the unit xml node: %s property for source type: %s\n", xmlNodeName, dataFormat.getSourceType());
 					System.exit(1);
 				}
 				if (xmlNode.isEnabled()) {
@@ -375,6 +422,52 @@ public
 					xmlNode.setStartTime(isStartTime);
 					xmlNode.setEndTime(isEndTime);
 					xmlNode.setUnitTestTimeNode(isTestTime);
+					if (isCnt == 1) {
+						if (isUnitId) {
+							dataFormat.getUnit().setUnitIdNode(xmlNode);
+						}
+						else if (isWaferNumber) {
+							dataFormat.getUnit().setWaferNumberNode(xmlNode);
+							setUpIndex(xmlNode, subString);
+						}
+						else if (isXCoord) {
+							dataFormat.getUnit().setxCoordNode(xmlNode);
+							setUpIndex(xmlNode, subString);
+						}
+						else if (isYCoord) {
+							dataFormat.getUnit().setyCoordNode(xmlNode);
+							setUpIndex(xmlNode, subString);
+						}
+						else if (isHardBin) {
+							dataFormat.getUnit().setHardBinNode(xmlNode);
+						}
+						else if (isSoftBin) {
+							dataFormat.getUnit().setSoftBinNode(xmlNode);
+						}
+						else if (isStartTime) {
+							dataFormat.getUnit().setStartTimeNode(xmlNode);
+						}
+						else if (isEndTime) {
+							dataFormat.getUnit().setEndTimeNode(xmlNode);
+						}
+						else if (isTestTime) {
+							dataFormat.getUnit().setTestTimeNode(xmlNode);
+						}
+						else if (isWaferLot) {
+							if (dataFormat.getDataType().equals(Config.DataTypes.WaferSort)) {
+								System.out.printf("Fatal Error: never setup wafer lot in data type: %s\n", Config.DataTypes.WaferSort);
+								System.exit(1);
+							}
+							else {
+								dataFormat.getUnit().setWaferLotNode(xmlNode);
+								setUpIndex(xmlNode, subString);
+							}
+						}
+						else {
+							System.out.println("Fatal Error: something woring for the Is property");
+							System.exit(1);
+						}
+					}
 				}
 				else {
 					dataFormat.getUnit().getNodes().remove(xmlNodeName);
@@ -384,6 +477,21 @@ public
 
 		}
 
+	}
+
+	private
+		void setUpIndex(XmlNode xmlNode, String subString) {
+		if (subString == null) {
+			System.out.printf("Fatal Error: please setup the sub string index to get the %s from unit id\n", xmlNode.getName());
+			System.exit(1);
+		}
+		xmlNode.setStartIndex(Integer.valueOf(subString.split(",")[0].trim()));
+		xmlNode.setEndIndex(Integer.valueOf(subString.split(",")[1].trim()));
+		if (xmlNode.getStartIndex() > xmlNode.getEndIndex()) {
+			System.out.printf("Fatal Error: please setup the sub string index to get the %s from unit id\n"
+				+ "    the start index must less than end index\n", xmlNode.getName());
+			System.exit(1);
+		}
 	}
 
 	public static

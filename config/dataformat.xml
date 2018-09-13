@@ -21,13 +21,13 @@ and open the template in the editor.
         <Customer>AMD</Customer>
         <Factory>Suzhou</Factory>
         <KDFPath>/home/ghfan/kdf/</KDFPath>
-        <XmlPath>/data/xml_suz/</XmlPath>
+        <XmlPath>/data/ft_xml/</XmlPath>
         <DataType>ATE</DataType>
         <DebugMode>0</DebugMode>
         
-        <!--comma seperated filters-->
+        <!--comma separated filters-->
         <FilterOut>sbo</FilterOut><!--filter out kdf whose name contains sbo-->
-        <!--comma seperated selectors-->
+        <!--comma separated selectors-->
         <Selector>htest</Selector> <!--select kdf whose name contains drs-->
         
         <!--tester type field-->
@@ -45,29 +45,32 @@ and open the template in the editor.
         <WaferNumberIndex>7</WaferNumberIndex>
         <SiteIndex></SiteIndex>
         <KDFMonthIndex>7</KDFMonthIndex>
-        <!--comma seperated file open time indices -->
+        <SourceTypeIndex>0</SourceTypeIndex>
+        <!--comma separated file open time indices -->
         <FileOpenTimeIndex>7,8</FileOpenTimeIndex>
         
         <!--falg to enable/diable ulsd test-->
         <ULSDNodeEnabled></ULSDNodeEnabled>
-        <!-- comma seperated ulsd fields-->
+        <!-- comma separated ulsd fields-->
         <ULSDNodeFilter></ULSDNodeFilter>
         
-        <!--comma seperated filters and selectors for sub and main class-->
+        <!--comma separated filters and selectors for sub and main class-->
         <BaseClasFilter></BaseClasFilter>
         <BaseClasSelector></BaseClasSelector>
         <SubClasFilter></SubClasFilter>
         <SubClasSelector></SubClasSelector>
         
-        <!--comma seperated Node Type filters-->
+        <!--comma separated Node Type filters-->
         <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
-        <!--comma seperated Node Type selectors-->
+        <!--comma separated Node Type selectors-->
         <NodeTypeSelector></NodeTypeSelector>
         
         <FieldValueLength>8192</FieldValueLength>
     </SourceType>
     
-    <SourceType name= "GFDRS" enabled = "1" >
+    
+    <!--GFDRS_S6310A1AB0PG_P_ATC607_H800S.00_WS1_BBIYG148MVB1_1_-5_180905_051627.kdf.20190909090909-->
+    <SourceType name= "GFDRS" enabled = "0" >
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
         <KDFPath>/home/ghfan/kdf/</KDFPath>
@@ -75,9 +78,9 @@ and open the template in the editor.
         <DataType>WaferSort</DataType>
         <DebugMode>0</DebugMode>
         
-        <!--comma seperated filters-->
+        <!--comma separated filters-->
         <FilterOut>sbo</FilterOut><!--filter out kdf whose name contains sbo-->
-        <!--comma seperated selectors-->
+        <!--comma separated selectors-->
         <Selector>gfdrs</Selector> <!--select kdf whose name contains drs-->
         
         <!--tester type field-->
@@ -95,27 +98,81 @@ and open the template in the editor.
         <WaferNumberIndex>7</WaferNumberIndex>
         <SiteIndex></SiteIndex>
         <KDFMonthIndex>7</KDFMonthIndex>
-        <!--comma seperated file open time indices -->
+        <SourceTypeIndex>0</SourceTypeIndex>
+        <!--comma separated file open time indices -->
         <FileOpenTimeIndex>9,10</FileOpenTimeIndex>
         
         <!--falg to enable/diable ulsd test-->
         <ULSDNodeEnabled></ULSDNodeEnabled>
-        <!-- comma seperated ulsd fields-->
+        <!-- comma separated ulsd fields-->
         <ULSDNodeFilter></ULSDNodeFilter>
         
-        <!--comma seperated filters and selectors for sub and main class-->
+        <!--comma separated filters and selectors for sub and main class-->
         <BaseClasFilter></BaseClasFilter>
         <BaseClasSelector></BaseClasSelector>
         <SubClasFilter></SubClasFilter>
         <SubClasSelector></SubClasSelector>
-        <!--comma seperated Node Type filters-->
+        <!--comma separated Node Type filters-->
         <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
-        <!--comma seperated Node Type selectors-->
+        <!--comma separated Node Type selectors-->
         <NodeTypeSelector></NodeTypeSelector>
         
         <!--the field whose value length beyonds this limit will be skipped-->
         <FieldValueLength>8192</FieldValueLength>
     </SourceType>
+        
+    <!--HG00058.1.1_6310_H800D0007101504_SLT_AXFNCP_DS2000DBABC01_20180823_052611_suzamdaslt086_006_MAIN.kdf.20180909090909-->    
+    <SourceType name= "SLT" enabled = "0" >
+        <Customer>Hygon</Customer>
+        <Factory>Suzhou</Factory>
+        <KDFPath>/home/ghfan/kdf/</KDFPath>
+        <XmlPath>/data/slt_xml/</XmlPath>
+        <DataType>SLT</DataType>
+        <DebugMode>0</DebugMode>
+        
+        <!--comma separated filters-->
+        <FilterOut>suz93k,gfdrs</FilterOut><!--filter out kdf whose name contains sbo-->
+        <!--comma separated selectors-->
+        <Selector>suzamdaslt</Selector> <!--select kdf whose name contains drs-->
+        
+        <!--tester type field-->
+        <TesterTypeIndex>3</TesterTypeIndex>
+        <TesterType>SLT:slt_data</TesterType>
+        
+        
+        <!--list length while kdf name is split by underline-->
+        <UnderLineCnt>11</UnderLineCnt>
+        <!--below params are filed name index in the kdf name-->
+        <LotNumberIndex>0</LotNumberIndex>
+        <TesterNumberIndex>8</TesterNumberIndex>
+        <MfgStepIndex></MfgStepIndex>
+        <TestCodeIndex>4</TestCodeIndex>
+        <WaferNumberIndex></WaferNumberIndex>
+        <SiteIndex>9</SiteIndex>
+        <KDFMonthIndex>6</KDFMonthIndex>
+        <SourceTypeIndex>3</SourceTypeIndex>
+        <!--comma separated file open time indices -->
+        <FileOpenTimeIndex>6,7</FileOpenTimeIndex>
+        
+        <!--falg to enable/diable ulsd test-->
+        <ULSDNodeEnabled></ULSDNodeEnabled>
+        <!-- comma separated ulsd fields-->
+        <ULSDNodeFilter></ULSDNodeFilter>
+        
+        <!--comma separated filters and selectors for sub and main class-->
+        <BaseClasFilter></BaseClasFilter>
+        <BaseClasSelector></BaseClasSelector>
+        <SubClasFilter></SubClasFilter>
+        <SubClasSelector></SubClasSelector>
+        <!--comma separated Node Type filters-->
+        <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
+        <!--comma separated Node Type selectors-->
+        <NodeTypeSelector></NodeTypeSelector>
+        
+        <!--the field whose value length beyonds this limit will be skipped-->
+        <FieldValueLength>8192</FieldValueLength>
+    </SourceType>    
+        
         
     <!--lot head info for whole xml-->
     <Head>
@@ -131,10 +188,13 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
         </XmlNode>
 
 
-        <XmlNode name= "lot_start_time" enabled = "1">
+        <XmlNode name= "lot_start_time">
             <Field>dateTestStarted</Field>
             <Field>startTimestamp</Field>
             <Time>1</Time><!--never change this one-->
@@ -146,10 +206,13 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
         </XmlNode>
 
 
-        <XmlNode name= "lot_end_time" enabled = "1">
+        <XmlNode name= "lot_end_time">
             <Field>dateTestFinished</Field>
             <Field>endTimestamp</Field>
             <Time>1</Time><!--never change this one-->
@@ -160,21 +223,27 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
         </XmlNode>
 
 
-        <XmlNode name= "operator_id" enabled = "0">
+        <XmlNode name= "operator_id">
             <Field>Operator_ID</Field>
             
-            <SourceType name= "HTEST1" enabled = "1" >
+            <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "GFDRS" enabled = "1" >
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "lot_number" enabled = "1">
+        <XmlNode name= "lot_number">
             <Field>lotId</Field>
             <Field>LOT_ID</Field>
             
@@ -184,20 +253,26 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
         </XmlNode>
 
-        <XmlNode name= "package" enabled = "1">
+        <XmlNode name= "package">
             <Field>package</Field>
             
-            <SourceType name= "HTEST1" enabled = "1" >
+            <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "GFDRS" enabled = "1" >
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "device" enabled = "1">
+        <XmlNode name= "device">
             <Field>IDV</Field>
             <Field>internalDevVer</Field>
             
@@ -207,9 +282,12 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
         </XmlNode>
 
-        <XmlNode name= "die_type" enabled = "0">
+        <XmlNode name= "die_type">
             <Field>dieType</Field>
             
             <SourceType name= "HTEST1" enabled = "1" >
@@ -218,11 +296,14 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
         </XmlNode>
 
 
 
-        <XmlNode name= "test_program" enabled = "1">
+        <XmlNode name= "test_program">
             <Field>testProgramName</Field>
             
             <SourceType name= "HTEST1" enabled = "1" >
@@ -231,9 +312,12 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
         </XmlNode>
 
-        <XmlNode name= "program_path" enabled = "1">
+        <XmlNode name= "program_patch">
             <Field>testProgramPatch</Field>
             
             <SourceType name= "HTEST1" enabled = "1" >
@@ -242,9 +326,12 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
         </XmlNode>
 
-        <XmlNode name= "program_version" enabled = "1">
+        <XmlNode name= "program_version">
             <Field>testProgramRev</Field>
             <Field>testProgramVersion</Field>
             
@@ -254,54 +341,69 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
         </XmlNode>
 
-        <XmlNode name= "kdf_version" enabled = "0">
+        <XmlNode name= "kdf_version">
             <Field>kdfFieldDescripRev</Field>
             
-            <SourceType name= "HTEST1" enabled = "1" >
+            <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "GFDRS" enabled = "1" >
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "client_version" enabled = "0">
+        <XmlNode name= "client_version">
             <Field>ClientVersion</Field>
             <Field>Software_Name</Field>
             
-            <SourceType name= "HTEST1" enabled = "1" >
+            <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "GFDRS" enabled = "1" >
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "test_time_units" enabled = "0">
+        <XmlNode name= "test_time_units">
             <Field>testTimeUnits</Field>
             
-            <SourceType name= "HTEST1" enabled = "1" >
+            <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "GFDRS" enabled = "1" >
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "factory" enabled = "0">
+        <XmlNode name= "factory">
             <Field>TEST_HOUSE_ID</Field>
             
-            <SourceType name= "HTEST1" enabled = "1" >
+            <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "GFDRS" enabled = "1" >
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "part_number" enabled = "0">
+        <XmlNode name= "part_number">
             <Field>PART_NUMBER</Field>
             
             <SourceType name= "HTEST1" enabled = "1" >
@@ -310,9 +412,12 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
         </XmlNode>
 
-        <XmlNode name= "tester_number" enabled = "1">
+        <XmlNode name= "tester_number">
             <Field>TESTER_ID</Field>
             <Field>equipmentId</Field>
             <LowerCase>1</LowerCase>
@@ -323,21 +428,27 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
         </XmlNode>
 
-        <XmlNode name= "handler_id" enabled = "0">
+        <XmlNode name= "handler_id">
             <Field>PROBERHANDLERID</Field>
             <Field>PROBERID_HANDLERID</Field>
             
-            <SourceType name= "HTEST1" enabled = "1" >
+            <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "GFDRS" enabled = "1" >
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "dib_id" enabled = "1">
+        <XmlNode name= "dib_id" >
             <Field>PROBECARDLOADBOARDID</Field>
             <Field>PROBECARDID_LOADBOARDID</Field>
             <LowerCase>1</LowerCase>
@@ -348,10 +459,13 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             
         </XmlNode>
 
-        <XmlNode name= "test_code" enabled = "1">
+        <XmlNode name= "test_code">
             <Field>TESTCODE</Field>
             <Field>testCode</Field>
             
@@ -361,9 +475,12 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
         </XmlNode>
 
-        <XmlNode name= "mfg_step" enabled = "1">
+        <XmlNode name= "mfg_step">
             <Field>TESTPHASE</Field>
             <Field>mfgStepName</Field>
             
@@ -373,21 +490,27 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
         </XmlNode>
 
 
-        <XmlNode name= "file_seq_number" enabled = "0">
+        <XmlNode name= "file_seq_number">
             <Field>seqNumber</Field>
             
-            <SourceType name= "HTEST1" enabled = "1" >
+            <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "GFDRS" enabled = "1" >
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "total_test_time" enabled = "0">
+        <XmlNode name= "total_test_time">
             <Field>testTime</Field>
             
             <SourceType name= "HTEST1" enabled = "1" >
@@ -396,43 +519,38 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-        </XmlNode>
-
-        <XmlNode name= "wafer_number" enabled = "0">
-            <Field>waferNumber</Field>
-            <Field>virtualWaferNumber</Field>
-            
-            <SourceType name= "HTEST1" enabled = "1" >
+            <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "GFDRS" enabled = "1" >
-                <EnabledLog>1</EnabledLog>
-            </SourceType>
-
         </XmlNode>
-
-
-        <XmlNode name= "wafer_test_date" enabled = "0">
+        
+        <XmlNode name= "wafer_test_date" >
             <Field>waferTestDate</Field>
             <Field>WAFER_TIMESTAMP</Field>
             <Time>1</Time>
             
-            <SourceType name= "HTEST1" enabled = "1" >
+            <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "GFDRS" enabled = "1" >
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "temp" enabled = "0">
+        <XmlNode name= "temp" >
             <Field>testTemperature</Field>
             <Field>TEMPERATURE</Field>
             
-            <SourceType name= "HTEST1" enabled = "1" >
+            <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "GFDRS" enabled = "1" >
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
         </XmlNode>
@@ -441,7 +559,7 @@ and open the template in the editor.
     <!--unit level details info for this kdf -->
     <Unit>
 
-        <XmlNode name= "unit_sequence" enabled = "1">
+        <XmlNode name= "unit_sequence" >
             <Field>seqNumber</Field>
             
             <SourceType name= "HTEST1" enabled = "1" >
@@ -450,9 +568,12 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
         </XmlNode>
 
-        <XmlNode name= "site" enabled = "1">
+        <XmlNode name= "site" >
             <Field>siteIndex</Field>
             
             <SourceType name= "HTEST1" enabled = "1" >
@@ -461,13 +582,17 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
 
         </XmlNode>
 
 
-        <XmlNode name= "test_time" enabled = "1">
+        <XmlNode name= "test_time" >
             <Field>testTime</Field>
-            <TestTime>1</TestTime> <!--never change this one-->
+            <Field>totalSocketTime</Field>
+            <IsTestTime>1</IsTestTime> <!--never change this one-->
             
             <SourceType name= "HTEST1" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
@@ -475,13 +600,16 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
         </XmlNode>
 
-        <XmlNode name= "end_test_time" enabled = "1">
+        <XmlNode name= "end_test_time" >
             <Field>unitEndTimestamp</Field>
             <Field>endTimestamp</Field>
             <Time>1</Time><!--never change this one-->
-            <EndTime>1</EndTime><!--never change this one-->
+            <IsEndTime>1</IsEndTime><!--never change this one-->
             
             <SourceType name= "HTEST1" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
@@ -489,13 +617,16 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
         </XmlNode>
 
-        <XmlNode name= "start_test_time" enabled = "1">
+        <XmlNode name= "start_test_time" >
             <Field>unitTimestamp</Field>
             <Field>startTimestamp</Field>
             <Time>1</Time><!--never change this one-->
-            <StartTime>1</StartTime><!--never change this one-->
+            <IsStartTime>1</IsStartTime><!--never change this one-->
             
             <SourceType name= "HTEST1" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
@@ -503,10 +634,13 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
         </XmlNode>
 
 
-        <XmlNode name= "unit_id" enabled = "1">
+        <XmlNode name= "unit_id" >
             <Field>unitSerialNumber</Field>
             <Field>serialNumber</Field>
             
@@ -516,9 +650,13 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <IsUnitID>1</IsUnitID>
         </XmlNode>
 
-        <XmlNode name= "wafer_number" enabled = "0">
+        <XmlNode name= "wafer_number" >
             <Field>wafer</Field>
             
             <SourceType name= "HTEST1" enabled = "1" >
@@ -527,9 +665,15 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <IswaferNumber>1</IswaferNumber>
+            <!--comma separated index to get wafer number from unit id-->
+            <SubString>7,9</SubString>
         </XmlNode>
 
-        <XmlNode name= "x_coord" enabled = "0">
+        <XmlNode name= "x_coord" >
             <Field>xCoord</Field>
             
             <SourceType name= "HTEST1" enabled = "1" >
@@ -538,9 +682,15 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <IsXCoord>1</IsXCoord>
+            <!--comma separated index to get wafer number from unit id-->
+            <SubString>9,11</SubString>
         </XmlNode>
 
-        <XmlNode name= "y_coord" enabled = "0">
+        <XmlNode name= "y_coord" >
             <Field>yCoord</Field>
             
             <SourceType name= "HTEST1" enabled = "1" >
@@ -549,9 +699,31 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <IsYCoord>1</IsYCoord>
+            <!--comma separated index to get wafer number from unit id-->
+            <SubString>11,13</SubString>
+        </XmlNode>
+        <XmlNode name= "lot_nb" >
+            <Field>lot_nb</Field>
+            
+            <SourceType name= "HTEST1" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <IsWaferLot>1</IsWaferLot>
+            <!--comma separated index to get wafer lot number from unit id-->
+            <SubString>0,5</SubString>
         </XmlNode>
 
-        <XmlNode name= "hard_bin" enabled = "1">
+        <XmlNode name= "hard_bin" >
             <Field>hardBin</Field><!--never change this one-->
             
             <SourceType name= "HTEST1" enabled = "1" >
@@ -560,9 +732,13 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <IsHardBin>1</IsHardBin>
         </XmlNode>
 
-        <XmlNode name= "soft_bin" enabled = "1">
+        <XmlNode name= "soft_bin" >
             <Field>softBin</Field><!--never change this one-->
             
             <SourceType name= "HTEST1" enabled = "1" >
@@ -571,6 +747,10 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "SLT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <IsSoftBin>1</IsSoftBin>
         </XmlNode>
     </Unit>
     

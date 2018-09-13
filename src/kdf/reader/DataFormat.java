@@ -67,6 +67,8 @@ public
 		int kdfMonthIndex = -1;
 	private
 		int testerTypeIndex = -1;
+	private
+		int sourceTypeIndex = -1;
 	private final
 		ArrayList<Integer> fileOpenTimeIndex = new ArrayList();
 
@@ -196,6 +198,10 @@ public
 					case "FieldValueLength":
 						this.fieldValueLengthLimit = Integer.valueOf(fieldValue);
 						break;
+					case "SourceTypeIndex":
+						this.sourceTypeIndex = Integer.valueOf(fieldValue);
+						break;
+
 					case "FileOpenTimeIndex":
 						int[] indices = new int[]{-1, -1, -1, -1};
 						int i = 0;
@@ -260,14 +266,25 @@ public
 			|| this.getKdfMonthIndex() == -1
 			|| this.getKdfPath() == null
 			|| this.getLotNumberIndex() == -1
-			|| this.getMfgStepIndex() == -1
-			//			|| this.getTestCodeIndex() == -1
+			|| (this.getMfgStepIndex() == -1 && (!this.dataType.equals(Config.DataTypes.SLT)))
+			|| this.getSourceTypeIndex() == -1
+			|| (this.getTestCodeIndex() == -1 && this.dataType.equals(Config.DataTypes.SLT))
+			|| (this.getWaferNumberIndex() == -1 && this.dataType.equals(Config.DataTypes.WaferSort))
 			|| this.getTesterNumberIndex() == -1
 			|| this.getTesterTypes().isEmpty()
 			|| this.getUnderLineCnt() == -1
 			|| this.getTesterTypeIndex() == -1
-			|| (this.getDataType().equals(Config.DataTypes.WaferSort) && this.getWaferNumberIndex() == -1)
-			|| this.getXmlPath() == null) {
+			|| this.getXmlPath() == null
+			|| this.getUnit().getEndTimeNode() == null
+			|| this.getUnit().getHardBinNode() == null
+			|| this.getUnit().getSoftBinNode() == null
+			|| this.getUnit().getStartTimeNode() == null
+			|| this.getUnit().getTestTimeNode() == null
+			|| this.getUnit().getUnitIdNode() == null
+			|| this.getUnit().getWaferNumberNode() == null
+			|| this.getUnit().getxCoordNode() == null
+			|| this.getUnit().getyCoordNode() == null
+			|| ((!this.dataType.equals(Config.DataTypes.WaferSort)) && this.getUnit().getWaferLotNode() == null)) {
 			this.printConfig();
 			System.out.printf("SourceData %s validation result: failed\n", this.sourceType);
 			return false;
@@ -289,7 +306,7 @@ public
 			+ "filters:%s, selectors:%s\n"
 			+ "fileOpenTimeIndex:%s\n"
 			+ "kdfMonthIndex:%s, lotNumberIndex:%s, mfgStepIndex:%s\n"
-			+ "siteIndex%s, testCodeIndex:%s, testerNumberIndex:%s,  "
+			+ "siteIndex:%s, testCodeIndex:%s, testerNumberIndex:%s,  "
 			+ "underLineCnt:%s, waferNumberIndex:%s\n\n",
 			this.sourceType, this.customer, this.dataType,
 			this.debugMode, this.enabled, this.xmlPath, this.kdfPath,
@@ -684,8 +701,13 @@ public
 	}
 
 	public
-		String getSourceTypeName() {
+		String getSourceType() {
 		return sourceType;
+	}
+
+	public
+		int getSourceTypeIndex() {
+		return sourceTypeIndex;
 	}
 
 }

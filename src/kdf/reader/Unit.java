@@ -27,9 +27,24 @@ public
 		XmlNode softBinNode = null;
 	private
 		XmlNode hardBinNode = null;
-//    private XmlNode softBinDesc = new XmlNode();
-//    private XmlNode hardBinDesc = new XmlNode();
-//    private XmlNode testTimeNode = new XmlNode();
+
+	// must be having those node in each unit
+	private
+		XmlNode unitIdNode = null;
+	private
+		XmlNode waferNumberNode = null;
+	private
+		XmlNode xCoordNode = null;
+	private
+		XmlNode yCoordNode = null;
+	private
+		XmlNode startTimeNode = null;
+	private
+		XmlNode endTimeNode = null;
+	private
+		XmlNode testTimeNode = null;
+	private
+		XmlNode waferLotNode = null;
 
 	public
 		Unit() {
@@ -116,31 +131,31 @@ public
 
 	public
 		XmlNode getHardBinNode() {
-		if (this.hardBinNode == null) {
-			for (XmlNode node : this.nodes.values()) {
-				for (String fieldName : node.getFieldNames()) {
-					if (fieldName.toLowerCase().contains("hard")) {
-						this.hardBinNode = node;
-						return this.hardBinNode;
-					}
-				}
-			}
-		}
+//		if (this.hardBinNode == null) {
+//			for (XmlNode node : this.nodes.values()) {
+//				for (String fieldName : node.getFieldNames()) {
+//					if (fieldName.toLowerCase().contains("hard")) {
+//						this.hardBinNode = node;
+//						return this.hardBinNode;
+//					}
+//				}
+//			}
+//		}
 		return hardBinNode;
 	}
 
 	public
 		XmlNode getSoftBinNode() {
-		if (this.softBinNode == null) {
-			for (XmlNode node : this.nodes.values()) {
-				for (String fieldName : node.getFieldNames()) {
-					if (fieldName.toLowerCase().contains("soft")) {
-						this.softBinNode = node;
-						return this.softBinNode;
-					}
-				}
-			}
-		}
+//		if (this.softBinNode == null) {
+//			for (XmlNode node : this.nodes.values()) {
+//				for (String fieldName : node.getFieldNames()) {
+//					if (fieldName.toLowerCase().contains("soft")) {
+//						this.softBinNode = node;
+//						return this.softBinNode;
+//					}
+//				}
+//			}
+//		}
 		return softBinNode;
 	}
 
@@ -163,6 +178,96 @@ public
 		value += "XmlNode = Result , Value = " + this.flag + " , Fields = [binDescFlag] \n";
 		System.out.println(value);
 
+	}
+
+	public
+		XmlNode getUnitIdNode() {
+		return unitIdNode;
+	}
+
+	public
+		XmlNode getWaferNumberNode() {
+		return waferNumberNode;
+	}
+
+	public
+		XmlNode getxCoordNode() {
+		return xCoordNode;
+	}
+
+	public
+		XmlNode getyCoordNode() {
+		return yCoordNode;
+	}
+
+	public
+		void setHardBinNode(XmlNode hardBinNode) {
+		this.hardBinNode = hardBinNode;
+	}
+
+	public
+		void setSoftBinNode(XmlNode softBinNode) {
+		this.softBinNode = softBinNode;
+	}
+
+	public
+		void setUnitIdNode(XmlNode unitIdNode) {
+		this.unitIdNode = unitIdNode;
+	}
+
+	public
+		void setWaferNumberNode(XmlNode waferNumberNode) {
+		this.waferNumberNode = waferNumberNode;
+	}
+
+	public
+		void setxCoordNode(XmlNode xCoordNode) {
+		this.xCoordNode = xCoordNode;
+	}
+
+	public
+		void setyCoordNode(XmlNode yCoordNode) {
+		this.yCoordNode = yCoordNode;
+	}
+
+	public
+		XmlNode getStartTimeNode() {
+		return startTimeNode;
+	}
+
+	public
+		void setStartTimeNode(XmlNode startTimeNode) {
+		this.startTimeNode = startTimeNode;
+	}
+
+	public
+		XmlNode getEndTimeNode() {
+		return endTimeNode;
+	}
+
+	public
+		void setEndTimeNode(XmlNode endTimeNode) {
+		this.endTimeNode = endTimeNode;
+	}
+
+	public
+		XmlNode getTestTimeNode() {
+		return testTimeNode;
+	}
+
+	public
+		void setTestTimeNode(XmlNode testTimeNode) {
+		this.testTimeNode = testTimeNode;
+	}
+
+	public
+		XmlNode getWaferLotNode() {
+		return waferLotNode;
+	}
+
+	public
+		void setWaferLotNode(XmlNode waferLotNode) {
+		this.waferLotNode = waferLotNode;
 	}
 
 }

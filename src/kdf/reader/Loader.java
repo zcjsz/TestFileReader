@@ -73,6 +73,7 @@ public
 		String subBaseClassField = null;
 	private
 		String fileOpenTime = "";
+	long jobStartTime = 0;
 
 	public
 		Loader() {
@@ -81,6 +82,8 @@ public
 
 	public
 		boolean loadFile(File file) {
+		jobStartTime = System.currentTimeMillis();
+		System.out.printf("%s: start proceed kdf %s\n", LocalDateTime.now(), file.getName());
 		this.file = file;
 		if (!this.validateFile(file)) {
 			this.failType = Config.FailureCase.ValidationFailure;
@@ -360,7 +363,7 @@ public
 		boolean readKDF() {
 		unitCnt = 0;
 		this.fileOpenTime = "";
-		long startTime = System.currentTimeMillis();
+		String waferNumber = "";
 
 		format.clearAll();
 		Node[] units = tree.getNodes(KdfTypes.KDF_RT_UNIT);
@@ -379,6 +382,7 @@ public
 				this.failType = Config.FailureCase.Exception;
 				return false;
 			}
+			waferNumber = Integer.valueOf(this.file.getName().split("_")[this.getFormat().getWaferNumberIndex()]).toString();
 		}
 
 		this.readRoot();
@@ -429,6 +433,7 @@ public
 		String testItemHead = format.getLotHeadKVString() + "," + "file_date=" + this.formatFileOpenTime();
 
 		readBinDesc();
+		System.out.println("opening kdf time is : " + (System.currentTimeMillis() - jobStartTime));
 
 		System.out.println("total unit cnt is: " + units.length);
 		int unitNo = 0;
@@ -448,6 +453,7 @@ public
 			format.calTestTime();
 			format.resetUnitTimeFormat();
 			format.setBinDesc();
+			readFTSLTXY(waferNumber);
 
 			/**
 			 * print and log unit data
@@ -459,7 +465,6 @@ public
 			String unitDataHead = testItemHead + format.getUnitHeadKVString();
 			System.out.println(unitDataHead);
 
-			
 			for (Node item : unit.getChildren()) {
 
 				String nodeName = item.getName();
@@ -478,7 +483,7 @@ public
 //				System.out.println(nodeContent);
 
 			}
-			if(this.getFormat().isLogToFile()) {
+			if (this.getFormat().isLogToFile()) {
 				try {
 					Files.write(testLogFile.toPath(), dataContent.toString().getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 
@@ -491,9 +496,40 @@ public
 		}
 
 		this.closeFile(this.file.getParent());
-		System.out.println("reading kdf time is : " + (System.currentTimeMillis() - startTime));
+		System.out.printf("%s: successed to proceed kdf %s\n", LocalDateTime.now(), file.getName());
+		System.out.println("total kdf reading time is : " + (System.currentTimeMillis() - jobStartTime));
 		this.tree = null;
 		return true;
+	}
+	/**
+	 * H800A0010041704
+	 * read waferLotNumber, waferNumber, x and y from unit id
+	 * @param waferNumber 
+	 */
+	private
+		void readFTSLTXY(String waferNumber) {
+		//H800A0010041704
+		if (!this.getFormat().equals(Config.DataTypes.WaferSort)) {
+			XmlNode waferNumberNode = this.getFormat().getUnit().getWaferNumberNode();
+			XmlNode unitIdNode = this.getFormat().getUnit().getUnitIdNode();
+			XmlNode xNode = this.getFormat().getUnit().getxCoordNode();
+			XmlNode yNode = this.getFormat().getUnit().getyCoordNode();
+			XmlNode waferLotNode = this.getFormat().getUnit().getWaferLotNode();
+
+			if (unitIdNode.getXmlValue().length() > yNode.getEndIndex()) {
+				waferNumberNode.setValue(Integer.valueOf(unitIdNode.getValue().substring(waferNumberNode.getStartIndex(), waferNumberNode.getEndIndex())).toString());
+				xNode.setValue(Integer.valueOf(unitIdNode.getValue().substring(xNode.getStartIndex(), xNode.getEndIndex())).toString());
+				yNode.setValue(Integer.valueOf(unitIdNode.getValue().substring(yNode.getStartIndex(), yNode.getEndIndex())).toString());
+				waferLotNode.setValue(unitIdNode.getValue().substring(waferLotNode.getStartIndex(), waferLotNode.getEndIndex())
+					+ "."
+					+ unitIdNode.getValue().substring(waferLotNode.getEndIndex(), waferLotNode.getEndIndex() + 2));
+			}
+		}
+		else {
+			if (this.getFormat().getUnit().getWaferNumberNode().getValue() == null) {
+				this.getFormat().getUnit().getWaferNumberNode().setValue(waferNumber);
+			}
+		}
 	}
 
 	private
@@ -505,7 +541,7 @@ public
 				}
 			}
 		}
-		}
+	}
 
 	private
 		void readUnitBin(Node unit) {
@@ -611,7 +647,7 @@ public
 		}
 		space = "";
 		String nodeName = node.getName();
-	
+
 		if (nodeName.equals(KdfTypes.KDF_RT_TEST) && node.getParentName().equals(KdfTypes.KDF_RT_FLOW)) {
 			//skip all the test since test is only for the test descriptions in 93k kdf
 //			System.out.print(node.getName());
@@ -803,10 +839,11 @@ public
 					if (i == length) {
 						field = field.substring(0, field.length() - 1);
 						names = field.trim().split("=");
-						
-						if(names.length != 2) {
+
+						if (names.length != 2) {
 							System.out.println("Error field: " + field);
-							continue;						}
+							continue;
+						}
 
 						// validate the field String length for text limit 32766
 						if (names[1].length() > this.format.getFieldValueLengthLimit()) {
@@ -1166,29 +1203,38 @@ public
 		return failType;
 	}
 
+	public
+		boolean chooseFormat(File file) {
+		for (DataFormat format : Config.dataFormats.values()) {
+			if (!format.isEnabled()) {
+				continue;
+			}
+			String sourceType = file.getName().split("_")[format.getSourceTypeIndex()];
+			if (sourceType.equals(format.getSourceType()) || sourceType.toLowerCase().startsWith(format.getSourceType().toLowerCase())) {
+				this.setFormat(format);
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static
 		void main(String[] args) throws Exception {
 		long startTime = System.currentTimeMillis();
 		new Config("config/dataformat.xml");
 		Loader loader = new Loader();
-		
 
-	
 		File testDataFile = new File("./testdata/KDF");
-		for(File stageFile: testDataFile.listFiles()) {
+		for (File stageFile : testDataFile.listFiles()) {
 			if (stageFile.isDirectory()) {
-				for (File file: stageFile.listFiles()) {
-					String sourceType = file.getName().split("_")[0];
-					DataFormat format = Config.dataFormats.get(sourceType);
-					
-					if(format != null) {
-						loader.setFormat(format);
+				for (File file : stageFile.listFiles()) {
+					if (loader.chooseFormat(file)) {
 						loader.loadFile(file);
 					}
 				}
 			}
 		}
-		
+
 		System.out.println("total time = " + (System.currentTimeMillis() - startTime));
 		startTime = System.currentTimeMillis();
 	}

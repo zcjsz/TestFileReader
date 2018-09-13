@@ -46,6 +46,10 @@ public
 		boolean enabledLog = true;
 	private
 		boolean enabled = false;
+	private
+		int startIndex = -1;
+	private
+		int endIndex = -1;
 
 	/**
 	 *
@@ -134,7 +138,14 @@ public
 	@Override
 	public
 		String toString() {
-		return "XmlNode = " + this.name + " , Value = " + this.value + " , Fields = " + this.fieldNames.toString() + "\n";
+		return "XmlNode = " + this.name 
+			+ " , Value = " + this.value
+			+ " , Fields = " + this.fieldNames.toString()
+			+ ", enabledLoged = " + this.enabledLog
+			+ ", startIndex = " + this.startIndex
+			+ ", endIndex = " + this.endIndex
+			
+			+ "\n";
 	}
 
 	public
@@ -281,6 +292,26 @@ public
 	public
 		void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	public
+		int getStartIndex() {
+		return startIndex;
+	}
+
+	public
+		int getEndIndex() {
+		return endIndex;
+	}
+
+	public
+		void setStartIndex(int startIndex) {
+		this.startIndex = startIndex;
+	}
+
+	public
+		void setEndIndex(int endIndex) {
+		this.endIndex = endIndex;
 	}
 
 	public static
