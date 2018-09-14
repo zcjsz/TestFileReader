@@ -5,6 +5,7 @@
  */
 package kdf.reader;
 
+import com.amd.kdf.KDFFieldData;
 import com.amd.kdf.collection.KDFCollectionFilter;
 import com.amd.kdf.collection.KDFInstanceTree;
 import com.amd.kdf.collection.KDFInstanceTree.Node;
@@ -65,7 +66,9 @@ public
 	private
 		HashMap<String, String> patternRefs = new HashMap();
 	private
-		HashMap<String, String> testDescs = new HashMap();
+		HashMap<String, String> testDescRefs = new HashMap();
+	private
+		HashMap<String, ComponentHash> comHashRefs = new HashMap();
 
 	private
 		String flowResultField = null;
@@ -80,8 +83,18 @@ public
 		super(null);
 	}
 
+	private
+		void clearRefs() {
+		this.patternRefs.clear();
+		this.pinRefs.clear();
+		this.testDescRefs.clear();
+		this.comHashRefs.clear();
+
+	}
+
 	public
 		boolean loadFile(File file) {
+		this.clearRefs();
 		jobStartTime = System.currentTimeMillis();
 		System.out.printf("%s: start proceed kdf %s\n", LocalDateTime.now(), file.getName());
 		this.file = file;
@@ -278,7 +291,7 @@ public
 				}
 
 				if (des.containsKey(testDescIdKey) && value.length() != 0) {
-					this.testDescs.put(des.get(testDescIdKey).toString(), value);
+					this.testDescRefs.put(des.get(testDescIdKey).toString(), value);
 				}
 			}
 			System.out.println("reading test desc time is : " + (System.currentTimeMillis() - startTime));
@@ -360,6 +373,26 @@ public
 	}
 
 	private
+		void readRoot_ComHash() {
+		long startTime = System.currentTimeMillis();
+		Node[] comHashRefs = tree.getNodes(KdfTypes.KDF_RT_COMPGROUPDESC);
+		if (comHashRefs != null && comHashRefs.length > 0) {
+			for (Node comHashNode : comHashRefs) {
+				KDFFieldData comNameField = comHashNode.get("componentName");
+				if (!comNameField.isNull()) {
+					String comName = comNameField.getValue().toString();
+					String comClass = comHashNode.get("componentClass").getValue().toString();
+					String comHash = comHashNode.get("componentHash").getValue().toString();
+					String comInst = comHashNode.get("componentInst").getValue().toString();
+					this.comHashRefs.put(comHash, new ComponentHash(comClass, comName));
+				}
+
+			}
+		}
+
+	}
+
+	private
 		boolean readKDF() {
 		unitCnt = 0;
 		this.fileOpenTime = "";
@@ -414,6 +447,7 @@ public
 		this.readRooT_Refs(KdfTypes.KDF_RT_PINREF, this.pinRefs);
 		this.readRooT_Refs(KdfTypes.KDF_RT_PATTERN, this.patternRefs);
 		readTestDesc();
+		readRoot_ComHash();
 		/**
 		 * print and log head Data
 		 */
@@ -462,7 +496,7 @@ public
 				format.printUnitInfo();
 			}
 			writeUnitData();
-			String unitDataHead = testItemHead + format.getUnitHeadKVString();
+			String unitDataHead = testItemHead + format.getUnitHeadKVString() + getSlaveNodeKVString();
 			System.out.println(unitDataHead);
 
 			for (Node item : unit.getChildren()) {
@@ -479,7 +513,7 @@ public
 				String nodeKVString = printNodeInfo(item, 0);
 				dataContent.append(nodeKVString);
 				// log for debugging
-				if(this.getFormat().isDebugMode()) {
+				if (this.getFormat().isDebugMode()) {
 					System.out.println(nodeKVString);
 				}
 
@@ -502,10 +536,11 @@ public
 		this.tree = null;
 		return true;
 	}
+
 	/**
-	 * H800A0010041704
-	 * read waferLotNumber, waferNumber, x and y from unit id
-	 * @param waferNumber 
+	 * H800A0010041704 read waferLotNumber, waferNumber, x and y from unit id
+	 *
+	 * @param waferNumber
 	 */
 	private
 		void readFTSLTXY(String waferNumber) {
@@ -562,17 +597,45 @@ public
 
 	private
 		void readUnitSerialNumber(Node unit) {
+		int dieCnt = 0;
 		Node[] serialNumbers = unit.getChildren(KdfTypes.KDF_RT_SERIAL);
 		if (serialNumbers != null && serialNumbers.length > 0) {
 			for (Node serialNumber : serialNumbers) {
 				for (XmlNode xmlNode : format.getUnit().getNodes().values()) {
 					for (String fieldName : xmlNode.getFieldNames()) {
 						if (serialNumber.containsKey(fieldName)) {
+
+							/**
+							 * for slt and ate only slt and ate contains 4 die
+							 * per device one master die and 3 slave die
+							 */
+							if (xmlNode.isUnitIdNode()
+								&& (!this.getFormat().getDataType().equals(Config.DataTypes.WaferSort))
+								&& (!serialNumber.get("master").getValue().toString().equals("1"))) {
+								//add for slave unit id if unit id is not null
+								if (!serialNumber.get(fieldName).isNull()) {
+									this.getFormat().getUnit().getSlaveUnits().add(
+										new SlaveUnit(serialNumber.get(fieldName).toString(), serialNumber.get("componentHash").toString())
+									);
+								}
+								continue;
+
+							}
+
 							xmlNode.setValue(serialNumber.get(fieldName).toString());
 						}
 					}
 				}
 			}
+		}
+		/**
+		 *
+		 * here we have to generate a dummy unit id for the master die only
+		 * format:
+		 */
+		// TODO
+		if (this.getFormat().getUnit().getUnitIdNode().getXmlValue().isEmpty()) {
+
 		}
 	}
 
@@ -651,10 +714,12 @@ public
 
 		if (nodeName.equals(KdfTypes.KDF_RT_TEST) && node.getParentName().equals(KdfTypes.KDF_RT_FLOW)) {
 			//skip all the test since test is only for the test descriptions in 93k kdf
-//			System.out.print(node.getName());
+			if (this.format.isDebugMode()) {
+				System.out.println("Skip the Test Node : " + node);
+			}
 			String idClass = node.get("testDescId").toString();
-			if (idClass != null && this.testDescs.containsKey(idClass)) {
-				subBaseClassField = this.testDescs.get(idClass);
+			if (idClass != null && this.testDescRefs.containsKey(idClass)) {
+				subBaseClassField = this.testDescRefs.get(idClass);
 
 				// return immediately if validate failed
 				if (!validateBaseSubClass(subBaseClassField)) {
@@ -665,10 +730,15 @@ public
 		}
 		else if (!validateNodeType(nodeName)) {
 			// skip those nodes
-			System.out.println("Skip Node: " + node);
+			if (this.format.isDebugMode()) {
+				System.out.println("Skip Node: " + node);
+			}
 			return formatString;
 		}
 		else {
+			/**
+			 * handle the current node here
+			 */
 			String formatNodeString = space + formateNode(node) + "\n";
 
 			if (validateForamtString(formatNodeString)) {
@@ -683,6 +753,9 @@ public
 			}
 
 		}
+		/**
+		 * handle the child node here
+		 */
 		for (Node item : node.getChildren()) {
 			formatString += printNodeInfo(item, level + 1);
 		}
@@ -950,6 +1023,31 @@ public
 		}
 		return value;
 
+	}
+
+	/**
+	 * this method is to generate the kv string for the slave die format:
+	 * ,componentName=unitID
+	 *
+	 *
+	 * @return
+	 */
+	private
+		String getSlaveNodeKVString() {
+		String value = "";
+		if (this.getFormat().getDataType().equals(Config.DataTypes.WaferSort)) {
+			return value;
+		}
+		for (SlaveUnit slaveUnit : this.getFormat().getUnit().getSlaveUnits()) {
+			if (slaveUnit.getComHash() != null) {
+				ComponentHash componentHash = this.comHashRefs.get(slaveUnit.getComHash());
+
+				if (componentHash != null && componentHash.getComName() != null && (!componentHash.getComName().isEmpty())) {
+					value += "," + componentHash.getComName() + "=" + slaveUnit.getUnitId();
+				}
+			}
+		}
+		return value;
 	}
 
 	private
