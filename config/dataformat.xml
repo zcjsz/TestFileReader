@@ -16,7 +16,7 @@ and open the template in the editor.
     <RenameKDF>0</RenameKDF>
     
     <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
-    <SourceType name= "HTEST1" enabled = "1" >
+    <SourceType name= "HTEST1" enabled = "0" >
         <LogToFile>0</LogToFile>
         <Customer>AMD</Customer>
         <Factory>Suzhou</Factory>
@@ -66,11 +66,13 @@ and open the template in the editor.
         <NodeTypeSelector></NodeTypeSelector>
         
         <FieldValueLength>8192</FieldValueLength>
+        <EnabledComponentHash>1</EnabledComponentHash>
     </SourceType>
     
     
     <!--GFDRS_S6310A1AB0PG_P_ATC607_H800S.00_WS1_BBIYG148MVB1_1_-5_180905_051627.kdf.20190909090909-->
     <SourceType name= "GFDRS" enabled = "0" >
+        <LogToFile>0</LogToFile>
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
         <KDFPath>/home/ghfan/kdf/</KDFPath>
@@ -119,10 +121,12 @@ and open the template in the editor.
         
         <!--the field whose value length beyonds this limit will be skipped-->
         <FieldValueLength>8192</FieldValueLength>
+        <EnabledComponentHash>1</EnabledComponentHash>
     </SourceType>
         
     <!--HG00058.1.1_6310_H800D0007101504_SLT_AXFNCP_DS2000DBABC01_20180823_052611_suzamdaslt086_006_MAIN.kdf.20180909090909-->    
-    <SourceType name= "SLT" enabled = "0" >
+    <SourceType name= "SLT" enabled = "1" >
+        <LogToFile>0</LogToFile>
         <Customer>Hygon</Customer>
         <Factory>Suzhou</Factory>
         <KDFPath>/home/ghfan/kdf/</KDFPath>
@@ -145,7 +149,7 @@ and open the template in the editor.
         <!--below params are filed name index in the kdf name-->
         <LotNumberIndex>0</LotNumberIndex>
         <TesterNumberIndex>8</TesterNumberIndex>
-        <MfgStepIndex></MfgStepIndex>
+        <MfgStepIndex>3</MfgStepIndex>
         <TestCodeIndex>4</TestCodeIndex>
         <WaferNumberIndex></WaferNumberIndex>
         <SiteIndex>9</SiteIndex>
@@ -171,6 +175,8 @@ and open the template in the editor.
         
         <!--the field whose value length beyonds this limit will be skipped-->
         <FieldValueLength>8192</FieldValueLength>
+        
+        <EnabledComponentHash>1</EnabledComponentHash>
     </SourceType>    
         
         

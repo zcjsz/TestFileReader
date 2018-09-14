@@ -69,6 +69,8 @@ public
 		int testerTypeIndex = -1;
 	private
 		int sourceTypeIndex = -1;
+	private
+		boolean enabledComponentHash =false;
 	private final
 		ArrayList<Integer> fileOpenTimeIndex = new ArrayList();
 
@@ -120,12 +122,15 @@ public
 			for (Element node : nodes) {
 				fieldName = node.getName().trim();
 				fieldValue = node.getTextTrim();
-
-				if ((!fieldName.equals("Head")) && (!fieldName.equals("Unit")) && fieldValue.isEmpty()) {
+				if(fieldValue.isEmpty()) {
 					continue;
 				}
 
 				switch (fieldName) {
+					
+					case "EnabledComponentHash":
+						this.enabledComponentHash = fieldValue.equals("1");
+						break;
 					case "LogToFile":
 						this.logToFile = fieldValue.equals("1");
 						break;
@@ -709,5 +714,11 @@ public
 		int getSourceTypeIndex() {
 		return sourceTypeIndex;
 	}
+
+	public
+	boolean isEnabledComponentHash() {
+		return enabledComponentHash;
+	}
+	
 
 }
