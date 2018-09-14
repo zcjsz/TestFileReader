@@ -510,7 +510,7 @@ public
 	private
 		void readFTSLTXY(String waferNumber) {
 		//H800A0010041704
-		if (!this.getFormat().equals(Config.DataTypes.WaferSort)) {
+		if (!this.getFormat().getDataType().equals(Config.DataTypes.WaferSort)) {
 			XmlNode waferNumberNode = this.getFormat().getUnit().getWaferNumberNode();
 			XmlNode unitIdNode = this.getFormat().getUnit().getUnitIdNode();
 			XmlNode xNode = this.getFormat().getUnit().getxCoordNode();
