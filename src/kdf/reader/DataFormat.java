@@ -266,7 +266,7 @@ public
 			|| this.getKdfMonthIndex() == -1
 			|| this.getKdfPath() == null
 			|| this.getLotNumberIndex() == -1
-			|| (this.getMfgStepIndex() == -1 && (!this.dataType.equals(Config.DataTypes.SLT)))
+			|| (this.getMfgStepIndex() == -1)
 			|| this.getSourceTypeIndex() == -1
 			|| (this.getTestCodeIndex() == -1 && this.dataType.equals(Config.DataTypes.SLT))
 			|| (this.getWaferNumberIndex() == -1 && this.dataType.equals(Config.DataTypes.WaferSort))
