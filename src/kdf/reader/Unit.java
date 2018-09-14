@@ -5,6 +5,7 @@
  */
 package kdf.reader;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 /**
@@ -45,6 +46,10 @@ public
 		XmlNode testTimeNode = null;
 	private
 		XmlNode waferLotNode = null;
+	private
+		ArrayList<SlaveUnit> slaveUnits = new ArrayList();
+	private
+		boolean dummyUnit = false;
 
 	public
 		Unit() {
@@ -268,6 +273,16 @@ public
 	public
 		void setWaferLotNode(XmlNode waferLotNode) {
 		this.waferLotNode = waferLotNode;
+	}
+
+	public
+		ArrayList<SlaveUnit> getSlaveUnits() {
+		return slaveUnits;
+	}
+
+	public
+		boolean isDummyUnit() {
+		return dummyUnit;
 	}
 
 }
