@@ -16,7 +16,7 @@ and open the template in the editor.
     <RenameKDF>0</RenameKDF>
     
     <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
-    <SourceType name= "HTEST1" enabled = "0" >
+    <SourceType name= "HTEST1" enabled = "1" >
         <LogToFile>0</LogToFile>
         <Customer>AMD</Customer>
         <Factory>Suzhou</Factory>
@@ -125,7 +125,7 @@ and open the template in the editor.
     </SourceType>
         
     <!--HG00058.1.1_6310_H800D0007101504_SLT_AXFNCP_DS2000DBABC01_20180823_052611_suzamdaslt086_006_MAIN.kdf.20180909090909-->    
-    <SourceType name= "SLT" enabled = "1" >
+    <SourceType name= "SLT" enabled = "0" >
         <LogToFile>0</LogToFile>
         <Customer>Hygon</Customer>
         <Factory>Suzhou</Factory>

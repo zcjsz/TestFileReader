@@ -75,6 +75,9 @@ public
 	private
 		String subBaseClassField = null;
 	private
+		String comHashValue = null;
+	private String flowNodeValue = null;
+	private
 		String fileOpenTime = "";
 	long jobStartTime = 0;
 
@@ -510,6 +513,8 @@ public
 				this.nodeHead = unitDataHead;
 				flowResultField = "";
 				subBaseClassField = "";
+				flowNodeValue = "";
+				comHashValue = "";
 				String nodeKVString = printNodeInfo(item, 0);
 				dataContent.append(nodeKVString);
 				// log for debugging
@@ -725,7 +730,13 @@ public
 				if (!validateBaseSubClass(subBaseClassField)) {
 					return formatString;
 				}
-
+			}
+			if(this.getFormat().isEnabledComponentHash()) {
+				String comHash = node.get("componentHash").toString();
+				if(comHash != null && this.comHashRefs.containsKey(comHash)) {
+					this.comHashValue = this.comHashRefs.get(comHash).getKVString();
+				}
+				
 			}
 		}
 		else if (!validateNodeType(nodeName)) {
@@ -745,8 +756,9 @@ public
 				formatString += formatNodeString;
 			}
 			else {
+				System.out.println("--------------------------------------------------------------------");
 				System.out.println("FATAL Error: node format string validation failed");
-				System.out.println("FATAL Error: es can not read this node string\n");
+				System.out.println("FATAL Error: es can not read this node string");
 				System.out.println(node);
 				System.out.printf("formatString is:%s", formatNodeString);
 				System.exit(1);
@@ -888,6 +900,7 @@ public
 			if (!this.subBaseClassField.isEmpty()) {
 				value += "," + this.subBaseClassField;
 			}
+			value += this.comHashValue;
 
 			String[] fields = node.toString().split(":");
 			if (fields.length > 3) {
@@ -947,7 +960,7 @@ public
 				}
 				if (node.getName().equals(KdfTypes.KDF_RT_FLOW)) {
 					// all the child nodes whose parent node is flow, add flow context and flow result into sub nodes
-					this.nodeHead += "," + fields[2];
+					this.nodeHead += "," + fields[2].trim();
 					flowResultField = "flowResult=" + fields[0].split("=")[1];
 
 				}
@@ -956,7 +969,13 @@ public
 				System.out.println("\nWarning: need to improve this method for below node");
 				System.out.println(node);
 			}
-
+			
+			// flow node value need to add the component hash content if needed, so add it in the test level
+//			if(node.getName().equals(KdfTypes.KDF_RT_FLOW)) {
+//				this.flowNodeValue = value;
+//				return "";
+//			}
+			
 			return value;
 		}
 

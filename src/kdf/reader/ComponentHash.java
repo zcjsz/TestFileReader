@@ -38,5 +38,10 @@ public
 		return comName;
 	}
 	
+	public
+		String getKVString() {
+			return ",comName=" + this.getComName() + ",comClass=" + this.getComClass();
+		}
+	
 	
 }
