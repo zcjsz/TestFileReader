@@ -50,7 +50,8 @@ public
 		int startIndex = -1;
 	private
 		int endIndex = -1;
-
+    private
+		boolean unitIdNode =false;
 	/**
 	 *
 	 * @param fileName
@@ -312,6 +313,17 @@ public
 	public
 		void setEndIndex(int endIndex) {
 		this.endIndex = endIndex;
+	}
+	
+
+	public
+	boolean isUnitIdNode() {
+		return unitIdNode;
+	}
+
+	public
+	void setUnitIdNode(boolean unitIdNode) {
+		this.unitIdNode = unitIdNode;
 	}
 
 	public static

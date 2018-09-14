@@ -425,6 +425,7 @@ public
 					if (isCnt == 1) {
 						if (isUnitId) {
 							dataFormat.getUnit().setUnitIdNode(xmlNode);
+							xmlNode.setUnitIdNode(true);
 						}
 						else if (isWaferNumber) {
 							dataFormat.getUnit().setWaferNumberNode(xmlNode);
