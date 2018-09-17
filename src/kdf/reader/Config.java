@@ -50,11 +50,14 @@ public
 		enum KdfRename {
 		exception, done, skip, openErr
 	}
+	
 	static
-		String subClass = "subClass=";
-
+		String testDescId = null;
 	static
-		String baseClass = "baseClass=";
+		String baseClass = null;
+	static
+		String subClass = null;
+	
 
 	public
 		Config(String configFile) {
@@ -119,6 +122,52 @@ public
 			}
 
 		});
+		reader.addHandler("/root/TestDescId", new ElementHandler() {
+			@Override
+			public
+				void onEnd(ElementPath path) {
+				Element row = path.getCurrent();
+				testDescId = row.getTextTrim();
+				row.detach();
+			}
+
+			@Override
+			public
+				void onStart(ElementPath path) {
+			}
+
+		});
+		reader.addHandler("/root/BaseClass", new ElementHandler() {
+			@Override
+			public
+				void onEnd(ElementPath path) {
+				Element row = path.getCurrent();
+				baseClass = row.getTextTrim();
+				row.detach();
+			}
+
+			@Override
+			public
+				void onStart(ElementPath path) {
+			}
+
+		});
+		reader.addHandler("/root/SubClass", new ElementHandler() {
+			@Override
+			public
+				void onEnd(ElementPath path) {
+				Element row = path.getCurrent();
+				subClass = row.getTextTrim();
+				row.detach();
+			}
+
+			@Override
+			public
+				void onStart(ElementPath path) {
+			}
+
+		});
+		
 
 		reader.addHandler("/root/SourceType", new ElementHandler() {
 			@Override
@@ -178,7 +227,9 @@ public
 		});
 		try {
 			document = reader.read(configFile);
-			if (lockFilePath == null || (!new File(lockFilePath).exists())) {
+			if (lockFilePath == null
+				|| (!new File(lockFilePath).exists())
+				|| testDescId == null) {
 				System.err.println("please setup correct lockFilePath");
 				return false;
 			}
