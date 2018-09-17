@@ -1046,7 +1046,7 @@ public
 
 	/**
 	 * this method is to generate the kv string for the slave die format:
-	 * ,componentName=unitID
+	 * ,DIE.1=unitID_1,DIE_2=unitID_2
 	 *
 	 *
 	 * @return

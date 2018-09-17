@@ -132,6 +132,7 @@ public
 		this.hardBinDesc = null;
 		this.softBinDesc = null;
 		this.flag = null;
+		this.slaveUnits.clear();
 	}
 
 	public
