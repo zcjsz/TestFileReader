@@ -66,20 +66,22 @@ public
 	private
 		HashMap<String, String> patternRefs = new HashMap();
 	private
-		HashMap<String, String> testDescRefs = new HashMap();
+		HashMap<String, TestDesc> testDescRefs = new HashMap();
 	private
 		HashMap<String, ComponentHash> comHashRefs = new HashMap();
 
 	private
-		String flowResultField = null;
+		String flowContextField = null;
+	private
+		String testResultField = null;
 	private
 		String subBaseClassField = null;
 	private
 		String comHashValue = null;
-	private String flowNodeValue = null;
 	private
 		String fileOpenTime = "";
-	private int testCntInFlow = 0;
+	private
+		int testCntInFlow = 0;
 	long jobStartTime = 0;
 	boolean debugMode = false;
 
@@ -274,30 +276,33 @@ public
 	 */
 	private
 		void readTestDesc() {
-		String subClassKey = "subClass";
-		String baseClassKey = "baseClass";
-		String testDescIdKey = "testDescId";
 		long startTime = System.currentTimeMillis();
 		Node[] descs = tree.getNodes(KdfTypes.KDF_RT_TESTDESC);
 		if (descs != null && descs.length > 0) {
 			for (Node des : descs) {
 				String value = "";
-				String subClassName = des.get(subClassKey).toString().trim();
-				String baseClassName = des.get(baseClassKey).toString().trim();
-				if (subClassName != null && (!subClassName.isEmpty())) {
-					value += Config.subClass + subClassName;
-					if (baseClassName != null && (!baseClassName.isEmpty())) {
-						value += "," + Config.baseClass + baseClassName;
+				String testDescId = null;
+				String baseClass = null;
+				String subClass = null;
+				for (String fieldName : des.keySet()) {
+					String fieldValue = des.get(fieldName).toString().trim();
+					if (fieldValue.isEmpty() || fieldName.isEmpty()) {
+						continue;
 					}
-				}
-				else {
-					if (baseClassName != null && (!baseClassName.isEmpty())) {
-						value += Config.baseClass + baseClassName;
+					if (fieldName.equals(Config.testDescId)) {
+						testDescId = fieldValue;
+						continue;
 					}
+					if (fieldName.endsWith(Config.subClass)) {
+						subClass = fieldValue;
+					}
+					if (fieldName.endsWith(Config.baseClass)) {
+						baseClass = fieldValue;
+					}
+					value += "," + fieldName + "=" + fieldValue;
 				}
-
-				if (des.containsKey(testDescIdKey) && value.length() != 0) {
-					this.testDescRefs.put(des.get(testDescIdKey).toString(), value);
+				if (testDescId != null && (!value.isEmpty())) {
+					this.testDescRefs.put(testDescId, new TestDesc(baseClass, subClass, value));
 				}
 			}
 			System.out.println("reading test desc time is : " + (System.currentTimeMillis() - startTime));
@@ -385,7 +390,7 @@ public
 		if (comHashRefs != null && comHashRefs.length > 0) {
 			for (Node comHashNode : comHashRefs) {
 				KDFFieldData comNameField = comHashNode.get("componentName");
-				if (!comNameField.isNull()) {
+				if (comNameField != null) {
 					String comName = comNameField.getValue().toString();
 					String comClass = comHashNode.get("componentClass").getValue().toString();
 					String comHash = comHashNode.get("componentHash").getValue().toString();
@@ -495,18 +500,17 @@ public
 			format.setBinDesc();
 			readFTSLTXY(waferNumber);
 
-			
 			writeUnitData();
 			String unitDataHead = format.getUnitHeadKVString() + getSlaveNodeKVString();
 			String testItemHeadStr = lotHeadStr + unitDataHead;
-			
+
 			/**
 			 * print and log unit data
 			 */
 			if (this.isDebugMode()) {
 				System.out.printf("Unit#%d Head Info:\n", unitNo);
 //				format.printUnitInfo();
-				System.out.println(testItemHeadStr);
+				System.out.println("TestItemHead: " + testItemHeadStr);
 			}
 
 			for (Node item : unit.getChildren()) {
@@ -518,9 +522,10 @@ public
 					continue;
 				}
 				this.nodeHead = testItemHeadStr;
-				flowResultField = "";
+				this.nodeHead = "unit_no=" + unitNo;
+				flowContextField = "";
+				testResultField = "";
 				subBaseClassField = "";
-				flowNodeValue = "";
 				comHashValue = "";
 				String nodeKVString = printNodeInfo(item, 0);
 				dataContent.append(nodeKVString);
@@ -625,7 +630,7 @@ public
 								&& (!this.getFormat().getDataType().equals(Config.DataTypes.WaferSort))
 								&& (!serialNumber.get("master").getValue().toString().equals("1"))) {
 								//add for slave unit id if unit id is not null
-								if (!serialNumber.get(fieldName).isNull()) {
+								if (serialNumber.get(fieldName) != null) {
 									this.getFormat().getUnit().getSlaveUnits().add(
 										new SlaveUnit(serialNumber.get(fieldName).toString(), serialNumber.get("componentHash").toString())
 									);
@@ -721,39 +726,39 @@ public
 				space = "          |--";
 				break;
 		}
-		
-		space = "";
-		String nodeName = node.getName();
 
-		if (nodeName.equals(KdfTypes.KDF_RT_TEST) && node.getParentName().equals(KdfTypes.KDF_RT_FLOW)) {
+//		space = "";
+		String nodeName = node.getName();
+		if (nodeName.equals(KdfTypes.KDF_RT_FLOW)) {
+			this.flowContextField = "";
+		}
+
+		if (nodeName.equals(KdfTypes.KDF_RT_TEST)) {
+			// reset all the test related items here
 			testCntInFlow++;
-			
-			if(testCntInFlow > 1) {
-				System.out.printf("This flow contains %d test\n", testCntInFlow);
-			}
-			
-			//skip all the test since test is only for the test descriptions in 93k kdf
-			if (this.isDebugMode()) {
-				System.out.println("Skip the Test Node : " + node);
-			}
+			subBaseClassField = "";
+			this.comHashValue = "";
+			this.testResultField = "";
+
 			String idClass = node.get("testDescId").toString();
 			if (idClass != null && this.testDescRefs.containsKey(idClass)) {
-				subBaseClassField = this.testDescRefs.get(idClass);
+				subBaseClassField = this.testDescRefs.get(idClass).getValue();
 
 				// return immediately if validate failed
-				if (!validateBaseSubClass(subBaseClassField)) {
+				if (!validateBaseSubClass(idClass)) {
 					return formatString;
 				}
 			}
-			if(this.getFormat().isEnabledComponentHash()) {
+			if (this.getFormat().isEnabledComponentHash()) {
 				String comHash = node.get("componentHash").toString();
-				if(comHash != null && this.comHashRefs.containsKey(comHash)) {
+				if (comHash != null && this.comHashRefs.containsKey(comHash)) {
 					this.comHashValue = this.comHashRefs.get(comHash).getKVString();
 				}
-				
 			}
+
 		}
-		else if (!validateNodeType(nodeName)) {
+
+		if (!validateNodeType(nodeName)) {
 			// skip those nodes
 			if (this.isDebugMode()) {
 				System.out.println("Skip this Node Type: " + node);
@@ -771,14 +776,20 @@ public
 			}
 			else {
 				System.out.println("--------------------------------------------------------------------");
-				System.out.println("FATAL Error: node format string validation failed");
-				System.out.println("FATAL Error: es can not read this node string");
-				System.out.println(node);
-				System.out.printf("formatString is:%s", formatNodeString);
+				System.err.println("FATAL Error: node format string validation failed");
+				System.err.println("FATAL Error: es can not read this node string");
+				System.err.println(node);
+				System.err.printf("formatString is:%s", formatNodeString);
 				System.exit(1);
 			}
 
 		}
+
+		// return immediately after slt test
+		if (this.getFormat().getDataType().equals(Config.DataTypes.SLT) && nodeName.equals(KdfTypes.KDF_RT_TEST)) {
+			return formatString;
+		}
+
 		/**
 		 * handle the child node here
 		 */
@@ -816,30 +827,17 @@ public
 		String[] names = baseSubClass.split(",");
 		String subClassName = null;
 		String baseClassName = null;
-		// subClass and baseClass 
-		if (names.length == 2) {
-			subClassName = names[0].split("=")[1];
-			baseClassName = names[1].split("=")[1];
-		}
-		else {
-			if (baseSubClass.startsWith(Config.baseClass)) {
-				baseClassName = baseSubClass.split("=")[1];
-			}
-			else {
-				subClassName = baseSubClass.split("=")[1];
-			}
-		}
 
 		// validate the base class first
 		if (!this.getFormat().getBaseClassFilters().isEmpty()) {
 			// filter out
-			if (baseClassName != null && this.getFormat().getBaseClassFilters().contains(baseClassName)) {
+			if (this.getFormat().getBaseClassFilters().contains(baseClassName)) {
 				return false;
 			}
 		}
 		if (!this.getFormat().getBaseClassSelectors().isEmpty()) {
 			// selector
-			if (baseClassName != null && (!this.getFormat().getBaseClassSelectors().contains(baseClassName))) {
+			if (!this.getFormat().getBaseClassSelectors().contains(baseClassName)) {
 				return false;
 			}
 		}
@@ -847,14 +845,14 @@ public
 		// validate the sub class
 		if (!this.getFormat().getSubClassFilters().isEmpty()) {
 			// filter out
-			if (subClassName != null && this.getFormat().getSubClassFilters().contains(subClassName)) {
+			if (this.getFormat().getSubClassFilters().contains(subClassName)) {
 				return false;
 			}
 		}
 
 		if (!this.getFormat().getSubClassSelectors().isEmpty()) {
 			// selector
-			if (subClassName != null && (!this.getFormat().getSubClassSelectors().contains(subClassName))) {
+			if (!this.getFormat().getSubClassSelectors().contains(subClassName)) {
 				return false;
 			}
 		}
@@ -886,6 +884,28 @@ public
 
 	}
 
+	private
+		String formatTestNode(Node node) {
+		String value = "";
+		String testResultField = this.getFieldKVStr(node, "result", "result");
+		String startTimeField = this.getFieldKVStr(node, "startTimestamp", "startTimestamp");
+		String endTimeField = this.getFieldKVStr(node, "endTimestamp", "endTimestamp");
+		String alarmField = this.getFieldKVStr(node, "alarm", "alarm");
+
+		this.testResultField = testResultField;
+		if (!testResultField.isEmpty()) {
+			value += "," + testResultField;
+		}
+		if (!startTimeField.isEmpty()) {
+			value += "," + startTimeField;
+		}
+		if (!endTimeField.isEmpty()) {
+			value += "," + endTimeField;
+		}
+		return value;
+
+	}
+
 	/**
 	 * bug1: Type: StructureMeasure, Parent Type: Test, Data: [result=1,
 	 * highSpecLimit=20.0, structureName=RDIL0:Temp, paramRefPtr=,
@@ -899,7 +919,8 @@ public
 	private
 		String formateNode(Node node) {
 		String value = "";
-		if (node.getName().equals(RecordTypes.KDF_RT_ULSD)) {
+		String nodeType = node.getName().trim();
+		if (nodeType.equals(RecordTypes.KDF_RT_ULSD)) {
 			return this.formatULSDNode(node);
 		}
 		else {
@@ -908,91 +929,98 @@ public
 				value += this.nodeHead;
 			}
 
-			if (node.getName().equals(KdfTypes.KDF_RT_EVALUATION)) {
-				value += "," + this.flowResultField;
+			if (!this.flowContextField.isEmpty()) {
+				value += "," + this.flowContextField;
 			}
-			if (!this.subBaseClassField.isEmpty()) {
-				value += "," + this.subBaseClassField;
+
+			if (nodeType.equals(KdfTypes.KDF_RT_EVALUATION)) {
+				value += "," + this.testResultField;
+			}
+			if (!this.subBaseClassField.isEmpty() 
+				&&(!this.getFormat().isIgnoreEmptyValueField())) {
+				value += this.subBaseClassField;
 			}
 			value += this.comHashValue;
 
-			String[] fields = node.toString().split(":");
-			if (fields.length > 3) {
-				value += "," + fields[0] + "=" + fields[1].split(",")[0].trim();
+			// add the node type
+			if (!nodeType.isEmpty()) {
+				value += ",type=" + node.getName().trim();
 			}
 
-			// find the data field
-			fields = node.toString().split("Data:");
-			fields = fields[fields.length - 1].split("\\[");
-			if (fields.length == 2) {
-				fields = fields[fields.length - 1].split(",");
-				int length = fields.length;
-				int i = 0;
-				for (String field : fields) {
-					i++;
+			if (nodeType.equals("Test")) {
+				value += this.formatTestNode(node);
+				return value;
+			}
 
-					String[] names = field.trim().split("=");
-					if (names.length != 2 || names[0].equals("") || names[1].equals("")) {
+			for (String fieldName : node.keySet()) {
+				String fieldValue = node.get(fieldName).toString().trim();
+
+				if (fieldName.isEmpty()) {
+					continue;
+				}
+				if (this.getFormat().getFieldFiters().contains(fieldName)) {
+					continue;
+				}
+
+				if (!fieldValue.isEmpty()) {
+					if (!this.isFormatField(fieldValue)) {
+						System.out.println("Warning: can not read this field");
+						System.out.println(fieldName + ":" + fieldValue);
 						continue;
+
 					}
-
-					// the last field
-					if (i == length) {
-						field = field.substring(0, field.length() - 1);
-						names = field.trim().split("=");
-
-						if (names.length != 2) {
-							System.out.println("Error field: " + field);
-							continue;
-						}
-
-						// validate the field String length for text limit 32766
-						if (names[1].length() > this.format.getFieldValueLengthLimit()) {
-							continue;
-						}
-					}
-
-					if (names[0].trim().equals(FieldType.PinRefPtr)) {
-						String pinName = this.pinRefs.get(names[1].trim());
+					if (fieldName.equals(FieldType.PinRefPtr)) {
+						String pinName = this.pinRefs.get(fieldValue);
 						if (pinName == null) {
-							System.out.println("no pin for this pinRef:" + names[1]);
+							System.out.println("no pin for this pinRef:" + fieldValue);
 						}
-						field = "pinName=" + pinName;
+						value += ",pin=" + pinName;
 					}
-					else if (names[0].trim().equals(FieldType.PatternId)) {
-						String pattern = this.patternRefs.get(names[1].trim());
+					else if (fieldName.equals(FieldType.PatternId)) {
+						String pattern = this.patternRefs.get(fieldValue);
 						if (pattern != null) {
-							field = "patterns=" + pattern;
-						}
-						else {
-							continue;
+							value += ",pattern=" + pattern;
 						}
 					}
-
-					value += "," + field.trim();
-
-				}
-				if (node.getName().equals(KdfTypes.KDF_RT_FLOW)) {
-					// all the child nodes whose parent node is flow, add flow context and flow result into sub nodes
-					this.nodeHead += "," + fields[2].trim();
-					flowResultField = "flowResult=" + fields[0].split("=")[1];
-					testCntInFlow = 0;
+					else {
+						value += "," + fieldName + "=" + fieldValue;
+					}
 				}
 			}
-			else {
-				System.out.println("\nWarning: need to improve this method for below node");
-				System.out.println(node);
+			if (node.getName().equals(KdfTypes.KDF_RT_FLOW)) {
+				// all the child nodes whose parent node is flow, add flow context and flow result into sub nodes
+				this.flowContextField = this.getFieldKVStr(node, "context", "context");
+//				this.testResultField += this.getFieldKVStr(node, "result", "flowResult");
+				testCntInFlow = 0;
 			}
-			
-			// flow node value need to add the component hash content if needed, so add it in the test level
-//			if(node.getName().equals(KdfTypes.KDF_RT_FLOW)) {
-//				this.flowNodeValue = value;
-//				return "";
-//			}
-			
 			return value;
 		}
+	}
 
+	/**
+	 * get the filed kv value return empty if key or value is empty
+	 *
+	 * @param node
+	 * @param fieldName
+	 * @return
+	 */
+	private
+		String getFieldKVStr(Node node, String fieldName, String aliasName) {
+		String value = "";
+
+		KDFFieldData fieldData = node.get(fieldName);
+		if (fieldData == null) {
+			return value;
+		}
+		String fieldValue = fieldData.toString().trim();
+		if ((!fieldValue.isEmpty()) && this.isFormatField(fieldValue)) {
+			if (aliasName != null) {
+				fieldName = aliasName;
+			}
+			value = fieldName + "=" + fieldValue;
+		}
+
+		return value;
 	}
 
 	private
@@ -1007,6 +1035,23 @@ public
 			}
 		}
 		return value;
+
+	}
+
+	private
+		boolean isFormatField(String field) {
+		int length = field.length();
+		if (length > this.format.getFieldValueLengthLimit()) {
+			return false;
+		}
+
+		while (length-- > 0) {
+			char chr = field.charAt(length);
+			if (chr == ',' || chr == '=') {
+				return false;
+			}
+		}
+		return true;
 
 	}
 
@@ -1349,10 +1394,9 @@ public
 		}
 		return false;
 	}
-		
 
 	public
-	boolean isDebugMode() {
+		boolean isDebugMode() {
 		return debugMode;
 	}
 
