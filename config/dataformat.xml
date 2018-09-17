@@ -14,16 +14,22 @@ and open the template in the editor.
     
     <!--rename kdf, append .done to kdf file-->
     <RenameKDF>0</RenameKDF>
+    <TestDescId>testDescId</TestDescId>
+    
+    <SubClass>subClass</SubClass>
+    <BaseClass>baseClass</BaseClass>
+    
+    
     
     <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
-    <SourceType name= "HTEST1" enabled = "1" >
+    <SourceType name= "HTEST1" enabled = "0" >
         <LogToFile>0</LogToFile>
         <Customer>AMD</Customer>
         <Factory>Suzhou</Factory>
         <KDFPath>/home/ghfan/kdf/</KDFPath>
         <XmlPath>/data/ft_xml/</XmlPath>
         <DataType>ATE</DataType>
-        <DebugMode>0</DebugMode>
+        <DebugMode>1</DebugMode>
         
         <!--comma separated filters-->
         <FilterOut>sbo</FilterOut><!--filter out kdf whose name contains sbo-->
@@ -67,18 +73,20 @@ and open the template in the editor.
         
         <FieldValueLength>8192</FieldValueLength>
         <EnabledComponentHash>1</EnabledComponentHash>
+        <!--comma separated KDFFieldData filters-->
+        <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units</FieldFilter>
     </SourceType>
     
     
     <!--GFDRS_S6310A1AB0PG_P_ATC607_H800S.00_WS1_BBIYG148MVB1_1_-5_180905_051627.kdf.20190909090909-->
-    <SourceType name= "GFDRS" enabled = "1" >
+    <SourceType name= "GFDRS" enabled = "0" >
         <LogToFile>0</LogToFile>
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
         <KDFPath>/home/ghfan/kdf/</KDFPath>
         <XmlPath>/data/wafer_sort_xml/</XmlPath>
         <DataType>WaferSort</DataType>
-        <DebugMode>0</DebugMode>
+        <DebugMode>1</DebugMode>
         
         <!--comma separated filters-->
         <FilterOut>sbo</FilterOut><!--filter out kdf whose name contains sbo-->
@@ -122,6 +130,8 @@ and open the template in the editor.
         <!--the field whose value length beyonds this limit will be skipped-->
         <FieldValueLength>8192</FieldValueLength>
         <EnabledComponentHash>1</EnabledComponentHash>
+        <!--comma separated KDFFieldData filters-->
+        <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units</FieldFilter>
     </SourceType>
         
     <!--HG00058.1.1_6310_H800D0007101504_SLT_AXFNCP_DS2000DBABC01_20180823_052611_suzamdaslt086_006_MAIN.kdf.20180909090909-->    
@@ -132,7 +142,7 @@ and open the template in the editor.
         <KDFPath>/home/ghfan/kdf/</KDFPath>
         <XmlPath>/data/slt_xml/</XmlPath>
         <DataType>SLT</DataType>
-        <DebugMode>0</DebugMode>
+        <DebugMode>1</DebugMode>
         
         <!--comma separated filters-->
         <FilterOut>suz93k,gfdrs</FilterOut><!--filter out kdf whose name contains sbo-->
@@ -164,9 +174,9 @@ and open the template in the editor.
         <ULSDNodeFilter></ULSDNodeFilter>
         
         <!--comma separated filters and selectors for sub and main class-->
-        <BaseClasFilter></BaseClasFilter>
+        <BaseClasFilter>DEFAULT</BaseClasFilter>
         <BaseClasSelector></BaseClasSelector>
-        <SubClasFilter></SubClasFilter>
+        <SubClasFilter>DEFAULT</SubClasFilter>
         <SubClasSelector></SubClasSelector>
         <!--comma separated Node Type filters-->
         <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
@@ -176,7 +186,12 @@ and open the template in the editor.
         <!--the field whose value length beyonds this limit will be skipped-->
         <FieldValueLength>8192</FieldValueLength>
         
-        <EnabledComponentHash>1</EnabledComponentHash>
+        <EnabledComponentHash>0</EnabledComponentHash>
+        <!--comma separated KDFFieldData filters-->
+        <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units</FieldFilter>
+        <!--default the base and sub class always log in the test type node-->
+        <SkipTestClass>1</SkipTestClass>
+            
     </SourceType>    
         
         
