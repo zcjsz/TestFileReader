@@ -71,7 +71,7 @@ and open the template in the editor.
     
     
     <!--GFDRS_S6310A1AB0PG_P_ATC607_H800S.00_WS1_BBIYG148MVB1_1_-5_180905_051627.kdf.20190909090909-->
-    <SourceType name= "GFDRS" enabled = "0" >
+    <SourceType name= "GFDRS" enabled = "1" >
         <LogToFile>0</LogToFile>
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
@@ -125,7 +125,7 @@ and open the template in the editor.
     </SourceType>
         
     <!--HG00058.1.1_6310_H800D0007101504_SLT_AXFNCP_DS2000DBABC01_20180823_052611_suzamdaslt086_006_MAIN.kdf.20180909090909-->    
-    <SourceType name= "SLT" enabled = "0" >
+    <SourceType name= "SLT" enabled = "1" >
         <LogToFile>0</LogToFile>
         <Customer>Hygon</Customer>
         <Factory>Suzhou</Factory>

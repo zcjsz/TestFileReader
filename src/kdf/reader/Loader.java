@@ -79,7 +79,9 @@ public
 	private String flowNodeValue = null;
 	private
 		String fileOpenTime = "";
+	private int testCntInFlow = 0;
 	long jobStartTime = 0;
+	boolean debugMode = false;
 
 	public
 		Loader() {
@@ -98,6 +100,7 @@ public
 	public
 		boolean loadFile(File file) {
 		this.clearRefs();
+		debugMode = this.getFormat().isDebugMode();
 		jobStartTime = System.currentTimeMillis();
 		System.out.printf("%s: start proceed kdf %s\n", LocalDateTime.now(), file.getName());
 		this.file = file;
@@ -455,7 +458,7 @@ public
 		 * print and log head Data
 		 */
 		format.resetHeadTimeFormat();
-		if (format.isDebugMode()) {
+		if (this.isDebugMode()) {
 			format.printHeadInfo();
 		}
 		writeHeadData();
@@ -467,7 +470,7 @@ public
 		catch (IOException ex) {
 			Logger.getLogger(Loader.class.getName()).log(Level.SEVERE, null, ex);
 		}
-		String testItemHead = format.getLotHeadKVString() + "," + "file_date=" + this.formatFileOpenTime();
+		String lotHeadStr = format.getLotHeadKVString() + "," + "file_date=" + this.formatFileOpenTime();
 
 		readBinDesc();
 		System.out.println("opening kdf time is : " + (System.currentTimeMillis() - jobStartTime));
@@ -492,15 +495,19 @@ public
 			format.setBinDesc();
 			readFTSLTXY(waferNumber);
 
+			
+			writeUnitData();
+			String unitDataHead = format.getUnitHeadKVString() + getSlaveNodeKVString();
+			String testItemHeadStr = lotHeadStr + unitDataHead;
+			
 			/**
 			 * print and log unit data
 			 */
-			if (format.isDebugMode()) {
-				format.printUnitInfo();
+			if (this.isDebugMode()) {
+				System.out.printf("Unit#%d Head Info:\n", unitNo);
+//				format.printUnitInfo();
+				System.out.println(testItemHeadStr);
 			}
-			writeUnitData();
-			String unitDataHead = testItemHead + format.getUnitHeadKVString() + getSlaveNodeKVString();
-			System.out.println(unitDataHead);
 
 			for (Node item : unit.getChildren()) {
 
@@ -510,7 +517,7 @@ public
 					|| nodeName.equals(KdfTypes.KDF_RT_BINDESC)) {
 					continue;
 				}
-				this.nodeHead = unitDataHead;
+				this.nodeHead = testItemHeadStr;
 				flowResultField = "";
 				subBaseClassField = "";
 				flowNodeValue = "";
@@ -518,7 +525,7 @@ public
 				String nodeKVString = printNodeInfo(item, 0);
 				dataContent.append(nodeKVString);
 				// log for debugging
-				if (this.getFormat().isDebugMode()) {
+				if (this.isDebugMode()) {
 					System.out.println(nodeKVString);
 				}
 
@@ -714,12 +721,19 @@ public
 				space = "          |--";
 				break;
 		}
+		
 		space = "";
 		String nodeName = node.getName();
 
 		if (nodeName.equals(KdfTypes.KDF_RT_TEST) && node.getParentName().equals(KdfTypes.KDF_RT_FLOW)) {
+			testCntInFlow++;
+			
+			if(testCntInFlow > 1) {
+				System.out.printf("This flow contains %d test\n", testCntInFlow);
+			}
+			
 			//skip all the test since test is only for the test descriptions in 93k kdf
-			if (this.format.isDebugMode()) {
+			if (this.isDebugMode()) {
 				System.out.println("Skip the Test Node : " + node);
 			}
 			String idClass = node.get("testDescId").toString();
@@ -741,8 +755,8 @@ public
 		}
 		else if (!validateNodeType(nodeName)) {
 			// skip those nodes
-			if (this.format.isDebugMode()) {
-				System.out.println("Skip Node: " + node);
+			if (this.isDebugMode()) {
+				System.out.println("Skip this Node Type: " + node);
 			}
 			return formatString;
 		}
@@ -962,7 +976,7 @@ public
 					// all the child nodes whose parent node is flow, add flow context and flow result into sub nodes
 					this.nodeHead += "," + fields[2].trim();
 					flowResultField = "flowResult=" + fields[0].split("=")[1];
-
+					testCntInFlow = 0;
 				}
 			}
 			else {
@@ -1334,6 +1348,12 @@ public
 			}
 		}
 		return false;
+	}
+		
+
+	public
+	boolean isDebugMode() {
+		return debugMode;
 	}
 
 	public static
