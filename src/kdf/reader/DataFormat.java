@@ -21,6 +21,8 @@ public
 
 	private
 		boolean logToFile = true;
+	private
+		boolean skipTestClass = false;
 
 	private
 		int fieldValueLengthLimit = 8192;
@@ -101,6 +103,8 @@ public
 		ArrayList<String> nodeTypeFilters = new ArrayList();
 	private final
 		ArrayList<String> nodeTypeSelectors = new ArrayList();
+	private
+		ArrayList<String> fieldFiters = new ArrayList();
 
 	public
 		DataFormat(Element sourceData) {
@@ -252,6 +256,17 @@ public
 							this.nodeTypeSelectors.add(selector.trim());
 						}
 						break;
+						
+					case "FieldFilter":
+						for (String filter : fieldValue.split(",")) {
+							this.fieldFiters.add(filter.trim());
+						}
+						break;
+					case "SkipTestClass":
+						this.skipTestClass = fieldValue.equals("1");
+						break;	
+						
+						
 					default:
 						System.out.printf("Error: this filed: %s is not supportted!\n", fieldName);
 						System.exit(1);
@@ -477,7 +492,7 @@ public
 
 	public
 		String getLotHeadKVString() {
-		String value = "\nEventType=test-item";
+		String value = "EventType=test-item";
 		for (XmlNode node : this.lotHead.values()) {
 			if (!node.isEnabledLog()) {
 				continue;
@@ -718,6 +733,16 @@ public
 	public
 	boolean isEnabledComponentHash() {
 		return enabledComponentHash;
+	}
+
+	public
+	ArrayList<String> getFieldFiters() {
+		return fieldFiters;
+	}
+
+	public
+	boolean isIgnoreEmptyValueField() {
+		return ignoreEmptyValueField;
 	}
 	
 
