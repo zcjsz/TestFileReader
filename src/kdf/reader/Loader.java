@@ -202,7 +202,9 @@ public
 					}
 				}
 			}
-			System.out.println("reading root time is : " + (System.currentTimeMillis() - startTime));
+			if(this.isDebugMode()) {
+				System.out.printf("reading %s time is : %d\n", root.getName(),(System.currentTimeMillis() - startTime));
+			}
 		}
 	}
 
@@ -220,7 +222,9 @@ public
 					}
 				}
 			}
-			System.out.printf("reading %s time is : %d\n", nodeType, (System.currentTimeMillis() - startTime));
+			if(this.isDebugMode()) {
+				System.out.printf("reading %s time is : %d\n", nodeType, (System.currentTimeMillis() - startTime));
+			}
 		}
 	}
 
@@ -243,7 +247,9 @@ public
 					}
 				}
 			}
-			System.out.println("reading component time is : " + (System.currentTimeMillis() - startTime));
+			if(this.isDebugMode()) {
+				System.out.println("reading component time is : " + (System.currentTimeMillis() - startTime));
+			}
 		}
 	}
 
@@ -266,7 +272,9 @@ public
 					}
 				}
 			}
-			System.out.println("reading omi time is : " + (System.currentTimeMillis() - startTime));
+			if(this.isDebugMode()) {
+				System.out.println("reading omi time is : " + (System.currentTimeMillis() - startTime));
+			}
 		}
 	}
 
@@ -305,7 +313,9 @@ public
 					this.testDescRefs.put(testDescId, new TestDesc(baseClass, subClass, value));
 				}
 			}
-			System.out.println("reading test desc time is : " + (System.currentTimeMillis() - startTime));
+			if(this.isDebugMode()) {
+				System.out.println("reading test desc time is : " + (System.currentTimeMillis() - startTime));
+			}
 		}
 	}
 
@@ -355,7 +365,9 @@ public
 				}
 
 			}
-			System.out.println("reading binDesc node time is : " + (System.currentTimeMillis() - startTime));
+			if(this.debugMode) {
+				System.out.println("reading binDesc node time is : " + (System.currentTimeMillis() - startTime));
+			}
 		}
 	}
 
@@ -379,7 +391,10 @@ public
 					data.put(key, value.trim());
 				}
 			}
-			System.out.println("reading " + kdfType + " time is " + (System.currentTimeMillis() - startTime));
+			if(this.isDebugMode()) {
+				System.out.println("reading " + kdfType + " time is " + (System.currentTimeMillis() - startTime));
+			}
+			
 		}
 	}
 
@@ -399,6 +414,9 @@ public
 				}
 
 			}
+		}
+		if(this.isDebugMode()) {
+			System.out.println("reading component hash time is " + (System.currentTimeMillis() - startTime));
 		}
 
 	}
@@ -896,11 +914,20 @@ public
 		if (!testResultField.isEmpty()) {
 			value += "," + testResultField;
 		}
-		if (!startTimeField.isEmpty()) {
-			value += "," + startTimeField;
+		if(!this.getFormat().getFieldFiters().contains("startTimestamp")) {
+			if (!startTimeField.isEmpty()) {
+				value += "," + startTimeField;
+			}
 		}
-		if (!endTimeField.isEmpty()) {
-			value += "," + endTimeField;
+		if(!this.getFormat().getFieldFiters().contains("endTimestamp")) {
+			if (!endTimeField.isEmpty()) {
+				value += "," + endTimeField;
+			}
+		}
+		if(!this.getFormat().getFieldFiters().contains("alarm")) {
+			if(!alarmField.isEmpty()) {
+				value += "," + alarmField;
+			}
 		}
 		return value;
 
@@ -963,21 +990,24 @@ public
 				}
 
 				if (!fieldValue.isEmpty()) {
-					if (!this.isFormatField(fieldValue)) {
-						System.out.println("Warning: can not read this field");
-						System.out.println(fieldName + ":" + fieldValue);
+					if (!this.isFormatField(fieldValue, fieldName)) {
 						continue;
 
 					}
 					if (fieldName.equals(FieldType.PinRefPtr)) {
 						String pinName = this.pinRefs.get(fieldValue);
-						if (pinName == null) {
-							System.out.println("no pin for this pinRef:" + fieldValue);
+						if(fieldValue.contains(",")) {
+							System.out.println("Multip Pin found: " + fieldValue);
 						}
-						value += ",pin=" + pinName;
+						if (pinName != null) {
+							value += ",pin=" + pinName;
+						}
 					}
 					else if (fieldName.equals(FieldType.PatternId)) {
 						String pattern = this.patternRefs.get(fieldValue);
+						if(fieldValue.contains(",")) {
+							System.out.println("Multip Patterns found: " + fieldValue);
+						}
 						if (pattern != null) {
 							value += ",pattern=" + pattern;
 						}
@@ -1013,7 +1043,7 @@ public
 			return value;
 		}
 		String fieldValue = fieldData.toString().trim();
-		if ((!fieldValue.isEmpty()) && this.isFormatField(fieldValue)) {
+		if ((!fieldValue.isEmpty()) && this.isFormatField(fieldValue, fieldName)) {
 			if (aliasName != null) {
 				fieldName = aliasName;
 			}
@@ -1039,15 +1069,19 @@ public
 	}
 
 	private
-		boolean isFormatField(String field) {
-		int length = field.length();
+		boolean isFormatField(String fieldValue, String fieldName) {
+		int length = fieldValue.length();
 		if (length > this.format.getFieldValueLengthLimit()) {
+			if(this.isDebugMode()) {
+				System.out.printf("Too long Field: fieldName=%s, fieldValue=%s\n", fieldName, fieldValue );
+			}
 			return false;
 		}
 
 		while (length-- > 0) {
-			char chr = field.charAt(length);
+			char chr = fieldValue.charAt(length);
 			if (chr == ',' || chr == '=') {
+				System.out.printf("Bad Format Field: fieldName=%s, fieldValue=%s\n", fieldName, fieldValue );
 				return false;
 			}
 		}
@@ -1387,7 +1421,7 @@ public
 				continue;
 			}
 			String sourceType = file.getName().split("_")[format.getSourceTypeIndex()];
-			if (sourceType.equals(format.getSourceType()) || sourceType.toLowerCase().startsWith(format.getSourceType().toLowerCase())) {
+			if (sourceType.equals(format.getSourceType()) || sourceType.toLowerCase().contains(format.getSourceType().toLowerCase())) {
 				this.setFormat(format);
 				return true;
 			}
