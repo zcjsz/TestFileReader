@@ -202,8 +202,8 @@ public
 					}
 				}
 			}
-			if(this.isDebugMode()) {
-				System.out.printf("reading %s time is : %d\n", root.getName(),(System.currentTimeMillis() - startTime));
+			if (this.isDebugMode()) {
+				System.out.printf("reading %s time is : %d\n", root.getName(), (System.currentTimeMillis() - startTime));
 			}
 		}
 	}
@@ -222,7 +222,7 @@ public
 					}
 				}
 			}
-			if(this.isDebugMode()) {
+			if (this.isDebugMode()) {
 				System.out.printf("reading %s time is : %d\n", nodeType, (System.currentTimeMillis() - startTime));
 			}
 		}
@@ -247,7 +247,7 @@ public
 					}
 				}
 			}
-			if(this.isDebugMode()) {
+			if (this.isDebugMode()) {
 				System.out.println("reading component time is : " + (System.currentTimeMillis() - startTime));
 			}
 		}
@@ -272,7 +272,7 @@ public
 					}
 				}
 			}
-			if(this.isDebugMode()) {
+			if (this.isDebugMode()) {
 				System.out.println("reading omi time is : " + (System.currentTimeMillis() - startTime));
 			}
 		}
@@ -313,7 +313,7 @@ public
 					this.testDescRefs.put(testDescId, new TestDesc(baseClass, subClass, value));
 				}
 			}
-			if(this.isDebugMode()) {
+			if (this.isDebugMode()) {
 				System.out.println("reading test desc time is : " + (System.currentTimeMillis() - startTime));
 			}
 		}
@@ -365,7 +365,7 @@ public
 				}
 
 			}
-			if(this.debugMode) {
+			if (this.debugMode) {
 				System.out.println("reading binDesc node time is : " + (System.currentTimeMillis() - startTime));
 			}
 		}
@@ -391,10 +391,10 @@ public
 					data.put(key, value.trim());
 				}
 			}
-			if(this.isDebugMode()) {
+			if (this.isDebugMode()) {
 				System.out.println("reading " + kdfType + " time is " + (System.currentTimeMillis() - startTime));
 			}
-			
+
 		}
 	}
 
@@ -415,7 +415,7 @@ public
 
 			}
 		}
-		if(this.isDebugMode()) {
+		if (this.isDebugMode()) {
 			System.out.println("reading component hash time is " + (System.currentTimeMillis() - startTime));
 		}
 
@@ -484,7 +484,7 @@ public
 		if (this.isDebugMode()) {
 			format.printHeadInfo();
 		}
-		writeHeadData();
+//		writeHeadData();
 
 		File testLogFile = new File(this.file.getAbsolutePath() + ".test_item.log");
 		try {
@@ -518,7 +518,7 @@ public
 			format.setBinDesc();
 			readFTSLTXY(waferNumber);
 
-			writeUnitData();
+//			writeUnitData();
 			String unitDataHead = format.getUnitHeadKVString() + getSlaveNodeKVString();
 			String testItemHeadStr = lotHeadStr + unitDataHead;
 
@@ -565,7 +565,7 @@ public
 
 		}
 
-		this.closeFile(this.file.getParent());
+//		this.closeFile(this.file.getParent());
 		System.out.printf("%s: successed to proceed kdf %s\n", LocalDateTime.now(), file.getName());
 		System.out.println("total kdf reading time is : " + (System.currentTimeMillis() - jobStartTime));
 		this.tree = null;
@@ -914,18 +914,18 @@ public
 		if (!testResultField.isEmpty()) {
 			value += "," + testResultField;
 		}
-		if(!this.getFormat().getFieldFiters().contains("startTimestamp")) {
+		if (!this.getFormat().getFieldFiters().contains("startTimestamp")) {
 			if (!startTimeField.isEmpty()) {
 				value += "," + startTimeField;
 			}
 		}
-		if(!this.getFormat().getFieldFiters().contains("endTimestamp")) {
+		if (!this.getFormat().getFieldFiters().contains("endTimestamp")) {
 			if (!endTimeField.isEmpty()) {
 				value += "," + endTimeField;
 			}
 		}
-		if(!this.getFormat().getFieldFiters().contains("alarm")) {
-			if(!alarmField.isEmpty()) {
+		if (!this.getFormat().getFieldFiters().contains("alarm")) {
+			if (!alarmField.isEmpty()) {
 				value += "," + alarmField;
 			}
 		}
@@ -963,8 +963,8 @@ public
 			if (nodeType.equals(KdfTypes.KDF_RT_EVALUATION)) {
 				value += "," + this.testResultField;
 			}
-			if (!this.subBaseClassField.isEmpty() 
-				&&(!this.getFormat().isIgnoreEmptyValueField())) {
+			if (!this.subBaseClassField.isEmpty()
+				&& (!this.getFormat().isIgnoreEmptyValueField())) {
 				value += this.subBaseClassField;
 			}
 			value += this.comHashValue;
@@ -996,7 +996,7 @@ public
 					}
 					if (fieldName.equals(FieldType.PinRefPtr)) {
 						String pinName = this.pinRefs.get(fieldValue);
-						if(fieldValue.contains(",")) {
+						if (fieldValue.contains(",")) {
 							System.out.println("Multip Pin found: " + fieldValue);
 						}
 						if (pinName != null) {
@@ -1005,7 +1005,7 @@ public
 					}
 					else if (fieldName.equals(FieldType.PatternId)) {
 						String pattern = this.patternRefs.get(fieldValue);
-						if(fieldValue.contains(",")) {
+						if (fieldValue.contains(",")) {
 							System.out.println("Multip Patterns found: " + fieldValue);
 						}
 						if (pattern != null) {
@@ -1072,8 +1072,8 @@ public
 		boolean isFormatField(String fieldValue, String fieldName) {
 		int length = fieldValue.length();
 		if (length > this.format.getFieldValueLengthLimit()) {
-			if(this.isDebugMode()) {
-				System.out.printf("Too long Field: fieldName=%s, fieldValue=%s\n", fieldName, fieldValue );
+			if (this.isDebugMode()) {
+				System.out.printf("Too long Field: fieldName=%s, fieldValue=%s\n", fieldName, fieldValue);
 			}
 			return false;
 		}
@@ -1081,7 +1081,7 @@ public
 		while (length-- > 0) {
 			char chr = fieldValue.charAt(length);
 			if (chr == ',' || chr == '=') {
-				System.out.printf("Bad Format Field: fieldName=%s, fieldValue=%s\n", fieldName, fieldValue );
+				System.out.printf("Bad Format Field: fieldName=%s, fieldValue=%s\n", fieldName, fieldValue);
 				return false;
 			}
 		}

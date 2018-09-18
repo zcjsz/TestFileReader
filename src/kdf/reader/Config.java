@@ -50,14 +50,13 @@ public
 		enum KdfRename {
 		exception, done, skip, openErr
 	}
-	
+
 	static
 		String testDescId = null;
 	static
 		String baseClass = null;
 	static
 		String subClass = null;
-	
 
 	public
 		Config(String configFile) {
@@ -167,7 +166,6 @@ public
 			}
 
 		});
-		
 
 		reader.addHandler("/root/SourceType", new ElementHandler() {
 			@Override

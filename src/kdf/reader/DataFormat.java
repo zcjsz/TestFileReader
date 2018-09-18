@@ -72,7 +72,7 @@ public
 	private
 		int sourceTypeIndex = -1;
 	private
-		boolean enabledComponentHash =false;
+		boolean enabledComponentHash = false;
 	private final
 		ArrayList<Integer> fileOpenTimeIndex = new ArrayList();
 
@@ -126,12 +126,12 @@ public
 			for (Element node : nodes) {
 				fieldName = node.getName().trim();
 				fieldValue = node.getTextTrim();
-				if(fieldValue.isEmpty()) {
+				if (fieldValue.isEmpty()) {
 					continue;
 				}
 
 				switch (fieldName) {
-					
+
 					case "EnabledComponentHash":
 						this.enabledComponentHash = fieldValue.equals("1");
 						break;
@@ -256,7 +256,7 @@ public
 							this.nodeTypeSelectors.add(selector.trim());
 						}
 						break;
-						
+
 					case "FieldFilter":
 						for (String filter : fieldValue.split(",")) {
 							this.fieldFiters.add(filter.trim());
@@ -264,9 +264,8 @@ public
 						break;
 					case "SkipTestClass":
 						this.skipTestClass = fieldValue.equals("1");
-						break;	
-						
-						
+						break;
+
 					default:
 						System.out.printf("Error: this filed: %s is not supportted!\n", fieldName);
 						System.exit(1);
@@ -731,19 +730,18 @@ public
 	}
 
 	public
-	boolean isEnabledComponentHash() {
+		boolean isEnabledComponentHash() {
 		return enabledComponentHash;
 	}
 
 	public
-	ArrayList<String> getFieldFiters() {
+		ArrayList<String> getFieldFiters() {
 		return fieldFiters;
 	}
 
 	public
-	boolean isIgnoreEmptyValueField() {
+		boolean isIgnoreEmptyValueField() {
 		return ignoreEmptyValueField;
 	}
-	
 
 }

@@ -50,8 +50,9 @@ public
 		int startIndex = -1;
 	private
 		int endIndex = -1;
-    private
-		boolean unitIdNode =false;
+	private
+		boolean unitIdNode = false;
+
 	/**
 	 *
 	 * @param fileName
@@ -139,13 +140,12 @@ public
 	@Override
 	public
 		String toString() {
-		return "XmlNode = " + this.name 
+		return "XmlNode = " + this.name
 			+ " , Value = " + this.value
 			+ " , Fields = " + this.fieldNames.toString()
 			+ ", enabledLoged = " + this.enabledLog
 			+ ", startIndex = " + this.startIndex
 			+ ", endIndex = " + this.endIndex
-			
 			+ "\n";
 	}
 
@@ -314,15 +314,14 @@ public
 		void setEndIndex(int endIndex) {
 		this.endIndex = endIndex;
 	}
-	
 
 	public
-	boolean isUnitIdNode() {
+		boolean isUnitIdNode() {
 		return unitIdNode;
 	}
 
 	public
-	void setUnitIdNode(boolean unitIdNode) {
+		void setUnitIdNode(boolean unitIdNode) {
 		this.unitIdNode = unitIdNode;
 	}
 

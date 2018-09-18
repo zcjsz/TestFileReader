@@ -11,6 +11,7 @@ package kdf.reader;
  */
 public
 	class TestDesc {
+
 	private
 		String baseClass = null;
 	private
@@ -19,31 +20,31 @@ public
 		String value = null;
 
 	/**
-	 * 
+	 *
 	 * @param base
 	 * @param sub
-	 * @param value 
+	 * @param value
 	 */
 	public
-	TestDesc(String base, String sub, String value) {
+		TestDesc(String base, String sub, String value) {
 		this.subClass = sub;
 		this.baseClass = base;
 		this.value = value;
 	}
 
 	public
-	String getBaseClass() {
+		String getBaseClass() {
 		return baseClass;
 	}
 
 	public
-	String getSubClass() {
+		String getSubClass() {
 		return subClass;
 	}
 
 	public
-	String getValue() {
+		String getValue() {
 		return value;
 	}
-	
+
 }

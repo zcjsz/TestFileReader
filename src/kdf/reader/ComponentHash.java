@@ -11,37 +11,36 @@ package kdf.reader;
  */
 public
 	class ComponentHash {
+
 	private
 		String comClass = null;
 	private
 		String comName = null;
 
-
 	/**
-	 * 
+	 *
 	 * @param comClass
-	 * @param comName 
+	 * @param comName
 	 */
 	public
-	ComponentHash(String comClass, String comName) {
+		ComponentHash(String comClass, String comName) {
 		this.comClass = comClass;
 		this.comName = comName;
 	}
 
 	public
-	String getComClass() {
+		String getComClass() {
 		return comClass;
 	}
 
 	public
-	String getComName() {
+		String getComName() {
 		return comName;
 	}
-	
+
 	public
 		String getKVString() {
-			return ",comName=" + this.getComName() + ",comClass=" + this.getComClass();
-		}
-	
-	
+		return ",comName=" + this.getComName() + ",comClass=" + this.getComClass();
+	}
+
 }
