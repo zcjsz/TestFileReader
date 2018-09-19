@@ -43,12 +43,16 @@ public
 
 	static
 		enum FailureCase {
-		ValidationFailure, OpenFailure, Exception
+		BadFormat, OpenFailure, Exception, RepeatKDF,IOError
 	};
 
 	static
 		enum KdfRename {
 		exception, done, skip, openErr
+	}
+	static
+		enum EventType {
+		KDFDone, KDFRepeat, KDFBadFormat, KDFOpenFailure,IOError
 	}
 
 	static

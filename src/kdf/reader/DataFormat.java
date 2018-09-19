@@ -5,6 +5,7 @@
  */
 package kdf.reader;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,6 +19,18 @@ import org.dom4j.Element;
  */
 public
 	class DataFormat {
+	
+	private
+		boolean generateMappingFile = true;
+	
+	private
+		String kdfArchivePath = null;
+	
+	private
+		String mappingPath = null;
+		
+	private
+		boolean addFileName = false;
 
 	private
 		boolean logToFile = true;
@@ -71,6 +84,8 @@ public
 		int testerTypeIndex = -1;
 	private
 		int sourceTypeIndex = -1;
+	private
+		int unitIdIndex = -1;
 	private
 		boolean enabledComponentHash = false;
 	private final
@@ -135,8 +150,15 @@ public
 					case "EnabledComponentHash":
 						this.enabledComponentHash = fieldValue.equals("1");
 						break;
+						
+					case "GenerateMappingFile":
+						this.generateMappingFile = fieldValue.equals("1");
+						break;		
 					case "LogToFile":
 						this.logToFile = fieldValue.equals("1");
+						break;
+					case "AddFileNameInUnit":
+						this.addFileName = fieldValue.equals("1");
 						break;
 					case "Factory":
 						this.factory = fieldValue;
@@ -147,8 +169,14 @@ public
 					case "KDFPath":
 						this.kdfPath = fieldValue;
 						break;
+					case "KDFArchivePath":
+						this.kdfArchivePath = fieldValue;
+						break;	
 					case "XmlPath":
 						this.xmlPath = fieldValue;
+						break;
+					case "MappingPath":
+						this.mappingPath = fieldValue;
 						break;
 					case "DataType":
 						this.dataType = Config.DataTypes.valueOf(fieldValue);
@@ -179,7 +207,10 @@ public
 					case "TesterTypeIndex":
 						this.testerTypeIndex = Integer.valueOf(fieldValue);
 						break;
-
+					case "UnitIdIndex":
+						this.unitIdIndex = Integer.valueOf(fieldValue);
+						break;	
+						
 					case "UnderLineCnt":
 						this.underLineCnt = Integer.valueOf(fieldValue);
 						break;
@@ -283,7 +314,7 @@ public
 			|| this.getDataType() == null
 			|| this.getFileOpenTimeIndex().isEmpty()
 			|| this.getKdfMonthIndex() == -1
-			|| this.getKdfPath() == null
+			|| (this.getKdfPath() == null || (! new File(this.getKdfPath()).exists()))
 			|| this.getLotNumberIndex() == -1
 			|| (this.getMfgStepIndex() == -1)
 			|| this.getSourceTypeIndex() == -1
@@ -293,6 +324,12 @@ public
 			|| this.getTesterTypes().isEmpty()
 			|| this.getUnderLineCnt() == -1
 			|| this.getTesterTypeIndex() == -1
+			|| ((this.generateMappingFile && this.mappingPath == null) 
+				|| (this.generateMappingFile && (!new File(this.mappingPath).exists()) && (!new File(this.mappingPath).mkdirs())))
+			|| (this.xmlPath == null
+				|| ((!new File(this.xmlPath).exists()) && (!new File(this.xmlPath).mkdirs())))
+			|| (this.kdfArchivePath == null
+				|| ((!new File(this.kdfArchivePath).exists()) && (! new File(this.kdfArchivePath).mkdirs())))
 			|| this.getXmlPath() == null
 			|| this.getUnit().getEndTimeNode() == null
 			|| this.getUnit().getHardBinNode() == null
@@ -303,6 +340,7 @@ public
 			|| this.getUnit().getWaferNumberNode() == null
 			|| this.getUnit().getxCoordNode() == null
 			|| this.getUnit().getyCoordNode() == null
+			|| (this.dataType.equals(Config.DataTypes.SLT) && this.unitIdIndex == -1)
 			|| ((!this.dataType.equals(Config.DataTypes.WaferSort)) && this.getUnit().getWaferLotNode() == null)) {
 			this.printConfig();
 			System.out.printf("SourceData %s validation result: failed\n", this.sourceType);
@@ -491,7 +529,7 @@ public
 
 	public
 		String getLotHeadKVString() {
-		String value = "EventType=test-item";
+		String value = "";
 		for (XmlNode node : this.lotHead.values()) {
 			if (!node.isEnabledLog()) {
 				continue;
@@ -743,5 +781,31 @@ public
 		boolean isIgnoreEmptyValueField() {
 		return ignoreEmptyValueField;
 	}
+
+	public
+	boolean isAddFileName() {
+		return addFileName;
+	}
+
+	public
+	String getMappingPath() {
+		return mappingPath;
+	}
+
+	public
+	String getKdfArchivePath() {
+		return kdfArchivePath;
+	}
+
+	public
+	int getUnitIdIndex() {
+		return unitIdIndex;
+	}
+
+	public
+	boolean isGenerateMappingFile() {
+		return generateMappingFile;
+	}
+	
 
 }

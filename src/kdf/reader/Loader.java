@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -84,6 +85,24 @@ public
 		int testCntInFlow = 0;
 	long jobStartTime = 0;
 	boolean debugMode = false;
+	
+	private File testLogFile = null;
+	private File mappingFile = null;
+	private File archiveFile = null;
+	private
+		String kdfMonth = null;
+	private
+		String kdfDate = null;
+	private
+		String lotNumber = null;
+	private
+		String transferTime = null;
+	private
+		String kdfName = null;
+	private
+		String unitId = null;
+	private
+		String mfgStp = null;
 
 	public
 		Loader() {
@@ -103,11 +122,32 @@ public
 		boolean loadFile(File file) {
 		this.clearRefs();
 		debugMode = this.getFormat().isDebugMode();
-		jobStartTime = System.currentTimeMillis();
-		System.out.printf("%s: start proceed kdf %s\n", LocalDateTime.now(), file.getName());
 		this.file = file;
+		
+		jobStartTime = System.currentTimeMillis();
+		System.out.printf("\n%s: start proceed kdf %s\n", LocalDateTime.now(), file.getName());
+		
+		//reset all the variables
+		this.testLogFile = null;
+		this.mappingFile = null;
+		this.kdfMonth = null;
+		this.kdfDate = null;
+		this.lotNumber = null;
+		this.archiveFile = null;
+		this.fileOpenTime = null;
+		this.transferTime = null;
+		this.kdfName = null;
+		this.unitId = null;
+		this.mfgStp = null;
+		
 		if (!this.validateFile(file)) {
-			this.failType = Config.FailureCase.ValidationFailure;
+			this.failType = Config.FailureCase.BadFormat;
+			this.logBadFormatFileToES();
+			return false;
+		}
+		if(this.isRepeatFile()) {
+			this.failType = Config.FailureCase.RepeatKDF;
+			this.logRepeatFileToES();
 			return false;
 		}
 
@@ -117,6 +157,7 @@ public
 		catch (Exception ex) {
 			ex.printStackTrace();
 			this.failType = Config.FailureCase.OpenFailure;
+			this.logOpenFailureToES();
 			return false;
 		}
 
@@ -141,7 +182,7 @@ public
 
 	private
 		boolean validateFile(File kdfFile) {
-		failType = null;
+		this.failType = null;
 
 		String kdfName = kdfFile.getName().toLowerCase();
 		String names[] = kdfName.split("kdf.");
@@ -155,6 +196,9 @@ public
 		if (names[names.length - 1].length() != 14 || (!names[names.length - 1].startsWith("20"))) {
 			return false;
 		}
+		this.transferTime = names[1];
+		this.kdfName = names[0] +"kdf";
+		
 		boolean skip = false;
 		for (String filter : this.getFormat().getFilters()) {
 			if (kdfName.contains(filter)) {
@@ -178,10 +222,102 @@ public
 
 		names = kdfFile.getName().split("_");
 		if (names.length != this.getFormat().getUnderLineCnt()) {
-			System.out.println("Skip this kdf since underline cnt is not " + this.getFormat().getUnderLineCnt());
+			System.err.println("Skip this kdf since underline cnt is not " + this.getFormat().getUnderLineCnt());
 			return false;
 		}
+		
+		if(!this.setKDFDate()){
+			System.err.println("Skip since bad Format of KDF date");
+			return false;
+		}
+		
+		this.lotNumber = names[format.getLotNumberIndex()];
+////		this.unitId = names[format.getUnitIdIndex()];
+		this.mfgStp = names[format.getMfgStepIndex()];
+		
+		// archive file
+		this.archiveFile = new File(this.getFormat().getKdfArchivePath()
+			+ "/" + this.kdfDate
+			+ "/" + lotNumber
+			+ "/" + this.file.getName());
+
+		// mapping file
+		this.mappingFile = new File(this.getFormat().getMappingPath() 
+			+ "/" + this.kdfDate
+			+ "/" + lotNumber
+			+ "/" + this.file.getName().split(".kdf")[0] + ".kdf");
+		
 		return true;
+	}
+	
+	private void logOpenFailureToES() {
+		System.out.printf("EventType=%s,LotNumber=%s,KDFMonth=%s,KDFDate=%s,TransferTime=%s,KDFName=%s,DataType=%s,MfgStep=%s\n",
+			Config.EventType.KDFOpenFailure,
+			this.lotNumber,
+			this.kdfMonth,
+			this.kdfDate,
+			this.transferTime,
+			this.kdfName,
+			this.getFormat().getDataType(),
+			this.mfgStp
+		);
+	}
+		
+	private void logRepeatFileToES() {
+		System.out.printf("EventType=%s,LotNumber=%s,KDFMonth=%s,KDFDate=%s,TransferTime=%s,KDFName=%s,DataType=%s,MfgStep=%s\n",
+			Config.EventType.KDFRepeat,
+			this.lotNumber,
+			this.kdfMonth,
+			this.kdfDate,
+			this.transferTime,
+			this.kdfName,
+			this.getFormat().getDataType(),
+			this.mfgStp
+			);
+	}
+	
+	private void logBadFormatFileToES() {
+		System.out.printf("EventType=%s,FileName=%s,DataType=%s\n",
+			Config.EventType.KDFBadFormat,
+			this.file.getName(),
+			this.getFormat().getDataType()
+			);
+	}
+	private void logIoErrorToES() {
+		System.out.printf("EventType=%s,LotNumber=%s,KDFMonth=%s,KDFDate=%s,TransferTime=%s,KDFName=%s,DataType=%s,MfgStep=%s\n",
+			Config.EventType.IOError,
+			this.lotNumber,
+			this.kdfMonth,
+			this.kdfDate,
+			this.transferTime,
+			this.kdfName,
+			this.getFormat().getDataType(),
+			this.mfgStp
+		);
+	}
+	private void logKDFDoneToES() {
+		
+		System.out.printf("EventType=%s,DoneTime=%s,KDFName=%s,UnitCnt=%d,LotNumber=%s,MfgStep=%s,KDFMonth=%s,KDFDate=%s,TransferTime=%s,DataType=%s\n",
+									"KDFDone",
+									ZonedDateTime.now().toOffsetDateTime(),
+									this.kdfName,
+									this.unitCnt,
+									this.lotNumber,
+									this.mfgStp,
+									kdfMonth,
+									this.kdfDate,
+									this.transferTime,
+									this.getFormat().getDataType()
+								);
+	}
+		
+	private boolean isRepeatFile() {
+		if(this.mappingFile.exists()) {
+			this.moveFileToArchive();
+			System.err.println("Skip since this is a repeat file");
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -423,7 +559,7 @@ public
 
 	private
 		boolean readKDF() {
-		unitCnt = 0;
+		this.unitCnt = 0;
 		this.fileOpenTime = "";
 		String waferNumber = "";
 
@@ -435,6 +571,7 @@ public
 		}
 		else {
 			unitCnt = units.length;
+			System.out.println("total unit cnt is: " + units.length);
 		}
 
 		if (format.getDataType().equals(Config.DataTypes.WaferSort)) {
@@ -486,19 +623,23 @@ public
 		}
 //		writeHeadData();
 
-		File testLogFile = new File(this.file.getAbsolutePath() + ".test_item.log");
+		testLogFile = new File(this.getFormat().getXmlPath()+ "/" + this.file.getName());
 		try {
 			Files.deleteIfExists(testLogFile.toPath());
 		}
 		catch (IOException ex) {
 			Logger.getLogger(Loader.class.getName()).log(Level.SEVERE, null, ex);
+			this.logIoErrorToES();
+			this.failType = Config.FailureCase.IOError;
+			return false;
+		
 		}
 		String lotHeadStr = format.getLotHeadKVString() + "," + "file_date=" + this.formatFileOpenTime();
 
 		readBinDesc();
 		System.out.println("opening kdf time is : " + (System.currentTimeMillis() - jobStartTime));
 
-		System.out.println("total unit cnt is: " + units.length);
+		
 		int unitNo = 0;
 		StringBuilder dataContent = new StringBuilder();
 		for (Node unit : units) {
@@ -553,23 +694,91 @@ public
 				}
 
 			}
-			if (this.getFormat().isLogToFile()) {
-				try {
-					Files.write(testLogFile.toPath(), dataContent.toString().getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-
-				}
-				catch (IOException ex) {
-					Logger.getLogger(Loader.class.getName()).log(Level.SEVERE, null, ex);
-				}
+			// IO error and exit for this file
+			if(!this.writeKVString(dataContent)) {
+				this.failType = Config.FailureCase.IOError;
+				this.logIoErrorToES();
+				this.removeTempLogFile();
+				return false;
 			}
-
 		}
 
-//		this.closeFile(this.file.getParent());
+		// this.closeFile(this.file.getParent());
+		
+		// generate the kdf mapping file and for repeat kdf file check
+		if((this.getFormat().isGenerateMappingFile() && (!this.generateMapFile())) 
+			|| (!this.renameKDFFile())) {
+			this.failType = Config.FailureCase.IOError;
+			this.logIoErrorToES();
+			this.removeTempLogFile();
+			return false;
+		}
+		if(!this.renameTempLogFile()) {
+			this.failType = Config.FailureCase.IOError;
+			this.logIoErrorToES();
+			this.removeTempLogFile();
+			System.out.println("Error: failed to rename the temp log file");
+			return false;
+		}
+		this.logKDFDoneToES();
+		
 		System.out.printf("%s: successed to proceed kdf %s\n", LocalDateTime.now(), file.getName());
 		System.out.println("total kdf reading time is : " + (System.currentTimeMillis() - jobStartTime));
 		this.tree = null;
 		return true;
+	}
+	private boolean renameTempLogFile(){
+		File esTestFile = new File(this.testLogFile.getAbsolutePath() + ".log");
+		return this.testLogFile.renameTo(esTestFile);
+	}	
+		
+		
+	private boolean renameKDFFile(){
+		if(Config.renameKDF) {
+			File kdfedFile = new File(this.file.getAbsolutePath() + "." + Config.KdfRename.done);
+			return this.file.renameTo(kdfedFile);
+		}	
+		return true;
+	}
+	/**
+	 * write the kv string in to log file
+	 * @return 
+	 */	
+	private boolean writeKVString(StringBuilder dataContent){
+		if (this.getFormat().isLogToFile()) {
+			try {
+				Files.write(testLogFile.toPath(), dataContent.toString().getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+
+			}
+			catch (IOException ex) {
+				Logger.getLogger(Loader.class.getName()).log(Level.SEVERE, null, ex);
+				return false;
+			}
+			return true;
+		}
+		return true;
+	}
+	private boolean generateMapFile() {
+		try {
+			if(this.mappingFile.createNewFile()) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		catch (IOException ex) {
+			Logger.getLogger(Loader.class.getName()).log(Level.SEVERE, null, ex);
+			return false;
+		}
+	}
+	private void removeTempLogFile() {
+		try {
+			Files.deleteIfExists(this.testLogFile.toPath());
+		}
+		catch (IOException ex) {
+			Logger.getLogger(Loader.class.getName()).log(Level.SEVERE, null, ex);
+		}
 	}
 
 	/**
@@ -1161,12 +1370,12 @@ public
 		}
 		return value;
 	}
-
+		
+	/*
 	private
 		void writeHeadData() {
 		this.fileOpenTime = "";
 		String[] names = this.file.getName().split("_");
-		// set file open time
 		for (int index : format.getFileOpenTimeIndex()) {
 			if (names[index].contains(".")) {
 				names[index] = names[index].substring(0, names[index].indexOf('.'));
@@ -1181,17 +1390,15 @@ public
 			System.exit(1);
 		}
 
-		// set kdf month
 		XmlNode lotStartTimeNode = format.getLotStartTimeNode();
 		XmlNode lotOpenTimeNode = format.getLotOpenTimeNode();
 		System.out.printf("fileOpenTime = %s, lotStartTime = %s, lotOpenTime = %s\n", fileOpenTime, lotStartTimeNode.getValue(), lotOpenTimeNode.getValue());
 
 		if (lotStartTimeNode != null && lotStartTimeNode.getValue() != null) {
 			if (lotOpenTimeNode != null && lotOpenTimeNode.getValue() != null) {
-				// this is the best case
+				
 			}
 			else {
-				// set lotOpenTimeNode = lotStartTime
 				lotOpenTimeNode.forceValueTo(lotStartTimeNode.getValue());
 			}
 		}
@@ -1219,7 +1426,8 @@ public
 		root.addElement("xml_file_generated_time").setText(LocalDateTime.now().toString());
 		root.addElement("kdf_file_name").setText(this.file.getName());
 
-	}
+	}*/
+	
 
 	private
 		void writeUnitData() {
@@ -1242,6 +1450,43 @@ public
 		return lotDate;
 	}
 
+	private boolean setKDFDate(){
+		String[] names = this.file.getName().split("_");
+		this.kdfMonth = names[format.getKdfMonthIndex()];
+		if (this.kdfMonth.length() == 4) {
+			//0604
+			this.kdfMonth = "20" + kdfMonth;
+		}
+		else if (this.kdfMonth.length() == 6) {
+			//180604
+			this.kdfMonth = "20" + kdfMonth.substring(0, 4);
+		}
+		else if (this.kdfMonth.length() == 8) {
+			this.kdfMonth = this.kdfMonth.substring(0,6);
+		}
+		else{
+			return false;
+		}
+		
+		this.fileOpenTime = "";
+		// set file open time
+		for (int index : format.getFileOpenTimeIndex()) {
+			if (names[index].contains(".")) {
+				names[index] = names[index].substring(0, names[index].indexOf('.'));
+			}
+			fileOpenTime += names[index];
+		}
+		if (fileOpenTime.length() == 12) {
+			fileOpenTime = "20" + fileOpenTime;
+		}
+		if (fileOpenTime.length() != 14) {
+			System.out.println("FATAL Error: failed to get file open time from the file name");
+			return false;
+		}
+		this.kdfDate = fileOpenTime.substring(0,8);
+		System.out.println(this.fileOpenTime);
+		return true;
+	}	
 	private
 		void closeFile(String xmlFilePath) {
 		xmlFilePath = format.getXmlPath();
@@ -1412,6 +1657,21 @@ public
 	public
 		Config.FailureCase getFailType() {
 		return failType;
+	}
+	private boolean moveFileToArchive() {
+		try {
+			if(this.archiveFile.exists()){
+				Files.delete(this.file.toPath());
+			}
+			else {
+				Files.move(this.file.toPath(), this.archiveFile.toPath(), ATOMIC_MOVE);
+			}
+		}
+		catch (IOException ex) {
+			System.out.println("EventType:ArchieveFailure");
+			return false;
+		}
+		return true;
 	}
 
 	public

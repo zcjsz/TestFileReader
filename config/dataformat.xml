@@ -24,10 +24,17 @@ and open the template in the editor.
     <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
     <SourceType name= "HTEST1" enabled = "1" >
         <LogToFile>0</LogToFile>
+        <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
+        <GenerateMappingFile>0</GenerateMappingFile>
         <Customer>AMD</Customer>
         <Factory>Suzhou</Factory>
         <KDFPath>/home/ghfan/kdf/</KDFPath>
-        <XmlPath>/data/ft_xml/</XmlPath>
+        <!--xml path is to store the generated test item log file-->
+        <XmlPath>/data/ft_log/</XmlPath>
+        <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
+        <MappingPath>/data/ft_mapping</MappingPath>
+        <!--kdf archive file is to store the kdf file which has been parsed successfully-->
+        <KDFArchivePath>/data/ft_archive</KDFArchivePath>
         <DataType>ATE</DataType>
         <DebugMode>0</DebugMode>
         
@@ -75,16 +82,24 @@ and open the template in the editor.
         <EnabledComponentHash>1</EnabledComponentHash>
         <!--comma separated KDFFieldData filters-->
         <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units</FieldFilter>
+        <AddFileNameInUnit>1</AddFileNameInUnit>
     </SourceType>
     
     
     <!--GFDRS_S6310A1AB0PG_P_ATC607_H800S.00_WS1_BBIYG148MVB1_1_-5_180905_051627.kdf.20190909090909-->
     <SourceType name= "GFDRS" enabled = "1" >
         <LogToFile>0</LogToFile>
+        <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
+        <GenerateMappingFile>0</GenerateMappingFile>
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
         <KDFPath>/home/ghfan/kdf/</KDFPath>
-        <XmlPath>/data/wafer_sort_xml/</XmlPath>
+        <!--xml path is to store the generated test item log file-->
+        <XmlPath>/data/wafer_sort_log/</XmlPath>
+        <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
+        <MappingPath>/data/wafer_sort_mapping</MappingPath>
+        <!--kdf archive file is to store the kdf file which has been parsed successfully-->
+        <KDFArchivePath>/data/wafer_sort_archive</KDFArchivePath>
         <DataType>WaferSort</DataType>
         <DebugMode>0</DebugMode>
         
@@ -107,7 +122,7 @@ and open the template in the editor.
         <TestCodeIndex></TestCodeIndex>
         <WaferNumberIndex>7</WaferNumberIndex>
         <SiteIndex></SiteIndex>
-        <KDFMonthIndex>7</KDFMonthIndex>
+        <KDFMonthIndex>9</KDFMonthIndex>
         <SourceTypeIndex>0</SourceTypeIndex>
         <!--comma separated file open time indices -->
         <FileOpenTimeIndex>9,10</FileOpenTimeIndex>
@@ -132,15 +147,23 @@ and open the template in the editor.
         <EnabledComponentHash>1</EnabledComponentHash>
         <!--comma separated KDFFieldData filters-->
         <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units</FieldFilter>
+        <AddFileNameInUnit>1</AddFileNameInUnit>
     </SourceType>
         
     <!--HG00058.1.1_6310_H800D0007101504_SLT_AXFNCP_DS2000DBABC01_20180823_052611_suzamdaslt086_006_MAIN.kdf.20180909090909-->    
     <SourceType name= "SLT" enabled = "1" >
         <LogToFile>0</LogToFile>
+        <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
+        <GenerateMappingFile>0</GenerateMappingFile>
         <Customer>Hygon</Customer>
         <Factory>Suzhou</Factory>
         <KDFPath>/home/ghfan/kdf/</KDFPath>
-        <XmlPath>/data/slt_xml/</XmlPath>
+        <!--xml path is to store the generated test item log file-->
+        <XmlPath>/data/slt_log/</XmlPath>
+        <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
+        <MappingPath>/data/slt_mapping</MappingPath>
+        <!--kdf archive file is to store the kdf file which has been parsed successfully-->
+        <KDFArchivePath>/data/slt_archive</KDFArchivePath>
         <DataType>SLT</DataType>
         <DebugMode>0</DebugMode>
         
@@ -168,6 +191,9 @@ and open the template in the editor.
         <!--comma separated file open time indices -->
         <FileOpenTimeIndex>6,7</FileOpenTimeIndex>
         
+        <!--unit id index for SLT only-->
+        <UnitIdIndex>2</UnitIdIndex>
+        
         <!--falg to enable/diable ulsd test-->
         <ULSDNodeEnabled></ULSDNodeEnabled>
         <!-- comma separated ulsd fields-->
@@ -191,6 +217,7 @@ and open the template in the editor.
         <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units</FieldFilter>
         <!--default the base and sub class always log in the test type node-->
         <SkipTestClass>1</SkipTestClass>
+        <AddFileNameInUnit>0</AddFileNameInUnit>
             
     </SourceType>
         
