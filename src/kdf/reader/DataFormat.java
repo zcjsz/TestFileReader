@@ -21,6 +21,9 @@ public
 	class DataFormat {
 	
 	private
+		boolean productionMode = true;
+	
+	private
 		boolean generateMappingFile = true;
 	
 	private
@@ -153,7 +156,11 @@ public
 						
 					case "GenerateMappingFile":
 						this.generateMappingFile = fieldValue.equals("1");
-						break;		
+						break;
+					
+					case "ProductionMode":
+						this.productionMode = fieldValue.equals("1");
+						break;
 					case "LogToFile":
 						this.logToFile = fieldValue.equals("1");
 						break;
@@ -806,6 +813,12 @@ public
 	boolean isGenerateMappingFile() {
 		return generateMappingFile;
 	}
+
+	public
+	boolean isProductionMode() {
+		return productionMode;
+	}
+	
 	
 
 }

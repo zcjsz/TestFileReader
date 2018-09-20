@@ -155,7 +155,7 @@ public
 			this.addFile("", "");
 		}
 		catch (Exception ex) {
-			ex.printStackTrace();
+			Logger.getLogger(Loader.class.getName()).log(Level.SEVERE, null, ex);
 			this.failType = Config.FailureCase.OpenFailure;
 			this.logOpenFailureToES();
 			return false;
@@ -222,12 +222,12 @@ public
 
 		names = kdfFile.getName().split("_");
 		if (names.length != this.getFormat().getUnderLineCnt()) {
-			System.err.println("Skip this kdf since underline cnt is not " + this.getFormat().getUnderLineCnt());
+			System.out.println("Skip this kdf since underline cnt is not " + this.getFormat().getUnderLineCnt());
 			return false;
 		}
 		
 		if(!this.setKDFDate()){
-			System.err.println("Skip since bad Format of KDF date");
+			System.out.println("Skip since bad Format of KDF date");
 			return false;
 		}
 		
@@ -283,9 +283,10 @@ public
 			this.getFormat().getDataType()
 			);
 	}
-	private void logIoErrorToES() {
-		System.out.printf("EventType=%s,LotNumber=%s,KDFMonth=%s,KDFDate=%s,TransferTime=%s,KDFName=%s,DataType=%s,MfgStep=%s\n",
+	private void logIoErrorToES(String func) {
+		System.out.printf("EventType=%s,Func=%s,LotNumber=%s,KDFMonth=%s,KDFDate=%s,TransferTime=%s,KDFName=%s,DataType=%s,MfgStep=%s\n",
 			Config.EventType.IOError,
+			func,
 			this.lotNumber,
 			this.kdfMonth,
 			this.kdfDate,
@@ -313,8 +314,10 @@ public
 		
 	private boolean isRepeatFile() {
 		if(this.mappingFile.exists()) {
-			this.moveFileToArchive();
-			System.err.println("Skip since this is a repeat file");
+			if(!this.moveFileToArchive()) {
+				this.logIoErrorToES("FailArchiveKDF");
+			}
+			System.out.println("Skip since this is a repeat file");
 			return true;
 		}
 		return false;
@@ -329,7 +332,9 @@ public
 		Node[] roots = tree.getRoots();
 		if (roots != null && roots.length > 0) {
 			for (Node root : roots) {
-				System.out.println("Root name is " + root.getName());
+				if(this.isDebugMode()) {
+					System.out.println("Root name is " + root.getName());
+				}
 				for (XmlNode xmlNode : format.getLotHead().values()) {
 					for (String fieldName : xmlNode.getFieldNames()) {
 						if (root.containsKey(fieldName)) {
@@ -560,7 +565,6 @@ public
 	private
 		boolean readKDF() {
 		this.unitCnt = 0;
-		this.fileOpenTime = "";
 		String waferNumber = "";
 
 		format.clearAll();
@@ -571,13 +575,15 @@ public
 		}
 		else {
 			unitCnt = units.length;
-			System.out.println("total unit cnt is: " + units.length);
+			if(this.isDebugMode()) {
+				System.out.println("total unit cnt is: " + units.length);
+			}
 		}
 
 		if (format.getDataType().equals(Config.DataTypes.WaferSort)) {
 			Node[] wafers = tree.getNodes(KdfTypes.KDF_RT_WAFER);
 			if (wafers != null && wafers.length > 1) {
-				System.err.println("Error: we expect only one wafer in one kdf file...");
+				System.out.println("Error: we expect only one wafer in one kdf file...");
 				this.failType = Config.FailureCase.Exception;
 				return false;
 			}
@@ -624,21 +630,16 @@ public
 //		writeHeadData();
 
 		testLogFile = new File(this.getFormat().getXmlPath()+ "/" + this.file.getName());
-		try {
-			Files.deleteIfExists(testLogFile.toPath());
-		}
-		catch (IOException ex) {
-			Logger.getLogger(Loader.class.getName()).log(Level.SEVERE, null, ex);
-			this.logIoErrorToES();
+		if(!this.removeTempLogFile()) {
+			this.logIoErrorToES("FailDeleteLogFile");
 			this.failType = Config.FailureCase.IOError;
 			return false;
-		
 		}
+		
 		String lotHeadStr = format.getLotHeadKVString() + "," + "file_date=" + this.formatFileOpenTime();
 
 		readBinDesc();
-		System.out.println("opening kdf time is : " + (System.currentTimeMillis() - jobStartTime));
-
+		System.out.printf("%s: opening kdf time is  %d\n", LocalDateTime.now(), (System.currentTimeMillis() - jobStartTime));
 		
 		int unitNo = 0;
 		StringBuilder dataContent = new StringBuilder();
@@ -697,8 +698,12 @@ public
 			// IO error and exit for this file
 			if(!this.writeKVString(dataContent)) {
 				this.failType = Config.FailureCase.IOError;
-				this.logIoErrorToES();
-				this.removeTempLogFile();
+				this.logIoErrorToES("FailWriteLogFile");
+				
+				if(!this.removeTempLogFile()) {
+					this.logIoErrorToES("FailDeleteLogFile");
+				}
+				
 				return false;
 			}
 		}
@@ -706,27 +711,82 @@ public
 		// this.closeFile(this.file.getParent());
 		
 		// generate the kdf mapping file and for repeat kdf file check
-		if((this.getFormat().isGenerateMappingFile() && (!this.generateMapFile())) 
-			|| (!this.renameKDFFile())) {
+		if(this.getFormat().isGenerateMappingFile() && (!this.generateMapFile())) {
 			this.failType = Config.FailureCase.IOError;
-			this.logIoErrorToES();
-			this.removeTempLogFile();
+			this.logIoErrorToES("FailCreateMapFile");
+			if(!this.removeTempLogFile()) {
+				this.logIoErrorToES("FailDeleteLogFile");
+			}
 			return false;
 		}
-		if(!this.renameTempLogFile()) {
+		
+		
+		// only rename the log file in production mode
+		if((this.getFormat().isProductionMode()) && (!this.renameTempLogFile())) {
 			this.failType = Config.FailureCase.IOError;
-			this.logIoErrorToES();
-			this.removeTempLogFile();
-			System.out.println("Error: failed to rename the temp log file");
+			this.logIoErrorToES("FailRenameLog");
+			if(!this.removeTempLogFile()){
+				this.logIoErrorToES("FailDeleteLogFile");
+			}
+			
+			if(!this.removeMapFile()) {
+				this.logIoErrorToES("FailDeleteMapFile");
+			}
 			return false;
 		}
 		this.logKDFDoneToES();
+		
+		// only rename or archive the kdf in production mode
+		if(this.getFormat().isProductionMode()) {
+			if((!Config.renameKDF) && (!this.moveFileToArchive())) {
+				this.failType = Config.FailureCase.IOError;
+				this.logIoErrorToES("FailArchiveKDF");
+
+				if(!this.removeTempLogFile()){
+					this.logIoErrorToES("FailDeleteLogFile");
+				}
+
+				if(!this.removeMapFile()) {
+					this.logIoErrorToES("FailDeleteMapFile");
+				}
+				return false;
+			}
+
+			if(!this.renameKDFFile()) {
+				this.failType = Config.FailureCase.IOError;
+				this.logIoErrorToES("FailRenameKDF");
+				if(!this.removeTempLogFile()){
+					this.logIoErrorToES("FailDeleteLogFile");
+				}
+
+				if(!this.removeMapFile()) {
+					this.logIoErrorToES("FailDeleteMapFile");
+				}
+				return false;
+			}
+		}
+		
 		
 		System.out.printf("%s: successed to proceed kdf %s\n", LocalDateTime.now(), file.getName());
 		System.out.println("total kdf reading time is : " + (System.currentTimeMillis() - jobStartTime));
 		this.tree = null;
 		return true;
 	}
+		
+		
+	private boolean removeMapFile() {
+		if(this.mappingFile.exists()) {
+			try {
+				Files.delete(this.mappingFile.toPath());
+			}
+			catch (IOException ex) {
+				Logger.getLogger(Loader.class.getName()).log(Level.SEVERE, null, ex);
+				return false;
+			}
+		}
+		return true;
+	}	
+		
 	private boolean renameTempLogFile(){
 		File esTestFile = new File(this.testLogFile.getAbsolutePath() + ".log");
 		return this.testLogFile.renameTo(esTestFile);
@@ -772,13 +832,18 @@ public
 			return false;
 		}
 	}
-	private void removeTempLogFile() {
-		try {
-			Files.deleteIfExists(this.testLogFile.toPath());
+	private boolean removeTempLogFile() {
+		if(this.testLogFile.exists()) {
+			try {
+				Files.delete(this.testLogFile.toPath());
+			}
+			catch (IOException ex) {
+				Logger.getLogger(Loader.class.getName()).log(Level.SEVERE, null, ex);
+				return false;
+			}
 		}
-		catch (IOException ex) {
-			Logger.getLogger(Loader.class.getName()).log(Level.SEVERE, null, ex);
-		}
+		return true;
+		
 	}
 
 	/**
@@ -1003,10 +1068,10 @@ public
 			}
 			else {
 				System.out.println("--------------------------------------------------------------------");
-				System.err.println("FATAL Error: node format string validation failed");
-				System.err.println("FATAL Error: es can not read this node string");
-				System.err.println(node);
-				System.err.printf("formatString is:%s", formatNodeString);
+				System.out.println("FATAL Error: node format string validation failed");
+				System.out.println("FATAL Error: es can not read this node string");
+				System.out.println("Node=" + node);
+				System.out.printf("formatString is:%s", formatNodeString);
 				System.exit(1);
 			}
 
@@ -1484,7 +1549,6 @@ public
 			return false;
 		}
 		this.kdfDate = fileOpenTime.substring(0,8);
-		System.out.println(this.fileOpenTime);
 		return true;
 	}	
 	private
@@ -1664,11 +1728,20 @@ public
 				Files.delete(this.file.toPath());
 			}
 			else {
-				Files.move(this.file.toPath(), this.archiveFile.toPath(), ATOMIC_MOVE);
+				if(!this.archiveFile.getParentFile().exists()) {
+					if(this.archiveFile.getParentFile().mkdirs()){
+						Files.move(this.file.toPath(), this.archiveFile.toPath(), ATOMIC_MOVE);
+					}
+					else{
+						this.logIoErrorToES("FailMkDIR");
+						return false;
+					}
+				}
 			}
 		}
 		catch (IOException ex) {
 			System.out.println("EventType:ArchieveFailure");
+			Logger.getLogger(Loader.class.getName()).log(Level.SEVERE, null, ex);
 			return false;
 		}
 		return true;

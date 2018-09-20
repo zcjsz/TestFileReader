@@ -23,9 +23,13 @@ and open the template in the editor.
     
     <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
     <SourceType name= "HTEST1" enabled = "1" >
+        <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
+        <ProductionMode>0</ProductionMode>
+        <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>0</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
         <GenerateMappingFile>0</GenerateMappingFile>
+        
         <Customer>AMD</Customer>
         <Factory>Suzhou</Factory>
         <KDFPath>/home/ghfan/kdf/</KDFPath>
@@ -82,15 +86,20 @@ and open the template in the editor.
         <EnabledComponentHash>1</EnabledComponentHash>
         <!--comma separated KDFFieldData filters-->
         <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units</FieldFilter>
+        <!--if enabled, the file name will be added in the unit level doc, default 0-->
         <AddFileNameInUnit>1</AddFileNameInUnit>
     </SourceType>
     
     
     <!--GFDRS_S6310A1AB0PG_P_ATC607_H800S.00_WS1_BBIYG148MVB1_1_-5_180905_051627.kdf.20190909090909-->
     <SourceType name= "GFDRS" enabled = "1" >
+        <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
+        <ProductionMode>0</ProductionMode>
+        <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>0</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
         <GenerateMappingFile>0</GenerateMappingFile>
+        
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
         <KDFPath>/home/ghfan/kdf/</KDFPath>
@@ -101,6 +110,8 @@ and open the template in the editor.
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
         <KDFArchivePath>/data/wafer_sort_archive</KDFArchivePath>
         <DataType>WaferSort</DataType>
+        
+        <!--never trun on debug mode in production mode, default 0-->
         <DebugMode>0</DebugMode>
         
         <!--comma separated filters-->
@@ -147,14 +158,19 @@ and open the template in the editor.
         <EnabledComponentHash>1</EnabledComponentHash>
         <!--comma separated KDFFieldData filters-->
         <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units</FieldFilter>
+        <!--if enabled, the file name will be added in the unit level doc, default 0-->
         <AddFileNameInUnit>1</AddFileNameInUnit>
     </SourceType>
         
     <!--HG00058.1.1_6310_H800D0007101504_SLT_AXFNCP_DS2000DBABC01_20180823_052611_suzamdaslt086_006_MAIN.kdf.20180909090909-->    
     <SourceType name= "SLT" enabled = "1" >
+        <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
+        <ProductionMode>0</ProductionMode>
+        <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>0</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
         <GenerateMappingFile>0</GenerateMappingFile>
+        
         <Customer>Hygon</Customer>
         <Factory>Suzhou</Factory>
         <KDFPath>/home/ghfan/kdf/</KDFPath>
@@ -217,6 +233,7 @@ and open the template in the editor.
         <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units</FieldFilter>
         <!--default the base and sub class always log in the test type node-->
         <SkipTestClass>1</SkipTestClass>
+        <!--if enabled, the file name will be added in the unit level doc, default 0-->
         <AddFileNameInUnit>0</AddFileNameInUnit>
             
     </SourceType>
