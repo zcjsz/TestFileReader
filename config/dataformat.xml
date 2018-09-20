@@ -22,7 +22,7 @@ and open the template in the editor.
     
     
     <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
-    <SourceType name= "HTEST1" enabled = "1" >
+    <SourceType name= "HTEST1" enabled = "0" >
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>0</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
@@ -40,7 +40,7 @@ and open the template in the editor.
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
         <KDFArchivePath>/data/ft_archive</KDFArchivePath>
         <DataType>ATE</DataType>
-        <DebugMode>0</DebugMode>
+        <DebugMode>1</DebugMode>
         
         <!--comma separated filters-->
         <FilterOut>sbo</FilterOut><!--filter out kdf whose name contains sbo-->
@@ -92,7 +92,7 @@ and open the template in the editor.
     
     
     <!--GFDRS_S6310A1AB0PG_P_ATC607_H800S.00_WS1_BBIYG148MVB1_1_-5_180905_051627.kdf.20190909090909-->
-    <SourceType name= "GFDRS" enabled = "1" >
+    <SourceType name= "GFDRS" enabled = "0" >
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>0</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
@@ -112,7 +112,7 @@ and open the template in the editor.
         <DataType>WaferSort</DataType>
         
         <!--never trun on debug mode in production mode, default 0-->
-        <DebugMode>0</DebugMode>
+        <DebugMode>1</DebugMode>
         
         <!--comma separated filters-->
         <FilterOut>sbo</FilterOut><!--filter out kdf whose name contains sbo-->
@@ -167,7 +167,7 @@ and open the template in the editor.
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>0</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
-        <LogToFile>0</LogToFile>
+        <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
         <GenerateMappingFile>0</GenerateMappingFile>
         
@@ -181,7 +181,7 @@ and open the template in the editor.
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
         <KDFArchivePath>/data/slt_archive</KDFArchivePath>
         <DataType>SLT</DataType>
-        <DebugMode>0</DebugMode>
+        <DebugMode>1</DebugMode>
         
         <!--comma separated filters-->
         <FilterOut>suz93k,gfdrs</FilterOut><!--filter out kdf whose name contains sbo-->
@@ -233,13 +233,13 @@ and open the template in the editor.
         <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units</FieldFilter>
         <!--default the base and sub class always log in the test type node-->
         <SkipTestClass>1</SkipTestClass>
-        <!--if enabled, the file name will be added in the unit level doc, default 0-->
+        <!--this is only for no-slt-->
         <AddFileNameInUnit>0</AddFileNameInUnit>
             
     </SourceType>
         
         
-    <!--lot head info for whole xml-->
+    <!--lot head time info for whole xml, must have and can not be disable-->
     <Head>
         <XmlNode name= "lot_open_time">
             <Field>dateFileOpened</Field>
@@ -258,7 +258,7 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
 
-
+        <!--lot head time info for whole xml, must have and can not be disable-->
         <XmlNode name= "lot_start_time">
             <Field>dateTestStarted</Field>
             <Field>startTimestamp</Field>
@@ -276,12 +276,12 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
 
-
+        <!--lot head time info for whole xml, must have and can not be disable-->
         <XmlNode name= "lot_end_time">
             <Field>dateTestFinished</Field>
             <Field>endTimestamp</Field>
             <Time>1</Time><!--never change this one-->
-            
+            <LotEndTime>1</LotEndTime>
             <SourceType name= "HTEST1" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -294,7 +294,7 @@ and open the template in the editor.
         </XmlNode>
 
 
-        <XmlNode name= "operator_id">
+        <XmlNode name= "Operator">
             <Field>Operator_ID</Field>
             
             <SourceType name= "HTEST1" enabled = "0" >
@@ -308,7 +308,7 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "lot_number">
+        <XmlNode name= "LotNumber">
             <Field>lotId</Field>
             <Field>LOT_ID</Field>
             
@@ -317,13 +317,14 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
+                <AliasName>WaferLot</AliasName>
             </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "package">
+        <XmlNode name= "Package">
             <Field>package</Field>
             
             <SourceType name= "HTEST1" enabled = "0" >
@@ -337,7 +338,7 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "device">
+        <XmlNode name= "Device">
             <Field>IDV</Field>
             <Field>internalDevVer</Field>
             
@@ -352,23 +353,23 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "die_type">
+        <XmlNode name= "DieType">
             <Field>dieType</Field>
             
-            <SourceType name= "HTEST1" enabled = "1" >
+            <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "SLT" enabled = "1" >
+            <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
         </XmlNode>
 
 
 
-        <XmlNode name= "test_program">
+        <XmlNode name= "Program">
             <Field>testProgramName</Field>
             
             <SourceType name= "HTEST1" enabled = "1" >
@@ -382,7 +383,7 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "program_patch">
+        <XmlNode name= "ProgramPatch">
             <Field>testProgramPatch</Field>
             
             <SourceType name= "HTEST1" enabled = "1" >
@@ -396,7 +397,7 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "program_version">
+        <XmlNode name= "ProgramVersion">
             <Field>testProgramRev</Field>
             <Field>testProgramVersion</Field>
             
@@ -468,7 +469,7 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "part_number">
+        <XmlNode name= "PartNumber">
             <Field>PART_NUMBER</Field>
             
             <SourceType name= "HTEST1" enabled = "1" >
@@ -482,7 +483,7 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "tester_number">
+        <XmlNode name= "Tester">
             <Field>TESTER_ID</Field>
             <Field>equipmentId</Field>
             <LowerCase>1</LowerCase>
@@ -498,7 +499,7 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "handler_id">
+        <XmlNode name= "Handler">
             <Field>PROBERHANDLERID</Field>
             <Field>PROBERID_HANDLERID</Field>
             
@@ -513,7 +514,7 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "dib_id" >
+        <XmlNode name= "Dib" >
             <Field>PROBECARDLOADBOARDID</Field>
             <Field>PROBECARDID_LOADBOARDID</Field>
             <LowerCase>1</LowerCase>
@@ -530,7 +531,7 @@ and open the template in the editor.
             
         </XmlNode>
 
-        <XmlNode name= "test_code">
+        <XmlNode name= "TestCode">
             <Field>TESTCODE</Field>
             <Field>testCode</Field>
             
@@ -545,7 +546,7 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "mfg_step">
+        <XmlNode name= "Operation">
             <Field>TESTPHASE</Field>
             <Field>mfgStepName</Field>
             
@@ -578,13 +579,13 @@ and open the template in the editor.
         <XmlNode name= "total_test_time">
             <Field>testTime</Field>
             
-            <SourceType name= "HTEST1" enabled = "1" >
+            <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "GFDRS" enabled = "1" >
+            <SourceType name= "GFDRS" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "SLT" enabled = "1" >
+            <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
         </XmlNode>
@@ -624,7 +625,7 @@ and open the template in the editor.
     <!--unit level details info for this kdf -->
     <Unit>
 
-        <XmlNode name= "unit_sequence" >
+        <XmlNode name= "UnitSeq" >
             <Field>seqNumber</Field>
             
             <SourceType name= "HTEST1" enabled = "1" >
@@ -638,7 +639,7 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "site" >
+        <XmlNode name= "Site" >
             <Field>siteIndex</Field>
             
             <SourceType name= "HTEST1" enabled = "1" >
@@ -654,7 +655,7 @@ and open the template in the editor.
         </XmlNode>
 
 
-        <XmlNode name= "test_time" >
+        <XmlNode name= "TestTime" >
             <Field>testTime</Field>
             <Field>totalSocketTime</Field>
             <IsTestTime>1</IsTestTime> <!--never change this one-->
@@ -670,7 +671,7 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "end_test_time" >
+        <XmlNode name= "EndTestTime" >
             <Field>unitEndTimestamp</Field>
             <Field>endTimestamp</Field>
             <Time>1</Time><!--never change this one-->
@@ -687,7 +688,7 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "start_test_time" >
+        <XmlNode name= "StartTestTime" >
             <Field>unitTimestamp</Field>
             <Field>startTimestamp</Field>
             <Time>1</Time><!--never change this one-->
@@ -705,7 +706,7 @@ and open the template in the editor.
         </XmlNode>
 
 
-        <XmlNode name= "unit_id" >
+        <XmlNode name= "UnitId" >
             <Field>unitSerialNumber</Field>
             <Field>serialNumber</Field>
             
@@ -721,9 +722,9 @@ and open the template in the editor.
             <IsUnitID>1</IsUnitID>
         </XmlNode>
 
-        <XmlNode name= "wafer_number" >
+        <XmlNode name= "WaferNumber" >
             <Field>wafer</Field>
-            
+         
             <SourceType name= "HTEST1" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -738,7 +739,7 @@ and open the template in the editor.
             <SubString>7,9</SubString>
         </XmlNode>
 
-        <XmlNode name= "x_coord" >
+        <XmlNode name= "X" >
             <Field>xCoord</Field>
             
             <SourceType name= "HTEST1" enabled = "1" >
@@ -755,7 +756,7 @@ and open the template in the editor.
             <SubString>9,11</SubString>
         </XmlNode>
 
-        <XmlNode name= "y_coord" >
+        <XmlNode name= "Y" >
             <Field>yCoord</Field>
             
             <SourceType name= "HTEST1" enabled = "1" >
@@ -771,9 +772,8 @@ and open the template in the editor.
             <!--comma separated index to get wafer number from unit id-->
             <SubString>11,13</SubString>
         </XmlNode>
-        <XmlNode name= "lot_nb" >
-            <Field>lot_nb</Field>
-            
+        <XmlNode name= "WaferLot" >
+            <Field>WaferLot</Field>
             <SourceType name= "HTEST1" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -788,7 +788,7 @@ and open the template in the editor.
             <SubString>0,5</SubString>
         </XmlNode>
 
-        <XmlNode name= "hard_bin" >
+        <XmlNode name= "HBin" >
             <Field>hardBin</Field><!--never change this one-->
             
             <SourceType name= "HTEST1" enabled = "1" >
@@ -803,7 +803,7 @@ and open the template in the editor.
             <IsHardBin>1</IsHardBin>
         </XmlNode>
 
-        <XmlNode name= "soft_bin" >
+        <XmlNode name= "SBin" >
             <Field>softBin</Field><!--never change this one-->
             
             <SourceType name= "HTEST1" enabled = "1" >

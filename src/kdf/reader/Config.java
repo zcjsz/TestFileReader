@@ -260,6 +260,7 @@ public
 
 			boolean isLotStartTime = false;
 			boolean isLotOpenTime = false;
+			boolean isLotEndTime = false;
 			boolean enabledLog = true;
 
 			for (Element node : nodes) {
@@ -279,6 +280,9 @@ public
 					case "lotstarttime":
 						isLotStartTime = value.equals("1");
 						break;
+					case "lotendtime":
+						isLotEndTime = value.equals("1");
+						break;	
 					case "lotopentime":
 						isLotOpenTime = value.equals("1");
 						break;
@@ -297,7 +301,10 @@ public
 						XmlNode xmlNode = new XmlNode(xmlNodeName);
 						nodeEnabled = node.attributeValue("enabled").trim().equals("1");
 						enabledLog = node.elementTextTrim("EnabledLog").equals("1");
-
+						if(node.elements("AliasName").size() > 0) {
+							String aliasName = node.elementTextTrim("AliasName").trim();
+							xmlNode.setName(aliasName);
+						}
 						if (Config.dataFormats.get(sourceType).getLotHead().containsKey(xmlNodeName)) {
 							System.out.printf("Fatal Error: duplicate head xml node found %s\n", xmlNodeName);
 							System.exit(1);
@@ -330,6 +337,7 @@ public
 					xmlNode.setToLowerCase(isLowerCase);
 					xmlNode.setLotOpenTime(isLotOpenTime);
 					xmlNode.setLotStartTime(isLotStartTime);
+					xmlNode.setLotEndTime(isLotEndTime);
 				}
 				else {
 					dataFormat.getLotHead().remove(xmlNodeName);

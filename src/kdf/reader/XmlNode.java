@@ -41,6 +41,8 @@ public
 	private
 		boolean lotOpenTime = false;
 	private
+		boolean lotEndTime = false;
+	private
 		String timeLongValue = null;
 	private
 		boolean enabledLog = true;
@@ -325,6 +327,21 @@ public
 		this.unitIdNode = unitIdNode;
 	}
 
+	public
+	boolean isLotEndTime() {
+		return lotEndTime;
+	}
+
+	public
+	void setLotEndTime(boolean lotEndTime) {
+		this.lotEndTime = lotEndTime;
+	}
+	
+
+	public
+	String getTimeLongValue() {
+		return timeLongValue;
+	}
 	public static
 		void main(String[] args) {
 		String value = "1494200055407";

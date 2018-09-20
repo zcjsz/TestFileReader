@@ -85,10 +85,13 @@ public
 		int testCntInFlow = 0;
 	long jobStartTime = 0;
 	boolean debugMode = false;
-	
-	private File testLogFile = null;
-	private File mappingFile = null;
-	private File archiveFile = null;
+
+	private
+		File testLogFile = null;
+	private
+		File mappingFile = null;
+	private
+		File archiveFile = null;
 	private
 		String kdfMonth = null;
 	private
@@ -103,6 +106,10 @@ public
 		String unitId = null;
 	private
 		String mfgStp = null;
+	private
+		int unitLevelDocCnt = 0;
+	private
+		int fileLevelDocCnt = 0;
 
 	public
 		Loader() {
@@ -123,10 +130,10 @@ public
 		this.clearRefs();
 		debugMode = this.getFormat().isDebugMode();
 		this.file = file;
-		
+
 		jobStartTime = System.currentTimeMillis();
 		System.out.printf("\n%s: start proceed kdf %s\n", LocalDateTime.now(), file.getName());
-		
+
 		//reset all the variables
 		this.testLogFile = null;
 		this.mappingFile = null;
@@ -139,13 +146,13 @@ public
 		this.kdfName = null;
 		this.unitId = null;
 		this.mfgStp = null;
-		
+
 		if (!this.validateFile(file)) {
 			this.failType = Config.FailureCase.BadFormat;
 			this.logBadFormatFileToES();
 			return false;
 		}
-		if(this.isRepeatFile()) {
+		if (this.isRepeatFile()) {
 			this.failType = Config.FailureCase.RepeatKDF;
 			this.logRepeatFileToES();
 			return false;
@@ -197,8 +204,8 @@ public
 			return false;
 		}
 		this.transferTime = names[1];
-		this.kdfName = names[0] +"kdf";
-		
+		this.kdfName = names[0] + "kdf";
+
 		boolean skip = false;
 		for (String filter : this.getFormat().getFilters()) {
 			if (kdfName.contains(filter)) {
@@ -225,16 +232,16 @@ public
 			System.out.println("Skip this kdf since underline cnt is not " + this.getFormat().getUnderLineCnt());
 			return false;
 		}
-		
-		if(!this.setKDFDate()){
+
+		if (!this.setKDFDate()) {
 			System.out.println("Skip since bad Format of KDF date");
 			return false;
 		}
-		
+
 		this.lotNumber = names[format.getLotNumberIndex()];
 ////		this.unitId = names[format.getUnitIdIndex()];
 		this.mfgStp = names[format.getMfgStepIndex()];
-		
+
 		// archive file
 		this.archiveFile = new File(this.getFormat().getKdfArchivePath()
 			+ "/" + this.kdfDate
@@ -242,79 +249,129 @@ public
 			+ "/" + this.file.getName());
 
 		// mapping file
-		this.mappingFile = new File(this.getFormat().getMappingPath() 
+		this.mappingFile = new File(this.getFormat().getMappingPath()
 			+ "/" + this.kdfDate
 			+ "/" + lotNumber
 			+ "/" + this.file.getName().split(".kdf")[0] + ".kdf");
-		
+
 		return true;
 	}
-	
-	private void logOpenFailureToES() {
-		System.out.printf("EventType=%s,LotNumber=%s,KDFMonth=%s,KDFDate=%s,TransferTime=%s,KDFName=%s,DataType=%s,MfgStep=%s\n",
-			Config.EventType.KDFOpenFailure,
-			this.lotNumber,
-			this.kdfMonth,
-			this.kdfDate,
-			this.transferTime,
-			this.kdfName,
-			this.getFormat().getDataType(),
-			this.mfgStp
+
+	private
+		void logOpenFailureToES() {
+		System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+			FieldType.EventType, Config.EventType.KDFOpenFailure,
+			FieldType.LotNumber, this.lotNumber,
+			FieldType.KdfMonth, this.kdfMonth,
+			FieldType.KdfDate, this.kdfDate,
+			FieldType.TransferTime, this.transferTime,
+			FieldType.KdfName, this.kdfName,
+			FieldType.DataType, this.getFormat().getDataType(),
+			FieldType.MfgStep, this.mfgStp
 		);
 	}
-		
-	private void logRepeatFileToES() {
-		System.out.printf("EventType=%s,LotNumber=%s,KDFMonth=%s,KDFDate=%s,TransferTime=%s,KDFName=%s,DataType=%s,MfgStep=%s\n",
-			Config.EventType.KDFRepeat,
-			this.lotNumber,
-			this.kdfMonth,
-			this.kdfDate,
-			this.transferTime,
-			this.kdfName,
-			this.getFormat().getDataType(),
-			this.mfgStp
-			);
-	}
-	
-	private void logBadFormatFileToES() {
-		System.out.printf("EventType=%s,FileName=%s,DataType=%s\n",
-			Config.EventType.KDFBadFormat,
-			this.file.getName(),
-			this.getFormat().getDataType()
-			);
-	}
-	private void logIoErrorToES(String func) {
-		System.out.printf("EventType=%s,Func=%s,LotNumber=%s,KDFMonth=%s,KDFDate=%s,TransferTime=%s,KDFName=%s,DataType=%s,MfgStep=%s\n",
-			Config.EventType.IOError,
-			func,
-			this.lotNumber,
-			this.kdfMonth,
-			this.kdfDate,
-			this.transferTime,
-			this.kdfName,
-			this.getFormat().getDataType(),
-			this.mfgStp
+
+	private
+		void logRepeatFileToES() {
+		System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+			FieldType.EventType, Config.EventType.KDFRepeat,
+			FieldType.LotNumber, this.lotNumber,
+			FieldType.KdfMonth, this.kdfMonth,
+			FieldType.KdfDate, this.kdfDate,
+			FieldType.TransferTime, this.transferTime,
+			FieldType.KdfName, this.kdfName,
+			FieldType.DataType, this.getFormat().getDataType(),
+			FieldType.MfgStep, this.mfgStp
 		);
 	}
-	private void logKDFDoneToES() {
-		
-		System.out.printf("EventType=%s,DoneTime=%s,KDFName=%s,UnitCnt=%d,LotNumber=%s,MfgStep=%s,KDFMonth=%s,KDFDate=%s,TransferTime=%s,DataType=%s\n",
-									"KDFDone",
-									ZonedDateTime.now().toOffsetDateTime(),
-									this.kdfName,
-									this.unitCnt,
-									this.lotNumber,
-									this.mfgStp,
-									kdfMonth,
-									this.kdfDate,
-									this.transferTime,
-									this.getFormat().getDataType()
-								);
+
+	private
+		void logBadFormatFileToES() {
+		System.out.printf("%s=%s,%s=%s,%s=%s\n",
+			FieldType.EventType, Config.EventType.KDFBadFormat,
+			FieldType.FileName, this.file.getName(),
+			FieldType.DataType, this.getFormat().getDataType()
+		);
 	}
-		
-	private boolean isRepeatFile() {
-		if(this.mappingFile.exists()) {
-			if(!this.moveFileToArchive()) {
+
+	private
+		void logIoErrorToES(String func) {
+		System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+			FieldType.EventType,Config.EventType.IOError,
+			FieldType.Failure,func,
+			FieldType.LotNumber,this.lotNumber,
+			FieldType.KdfMonth,this.kdfMonth,
+			FieldType.KdfDate,this.kdfDate,
+			FieldType.TransferTime,this.transferTime,
+			FieldType.KdfName,this.kdfName,
+			FieldType.DataType,this.getFormat().getDataType(),
+			FieldType.MfgStep,this.mfgStp
+		);
+	}
+
+	private
+		void logKDFDoneToES() {
+		if (!this.getFormat().getDataType().equals(Config.DataTypes.SLT)) {
+			System.out.printf("%s=%s,%s=%s,%s=%s,%s=%d,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%d\n",
+				FieldType.EventType,Config.EventType.KDFDone,
+				FieldType.DoneTime,ZonedDateTime.now().toOffsetDateTime(),
+				FieldType.KdfName,this.kdfName,
+				FieldType.UnitCnt,this.unitCnt,
+				FieldType.LotNumber,this.lotNumber,
+				FieldType.MfgStep,this.mfgStp,
+				FieldType.KdfMonth,this.kdfMonth,
+				FieldType.KdfDate,this.kdfDate,
+				FieldType.TransferTime,this.transferTime,
+				FieldType.DataType,this.getFormat().getDataType(),
+				FieldType.DocCnt,this.unitLevelDocCnt
+			);
+		}
+		else {
+			System.out.printf("%s=%s,%s=%s,%s=%s,%s=%d,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%d,%s=%s\n",
+				FieldType.EventType,Config.EventType.KDFDone,
+				FieldType.DoneTime,ZonedDateTime.now().toOffsetDateTime(),
+				this.getFormat().getUnit().getUnitIdNode().getName(),this.getFormat().getUnit().getUnitIdNode().getXmlValue(),
+				FieldType.UnitCnt,this.unitCnt,
+				FieldType.LotNumber,this.lotNumber,
+				FieldType.MfgStep,this.mfgStp,
+				FieldType.KdfMonth,kdfMonth,
+				FieldType.KdfDate,this.kdfDate,
+				FieldType.TransferTime,this.transferTime,
+				FieldType.DataType,this.getFormat().getDataType(),
+				FieldType.DocCnt,this.unitLevelDocCnt,
+				FieldType.KdfName,this.kdfName
+			);
+		}
+
+	}
+
+	private
+		String getAteFileKVStr() {
+
+		String value = FieldType.Type + "=" + FieldType.File
+			+ "," + FieldType.DoneTime + "=" + ZonedDateTime.now().toOffsetDateTime()
+			+ "," + FieldType.KdfName + "=" + this.kdfName
+			+ "," + FieldType.UnitCnt + "=" + this.unitCnt
+			+ "," + FieldType.LotNumber + "=" + this.lotNumber
+			+ "," + FieldType.MfgStep + "=" + this.mfgStp
+			+ "," + FieldType.KdfMonth + "=" + this.kdfMonth
+			+ "," + FieldType.KdfDate + "=" + this.kdfDate
+			+ "," + FieldType.TransferTime + "=" + this.transferTime
+			+ "," + FieldType.DataType + "=" + this.getFormat().getDataType()
+			+ "," + FieldType.DocCnt + "=" + this.fileLevelDocCnt
+			+ "," + FieldType.FileTime + "=" + this.formatFileOpenTime()
+			;
+		value += this.getFormat().getFileDocTimeKVStr() + "\n";
+		if(this.isDebugMode()) {
+			System.out.println(value);
+		}
+		return value;
+	}
+
+	private
+		boolean isRepeatFile() {
+		if (this.mappingFile.exists()) {
+			if (!this.moveFileToArchive()) {
 				this.logIoErrorToES("FailArchiveKDF");
 			}
 			System.out.println("Skip since this is a repeat file");
@@ -332,7 +389,7 @@ public
 		Node[] roots = tree.getRoots();
 		if (roots != null && roots.length > 0) {
 			for (Node root : roots) {
-				if(this.isDebugMode()) {
+				if (this.isDebugMode()) {
 					System.out.println("Root name is " + root.getName());
 				}
 				for (XmlNode xmlNode : format.getLotHead().values()) {
@@ -575,7 +632,7 @@ public
 		}
 		else {
 			unitCnt = units.length;
-			if(this.isDebugMode()) {
+			if (this.isDebugMode()) {
 				System.out.println("total unit cnt is: " + units.length);
 			}
 		}
@@ -629,18 +686,25 @@ public
 		}
 //		writeHeadData();
 
-		testLogFile = new File(this.getFormat().getXmlPath()+ "/" + this.file.getName());
-		if(!this.removeTempLogFile()) {
+		testLogFile = new File(this.getFormat().getXmlPath() + "/" + this.file.getName());
+		if (!this.removeTempLogFile()) {
 			this.logIoErrorToES("FailDeleteLogFile");
 			this.failType = Config.FailureCase.IOError;
 			return false;
 		}
-		
-		String lotHeadStr = format.getLotHeadKVString() + "," + "file_date=" + this.formatFileOpenTime();
+
+		/**
+		 * here there are 3 types doc need to send to es A: Type=File, only
+		 * exist for ate since slt file is just unit B: Type=Unit, C:
+		 * Type=others for the details test items.
+		 *
+		 */
+		// the lotHeadStr does't contains lot open/start/end time, we use the FieldType.FileTime as the timestamper
+		String lotHeadStr = format.getLotHeadKVString() + "," + FieldType.FileTime + "=" + this.formatFileOpenTime();
 
 		readBinDesc();
 		System.out.printf("%s: opening kdf time is  %d\n", LocalDateTime.now(), (System.currentTimeMillis() - jobStartTime));
-		
+
 		int unitNo = 0;
 		StringBuilder dataContent = new StringBuilder();
 		for (Node unit : units) {
@@ -660,18 +724,44 @@ public
 			format.setBinDesc();
 			readFTSLTXY(waferNumber);
 
-//			writeUnitData();
-			String unitDataHead = format.getUnitHeadKVString() + getSlaveNodeKVString();
-			String testItemHeadStr = lotHeadStr + unitDataHead;
+			/**
+			 * here we create the unit level doc <unitKVStr>
+			 * unitDocKVString contains the unit start and end timestamper, add
+			 * kdf file name in the unit level doc for ate only.
+			 */
+			String unitKVStr = lotHeadStr + format.getUnitDocKVString() + getSlaveNodeKVString();
+
+			if (this.getFormat().isAddFileName() && (!this.getFormat().getDataType().equals(Config.DataTypes.SLT))) {
+				unitKVStr += this.getFileNameKVStr();
+			}
+
+			if (validateForamtString(unitKVStr)) {
+				dataContent.append(unitKVStr).append("\n");
+			}
+			else {
+				System.err.println("Error Unit Doc: \n" + unitKVStr);
+				System.err.flush();
+				return false;
+			}
+
+			/**
+			 * here we create the head for each test time it combines the:
+			 * <lotHeadStr> which contains the lot info
+			 * <UnitHeadTestKVStr> which contains the unit level info and has no
+			 * the unit start/end time
+			 * <SlaveNodeKVString> which contains the slave die info for the
+			 * whole part
+			 */
+			String testItemHeadStr = lotHeadStr + format.getUnitHeadTestKVStr() + getSlaveNodeKVString();
 
 			/**
 			 * print and log unit data
 			 */
 			if (this.isDebugMode()) {
-				System.out.printf("Unit#%d Head Info:\n", unitNo);
 //				format.printUnitInfo();
-				System.out.println("TestItemHead: " + testItemHeadStr);
+				System.out.printf("Unit#%d KV String:\n%s\n", unitNo, unitKVStr);
 			}
+			this.unitLevelDocCnt = 1;
 
 			for (Node item : unit.getChildren()) {
 
@@ -682,7 +772,7 @@ public
 					continue;
 				}
 				this.nodeHead = testItemHeadStr;
-				this.nodeHead = "unit_no=" + unitNo;
+//				this.nodeHead = "unit_no=" + unitNo;
 				flowContextField = "";
 				testResultField = "";
 				subBaseClassField = "";
@@ -695,87 +785,118 @@ public
 				}
 
 			}
+			this.fileLevelDocCnt += this.unitLevelDocCnt;
 			// IO error and exit for this file
-			if(!this.writeKVString(dataContent)) {
+			if (!this.writeKVString(dataContent)) {
 				this.failType = Config.FailureCase.IOError;
 				this.logIoErrorToES("FailWriteLogFile");
-				
-				if(!this.removeTempLogFile()) {
+
+				if (!this.removeTempLogFile()) {
 					this.logIoErrorToES("FailDeleteLogFile");
 				}
-				
+
 				return false;
 			}
 		}
+		// add the file level doc to es
+		if (!this.writeFileKVString()) {
+			return false;
+		}
 
-		// this.closeFile(this.file.getParent());
-		
 		// generate the kdf mapping file and for repeat kdf file check
-		if(this.getFormat().isGenerateMappingFile() && (!this.generateMapFile())) {
+		if (this.getFormat().isGenerateMappingFile() && (!this.generateMapFile())) {
 			this.failType = Config.FailureCase.IOError;
 			this.logIoErrorToES("FailCreateMapFile");
-			if(!this.removeTempLogFile()) {
+			if (!this.removeTempLogFile()) {
 				this.logIoErrorToES("FailDeleteLogFile");
 			}
 			return false;
 		}
-		
-		
+
 		// only rename the log file in production mode
-		if((this.getFormat().isProductionMode()) && (!this.renameTempLogFile())) {
+		if ((this.getFormat().isProductionMode()) && (!this.renameTempLogFile())) {
 			this.failType = Config.FailureCase.IOError;
 			this.logIoErrorToES("FailRenameLog");
-			if(!this.removeTempLogFile()){
+			if (!this.removeTempLogFile()) {
 				this.logIoErrorToES("FailDeleteLogFile");
 			}
-			
-			if(!this.removeMapFile()) {
+
+			if (!this.removeMapFile()) {
 				this.logIoErrorToES("FailDeleteMapFile");
 			}
 			return false;
 		}
 		this.logKDFDoneToES();
-		
+
 		// only rename or archive the kdf in production mode
-		if(this.getFormat().isProductionMode()) {
-			if((!Config.renameKDF) && (!this.moveFileToArchive())) {
+		if (this.getFormat().isProductionMode()) {
+			if ((!Config.renameKDF) && (!this.moveFileToArchive())) {
 				this.failType = Config.FailureCase.IOError;
 				this.logIoErrorToES("FailArchiveKDF");
 
-				if(!this.removeTempLogFile()){
+				if (!this.removeTempLogFile()) {
 					this.logIoErrorToES("FailDeleteLogFile");
 				}
 
-				if(!this.removeMapFile()) {
+				if (!this.removeMapFile()) {
 					this.logIoErrorToES("FailDeleteMapFile");
 				}
 				return false;
 			}
 
-			if(!this.renameKDFFile()) {
+			if (!this.renameKDFFile()) {
 				this.failType = Config.FailureCase.IOError;
 				this.logIoErrorToES("FailRenameKDF");
-				if(!this.removeTempLogFile()){
+				if (!this.removeTempLogFile()) {
 					this.logIoErrorToES("FailDeleteLogFile");
 				}
 
-				if(!this.removeMapFile()) {
+				if (!this.removeMapFile()) {
 					this.logIoErrorToES("FailDeleteMapFile");
 				}
 				return false;
 			}
 		}
-		
-		
+
 		System.out.printf("%s: successed to proceed kdf %s\n", LocalDateTime.now(), file.getName());
-		System.out.println("total kdf reading time is : " + (System.currentTimeMillis() - jobStartTime));
+		System.out.printf("%s: total kdf reading time is : %d\n", LocalDateTime.now(), (System.currentTimeMillis() - jobStartTime));
 		this.tree = null;
 		return true;
 	}
-		
-		
-	private boolean removeMapFile() {
-		if(this.mappingFile.exists()) {
+
+	/**
+	 * append the file level doc to es stream
+	 *
+	 * @return
+	 */
+	private
+		boolean writeFileKVString() {
+		// IO error and exit for this file
+		if (!this.writeKVString(this.getAteFileKVStr())) {
+			this.failType = Config.FailureCase.IOError;
+			this.logIoErrorToES("FailWriteLogFile");
+
+			if (!this.removeTempLogFile()) {
+				this.logIoErrorToES("FailDeleteLogFile");
+			}
+
+			return false;
+		}
+		return true;
+	}
+
+	private
+		String getFileNameKVStr() {
+		String value = "";
+		if (this.getFormat().isAddFileName()) {
+			value = "," + "FileName=" + this.kdfName;
+		}
+		return value;
+	}
+
+	private
+		boolean removeMapFile() {
+		if (this.mappingFile.exists()) {
 			try {
 				Files.delete(this.mappingFile.toPath());
 			}
@@ -785,26 +906,30 @@ public
 			}
 		}
 		return true;
-	}	
-		
-	private boolean renameTempLogFile(){
+	}
+
+	private
+		boolean renameTempLogFile() {
 		File esTestFile = new File(this.testLogFile.getAbsolutePath() + ".log");
 		return this.testLogFile.renameTo(esTestFile);
-	}	
-		
-		
-	private boolean renameKDFFile(){
-		if(Config.renameKDF) {
+	}
+
+	private
+		boolean renameKDFFile() {
+		if (Config.renameKDF) {
 			File kdfedFile = new File(this.file.getAbsolutePath() + "." + Config.KdfRename.done);
 			return this.file.renameTo(kdfedFile);
-		}	
+		}
 		return true;
 	}
+
 	/**
 	 * write the kv string in to log file
-	 * @return 
-	 */	
-	private boolean writeKVString(StringBuilder dataContent){
+	 *
+	 * @return
+	 */
+	private
+		boolean writeKVString(StringBuilder dataContent) {
 		if (this.getFormat().isLogToFile()) {
 			try {
 				Files.write(testLogFile.toPath(), dataContent.toString().getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
@@ -818,9 +943,32 @@ public
 		}
 		return true;
 	}
-	private boolean generateMapFile() {
+
+	/**
+	 * write the kv string in to log file
+	 *
+	 * @return
+	 */
+	private
+		boolean writeKVString(String dataContent) {
+		if (this.getFormat().isLogToFile()) {
+			try {
+				Files.write(testLogFile.toPath(), dataContent.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+
+			}
+			catch (IOException ex) {
+				Logger.getLogger(Loader.class.getName()).log(Level.SEVERE, null, ex);
+				return false;
+			}
+			return true;
+		}
+		return true;
+	}
+
+	private
+		boolean generateMapFile() {
 		try {
-			if(this.mappingFile.createNewFile()) {
+			if (this.mappingFile.createNewFile()) {
 				return true;
 			}
 			else {
@@ -832,8 +980,10 @@ public
 			return false;
 		}
 	}
-	private boolean removeTempLogFile() {
-		if(this.testLogFile.exists()) {
+
+	private
+		boolean removeTempLogFile() {
+		if (this.testLogFile.exists()) {
 			try {
 				Files.delete(this.testLogFile.toPath());
 			}
@@ -843,7 +993,7 @@ public
 			}
 		}
 		return true;
-		
+
 	}
 
 	/**
@@ -996,6 +1146,7 @@ public
 
 	private
 		String printNodeInfo(Node node, int level) {
+		this.unitLevelDocCnt++;
 		String formatString = "";
 		String space = "";
 		switch (level) {
@@ -1019,7 +1170,7 @@ public
 				break;
 		}
 
-//		space = "";
+		space = "";
 		String nodeName = node.getName();
 		if (nodeName.equals(KdfTypes.KDF_RT_FLOW)) {
 			this.flowContextField = "";
@@ -1072,7 +1223,8 @@ public
 				System.out.println("FATAL Error: es can not read this node string");
 				System.out.println("Node=" + node);
 				System.out.printf("formatString is:%s", formatNodeString);
-				System.exit(1);
+				this.unitLevelDocCnt--;
+				//System.exit(1);
 			}
 
 		}
@@ -1245,7 +1397,7 @@ public
 
 			// add the node type
 			if (!nodeType.isEmpty()) {
-				value += ",type=" + node.getName().trim();
+				value += "," + FieldType.Type + "=" + node.getName().trim();
 			}
 
 			if (nodeType.equals("Test")) {
@@ -1366,7 +1518,7 @@ public
 	private
 		String formatULSDNode(Node node) {
 		//Type: ULSD, Parent Type: Unit, Data: [hostName=atdtsocket204.higon.com, queryTimeout=10000, totalQueryTime=2.045, recvTime=2.045, queriedTests=[[name='FUSE.LOG_MODE=SOFT'], [segmentName='Top.DIE3.DIE3FuseRam'], [segmentName='Top.DIE3.DIE3FuseRam'].bitValues]], portNumber=9999, timeout=0, queryType=3, connectTime=6.935, connectTimeout=5000, networkError=0, results=[[FT, DNXSP3XX1A0XFP0, F3, AANFNP, 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001100010110000000000000000000000000000000000000000000000000000000000000000000000000000000000000001100010110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000100000000000000000000000000000000000000000000000000000000100001000000000000000000000000000000000000000000000000000000000001000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001010011100000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001100010110000000000000000000000000000000000000000000000000000000010000010000000000000000000000000000000000000000000000000000000011100000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000010100001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001001000010100100010010010001000010010000100101101110010110111000100100111010010011001001001001110111111100110111110101110101111110101111110001110110111010110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001101000111010000000000000000000000000000000000000000000000000000001001100101011011010101011000100010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000101000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001110110110000000000000000000000000101011110000000000000000000000000000011000101001000000000000000000000000011001001000000000000000000000000000011000100101000000000000000000000000010110010100110010000001100100000110001101010001111111000101111101010101111001110101110101101101101110111101101001111101100010010101001010000101000110110100111111110000000000000000000000000000000000000000000000000000000000000000000000000101111010110101111001010101111010000101111010010101110100110101110100101100000001111100000000101100000001001100000001011011110110111011110110100001110100000001110011000001110011010001110011010001101010010001101010010110111110101101111111001101110100010111100000110111101100010111100101100111101001100111101011110111101011010111100111110111101011000111100011000111101011110111100100110111101000000111101010110111100110000111100011000111100101010111100100110111100100100111100011010111100010110111100100000111100010110111100101100111100011100111000000011111000000110110010001111110110010101110111110011110111011001110011101001110111000000110110001001111000000000110010111101110101001111110111010011101100110100110110001000110001010000110100000010110011111100110101111010110110001010110100101100110110010100110010111010110101110110110100001100110110011100110101010110110110001000110110010110110110010010110101110010110110001100110100111100110110011100110101011000110110000100110110010100110101100110110100111010110101011010110101001000110101001000110100110100110100110000110101000000110100101100110101001010110100110010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100110010101001010100101110010000000000000000000000000000000000001111000000100001110010001001010100000000000000000000000001000011000010100000000000000000000000000000000000010010101101100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111111111111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010101011011001100100111010110100111101000000110001110010000000000000000000000000000000111]], status=Success]
-		String value = "Type=" + RecordTypes.KDF_RT_ULSD;
+		String value = FieldType.Type + "=" + RecordTypes.KDF_RT_ULSD;
 		String names[] = node.toString().split(",");
 		int size = names.length;
 		while (size-- > 0) {
@@ -1435,65 +1587,48 @@ public
 		}
 		return value;
 	}
-		
+
 	/*
-	private
-		void writeHeadData() {
-		this.fileOpenTime = "";
-		String[] names = this.file.getName().split("_");
-		for (int index : format.getFileOpenTimeIndex()) {
-			if (names[index].contains(".")) {
-				names[index] = names[index].substring(0, names[index].indexOf('.'));
-			}
-			fileOpenTime += names[index];
-		}
-		if (fileOpenTime.length() == 12) {
-			fileOpenTime = "20" + fileOpenTime;
-		}
-		if (fileOpenTime.length() != 14) {
-			System.out.println("FATAL Error: failed to get file open time from the file name");
-			System.exit(1);
-		}
-
-		XmlNode lotStartTimeNode = format.getLotStartTimeNode();
-		XmlNode lotOpenTimeNode = format.getLotOpenTimeNode();
-		System.out.printf("fileOpenTime = %s, lotStartTime = %s, lotOpenTime = %s\n", fileOpenTime, lotStartTimeNode.getValue(), lotOpenTimeNode.getValue());
-
-		if (lotStartTimeNode != null && lotStartTimeNode.getValue() != null) {
-			if (lotOpenTimeNode != null && lotOpenTimeNode.getValue() != null) {
-				
-			}
-			else {
-				lotOpenTimeNode.forceValueTo(lotStartTimeNode.getValue());
-			}
-		}
-		else {
-
-			if (lotOpenTimeNode != null && lotOpenTimeNode.getValue() != null) {
-				lotStartTimeNode.forceValueTo(lotOpenTimeNode.getValue());
-			}
-			else {
-				lotOpenTimeNode.forceValueTo(fileOpenTime);
-				lotStartTimeNode.forceValueTo(fileOpenTime);
-			}
-		}
-
-		if (lotStartTimeNode.getValue().compareTo(fileOpenTime) < 0) {
-			lotStartTimeNode.forceValueTo(fileOpenTime);
-		}
-
-		root.clearContent();
-		for (XmlNode node : format.getLotHead().values()) {
-			root.addElement(node.getName()).setText(node.getXmlValue());
-
-		}
-		root.addElement("src_to_xml_time").setText("1");
-		root.addElement("xml_file_generated_time").setText(LocalDateTime.now().toString());
-		root.addElement("kdf_file_name").setText(this.file.getName());
-
-	}*/
-	
-
+	 * private void writeHeadData() { this.fileOpenTime = ""; String[] names =
+	 * this.file.getName().split("_"); for (int index :
+	 * format.getFileOpenTimeIndex()) { if (names[index].contains(".")) {
+	 * names[index] = names[index].substring(0, names[index].indexOf('.')); }
+	 * fileOpenTime += names[index]; } if (fileOpenTime.length() == 12) {
+	 * fileOpenTime = "20" + fileOpenTime; } if (fileOpenTime.length() != 14) {
+	 * System.out.println("FATAL Error: failed to get file open time from the
+	 * file name"); System.exit(1); }
+	 *
+	 * XmlNode lotStartTimeNode = format.getLotStartTimeNode(); XmlNode
+	 * lotOpenTimeNode = format.getLotOpenTimeNode();
+	 * System.out.printf("fileOpenTime = %s, lotStartTime = %s, lotOpenTime =
+	 * %s\n", fileOpenTime, lotStartTimeNode.getValue(),
+	 * lotOpenTimeNode.getValue());
+	 *
+	 * if (lotStartTimeNode != null && lotStartTimeNode.getValue() != null) { if
+	 * (lotOpenTimeNode != null && lotOpenTimeNode.getValue() != null) {
+	 *
+	 * }
+	 * else { lotOpenTimeNode.forceValueTo(lotStartTimeNode.getValue()); } }
+	 * else {
+	 *
+	 * if (lotOpenTimeNode != null && lotOpenTimeNode.getValue() != null) {
+	 * lotStartTimeNode.forceValueTo(lotOpenTimeNode.getValue()); } else {
+	 * lotOpenTimeNode.forceValueTo(fileOpenTime);
+	 * lotStartTimeNode.forceValueTo(fileOpenTime); } }
+	 *
+	 * if (lotStartTimeNode.getValue().compareTo(fileOpenTime) < 0) {
+	 * lotStartTimeNode.forceValueTo(fileOpenTime); }
+	 *
+	 * root.clearContent(); for (XmlNode node : format.getLotHead().values()) {
+	 * root.addElement(node.getName()).setText(node.getXmlValue());
+	 *
+	 * }
+	 * root.addElement("src_to_xml_time").setText("1");
+	 * root.addElement("xml_file_generated_time").setText(LocalDateTime.now().toString());
+	 * root.addElement("kdf_file_name").setText(this.file.getName());
+	 *
+	 * }
+	 */
 	private
 		void writeUnitData() {
 		Element unit = root.addElement("Unit");
@@ -1515,7 +1650,8 @@ public
 		return lotDate;
 	}
 
-	private boolean setKDFDate(){
+	private
+		boolean setKDFDate() {
 		String[] names = this.file.getName().split("_");
 		this.kdfMonth = names[format.getKdfMonthIndex()];
 		if (this.kdfMonth.length() == 4) {
@@ -1527,12 +1663,12 @@ public
 			this.kdfMonth = "20" + kdfMonth.substring(0, 4);
 		}
 		else if (this.kdfMonth.length() == 8) {
-			this.kdfMonth = this.kdfMonth.substring(0,6);
+			this.kdfMonth = this.kdfMonth.substring(0, 6);
 		}
-		else{
+		else {
 			return false;
 		}
-		
+
 		this.fileOpenTime = "";
 		// set file open time
 		for (int index : format.getFileOpenTimeIndex()) {
@@ -1548,9 +1684,10 @@ public
 			System.out.println("FATAL Error: failed to get file open time from the file name");
 			return false;
 		}
-		this.kdfDate = fileOpenTime.substring(0,8);
+		this.kdfDate = fileOpenTime.substring(0, 8);
 		return true;
-	}	
+	}
+
 	private
 		void closeFile(String xmlFilePath) {
 		xmlFilePath = format.getXmlPath();
@@ -1722,17 +1859,19 @@ public
 		Config.FailureCase getFailType() {
 		return failType;
 	}
-	private boolean moveFileToArchive() {
+
+	private
+		boolean moveFileToArchive() {
 		try {
-			if(this.archiveFile.exists()){
+			if (this.archiveFile.exists()) {
 				Files.delete(this.file.toPath());
 			}
 			else {
-				if(!this.archiveFile.getParentFile().exists()) {
-					if(this.archiveFile.getParentFile().mkdirs()){
+				if (!this.archiveFile.getParentFile().exists()) {
+					if (this.archiveFile.getParentFile().mkdirs()) {
 						Files.move(this.file.toPath(), this.archiveFile.toPath(), ATOMIC_MOVE);
 					}
-					else{
+					else {
 						this.logIoErrorToES("FailMkDIR");
 						return false;
 					}

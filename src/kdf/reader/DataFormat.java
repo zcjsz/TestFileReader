@@ -317,6 +317,9 @@ public
 	public
 		boolean validate() {
 		if (this.getCustomer() == null
+			|| this.getLotEndTimeNode() == null
+			|| this.getLotOpenTimeNode() == null
+			|| this.getLotStartTimeNode() == null
 			|| this.getFactory() == null
 			|| this.getDataType() == null
 			|| this.getFileOpenTimeIndex().isEmpty()
@@ -533,16 +536,31 @@ public
 		unit.clear();
 
 	}
-
+	
+	/**
+	 * get the lot head kv string
+	 * here we skip the lot start/end/open time since we use the FieldType.FileTime as the lot time timestamper
+	 * @return 
+	 */
 	public
 		String getLotHeadKVString() {
+		boolean firstField = false;
 		String value = "";
 		for (XmlNode node : this.lotHead.values()) {
 			if (!node.isEnabledLog()) {
 				continue;
 			}
+			if(node.isLotEndTime() || node.isLotOpenTime() || node.isLotStartTime()) {
+				continue;
+			}
 			if (node.getValue() != null && (!node.getValue().isEmpty())) {
-				value += "," + node.toKVString();
+				if(!firstField) {
+					value += node.toKVString();
+					firstField = true;
+				}
+				else {
+					value += "," + node.toKVString();
+				}
 			}
 		}
 		if (!this.ignoreEmptyValueField) {
@@ -560,8 +578,8 @@ public
 	}
 
 	public
-		String getUnitHeadKVString() {
-		String value = "";
+		String getUnitDocKVString() {
+		String value = "," + FieldType.Type + "=" + FieldType.Unit;
 		for (XmlNode node : this.getUnit().getNodes().values()) {
 			if (!node.isEnabledLog()) {
 				continue;
@@ -580,13 +598,66 @@ public
 				}
 			}
 		}
-		value += "," + "softBinDesc=" + this.getUnit().getSoftBinDescValue();
-		value += "," + "hardBinDesc=" + this.getUnit().getHardBinDescValue();
-		value += "," + "binType=" + this.getUnit().getFlagIntValue();
+		value += "," + FieldType.SoftBinDesc + "=" + this.getUnit().getSoftBinDescValue();
+		value += "," + FieldType.HardBinDesc + "=" + this.getUnit().getHardBinDescValue();
+		value += "," + FieldType.BinType + "=" + this.getUnit().getFlagIntValue();
 
 		return value;
 
 	}
+		
+	public
+		String getUnitHeadTestKVStr() {
+		String value = "";
+		for (XmlNode node : this.getUnit().getNodes().values()) {
+			if (!node.isEnabledLog()) {
+				continue;
+			}
+			if (node.getValue() != null && (!node.getValue().isEmpty())) {
+				//never log the unit start time and end time into test level data
+				if(node.isStartTime() || node.isEndTime()) {
+					continue;
+				}
+				value += "," + node.toKVString();
+			}
+		}
+		if (!this.ignoreEmptyValueField) {
+			for (XmlNode node : this.lotHead.values()) {
+				if (!node.isEnabledLog()) {
+					continue;
+				}
+				if (node.getValue() == null || node.getValue().isEmpty()) {
+					value += "," + node.toKVString();
+				}
+			}
+		}
+		value += "," + FieldType.SoftBinDesc + "=" + this.getUnit().getSoftBinDescValue();
+		value += "," + FieldType.HardBinDesc + "=" + this.getUnit().getHardBinDescValue();
+		value += "," + FieldType.BinType + "=" + this.getUnit().getFlagIntValue();
+
+		return value;
+
+	}
+	
+	public
+		String getFileDocTimeKVStr() {
+			String value = "";
+			XmlNode startTimeNode = this.getLotStartTimeNode();
+			
+			if(startTimeNode.getValue() != null) {
+				value += "," + startTimeNode.toKVString();
+			}
+			XmlNode endTimeNode = this.getLotEndTimeNode();
+			if(endTimeNode.getValue() != null) {
+				value += "," + endTimeNode.toKVString();
+			}
+			
+			if(startTimeNode.getValue() != null && endTimeNode.getValue() != null) {
+				value += ("," + FieldType.GrossTime + "=" + (Long.valueOf(endTimeNode.getTimeLongValue()) -Long.valueOf(startTimeNode.getTimeLongValue()))/1000);
+			}
+			return value;
+			
+		}
 
 	public
 		XmlNode getLotStartTimeNode() {
@@ -596,6 +667,17 @@ public
 			}
 		}
 		return null;
+	}
+	
+	public
+		XmlNode getLotEndTimeNode() {
+		for (XmlNode node : this.getLotHead().values()) {
+			if (node.isLotEndTime()) {
+				return node;
+			}
+		}
+		return null;
+
 	}
 
 	public
