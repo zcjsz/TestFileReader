@@ -22,11 +22,11 @@ and open the template in the editor.
     
     
     <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
-    <SourceType name= "HTEST1" enabled = "0" >
+    <SourceType name= "HTEST1" enabled = "1" >
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>0</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
-        <LogToFile>0</LogToFile>
+        <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
         <GenerateMappingFile>0</GenerateMappingFile>
         
@@ -92,11 +92,11 @@ and open the template in the editor.
     
     
     <!--GFDRS_S6310A1AB0PG_P_ATC607_H800S.00_WS1_BBIYG148MVB1_1_-5_180905_051627.kdf.20190909090909-->
-    <SourceType name= "GFDRS" enabled = "0" >
+    <SourceType name= "GFDRS" enabled = "1" >
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>0</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
-        <LogToFile>0</LogToFile>
+        <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
         <GenerateMappingFile>0</GenerateMappingFile>
         
@@ -241,7 +241,7 @@ and open the template in the editor.
         
     <!--lot head time info for whole xml, must have and can not be disable-->
     <Head>
-        <XmlNode name= "lot_open_time">
+        <XmlNode name= "LotOpenTime">
             <Field>dateFileOpened</Field>
             <Field>fileOpenedTimestamp</Field>
             <Time>1</Time><!--never change this one-->
@@ -259,7 +259,7 @@ and open the template in the editor.
         </XmlNode>
 
         <!--lot head time info for whole xml, must have and can not be disable-->
-        <XmlNode name= "lot_start_time">
+        <XmlNode name= "LotStartTime">
             <Field>dateTestStarted</Field>
             <Field>startTimestamp</Field>
             <Time>1</Time><!--never change this one-->
@@ -277,7 +277,7 @@ and open the template in the editor.
         </XmlNode>
 
         <!--lot head time info for whole xml, must have and can not be disable-->
-        <XmlNode name= "lot_end_time">
+        <XmlNode name= "LotEndTime">
             <Field>dateTestFinished</Field>
             <Field>endTimestamp</Field>
             <Time>1</Time><!--never change this one-->
@@ -412,7 +412,7 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "kdf_version">
+        <XmlNode name= "KdfVersion">
             <Field>kdfFieldDescripRev</Field>
             
             <SourceType name= "HTEST1" enabled = "0" >
@@ -426,7 +426,7 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "client_version">
+        <XmlNode name= "ClientVersion">
             <Field>ClientVersion</Field>
             <Field>Software_Name</Field>
             
@@ -441,7 +441,7 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "test_time_units">
+        <XmlNode name= "TimeUnits">
             <Field>testTimeUnits</Field>
             
             <SourceType name= "HTEST1" enabled = "0" >
@@ -455,7 +455,7 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "factory">
+        <XmlNode name= "Factory">
             <Field>TEST_HOUSE_ID</Field>
             
             <SourceType name= "HTEST1" enabled = "0" >
@@ -562,7 +562,7 @@ and open the template in the editor.
         </XmlNode>
 
 
-        <XmlNode name= "file_seq_number">
+        <XmlNode name= "FileSeqNumber">
             <Field>seqNumber</Field>
             
             <SourceType name= "HTEST1" enabled = "0" >
@@ -576,7 +576,7 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "total_test_time">
+        <XmlNode name= "TotalTestTime">
             <Field>testTime</Field>
             
             <SourceType name= "HTEST1" enabled = "0" >
@@ -590,7 +590,7 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
         
-        <XmlNode name= "wafer_test_date" >
+        <XmlNode name= "WaferTestDate" >
             <Field>waferTestDate</Field>
             <Field>WAFER_TIMESTAMP</Field>
             <Time>1</Time>
@@ -606,7 +606,7 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
 
-        <XmlNode name= "temp" >
+        <XmlNode name= "Temp" >
             <Field>testTemperature</Field>
             <Field>TEMPERATURE</Field>
             
