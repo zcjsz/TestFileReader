@@ -40,12 +40,12 @@ and open the template in the editor.
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
         <KDFArchivePath>/data/ft_archive</KDFArchivePath>
         <DataType>ATE</DataType>
-        <DebugMode>1</DebugMode>
+        <DebugMode>0</DebugMode>
         
         <!--comma separated filters-->
         <FilterOut>sbo</FilterOut><!--filter out kdf whose name contains sbo-->
         <!--comma separated selectors-->
-        <Selector>htest</Selector> <!--select kdf whose name contains drs-->
+        <Selector>HTEST</Selector> <!--select kdf whose name contains drs-->
         
         <!--tester type field-->
         <TesterTypeIndex>2</TesterTypeIndex>
@@ -112,12 +112,12 @@ and open the template in the editor.
         <DataType>WaferSort</DataType>
         
         <!--never trun on debug mode in production mode, default 0-->
-        <DebugMode>1</DebugMode>
+        <DebugMode>0</DebugMode>
         
         <!--comma separated filters-->
         <FilterOut>sbo</FilterOut><!--filter out kdf whose name contains sbo-->
         <!--comma separated selectors-->
-        <Selector>gfdrs</Selector> <!--select kdf whose name contains drs-->
+        <Selector>GFDRS</Selector> <!--select kdf whose name contains drs-->
         
         <!--tester type field-->
         <TesterTypeIndex>2</TesterTypeIndex>
@@ -157,7 +157,7 @@ and open the template in the editor.
         <FieldValueLength>8192</FieldValueLength>
         <EnabledComponentHash>1</EnabledComponentHash>
         <!--comma separated KDFFieldData filters-->
-        <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units</FieldFilter>
+        <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units,generatedTestName,paramRefPtr</FieldFilter>
         <!--if enabled, the file name will be added in the unit level doc, default 0-->
         <AddFileNameInUnit>1</AddFileNameInUnit>
     </SourceType>
@@ -181,12 +181,12 @@ and open the template in the editor.
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
         <KDFArchivePath>/data/slt_archive</KDFArchivePath>
         <DataType>SLT</DataType>
-        <DebugMode>1</DebugMode>
+        <DebugMode>0</DebugMode>
         
         <!--comma separated filters-->
         <FilterOut>suz93k,gfdrs</FilterOut><!--filter out kdf whose name contains sbo-->
         <!--comma separated selectors-->
-        <Selector>suzamdaslt</Selector> <!--select kdf whose name contains drs-->
+        <Selector></Selector> <!--select kdf whose name contains drs-->
         
         <!--tester type field-->
         <TesterTypeIndex>3</TesterTypeIndex>
@@ -216,9 +216,9 @@ and open the template in the editor.
         <ULSDNodeFilter></ULSDNodeFilter>
         
         <!--comma separated filters and selectors for sub and main class-->
-        <BaseClasFilter>DEFAULT</BaseClasFilter>
+        <BaseClasFilter></BaseClasFilter>
         <BaseClasSelector></BaseClasSelector>
-        <SubClasFilter>DEFAULT</SubClasFilter>
+        <SubClasFilter></SubClasFilter>
         <SubClasSelector></SubClasSelector>
         <!--comma separated Node Type filters-->
         <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
@@ -230,7 +230,7 @@ and open the template in the editor.
         
         <EnabledComponentHash>0</EnabledComponentHash>
         <!--comma separated KDFFieldData filters-->
-        <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units</FieldFilter>
+        <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units,DEFAULT</FieldFilter>
         <!--default the base and sub class always log in the test type node-->
         <SkipTestClass>1</SkipTestClass>
         <!--this is only for no-slt-->
@@ -248,10 +248,10 @@ and open the template in the editor.
             <LotOpenTime>1</LotOpenTime>
 
             <SourceType name= "HTEST1" enabled = "1" >
-                <EnabledLog>1</EnabledLog>
+                <EnabledLog>0</EnabledLog>
             </SourceType>
             <SourceType name= "GFDRS" enabled = "1" >
-                <EnabledLog>1</EnabledLog>
+                <EnabledLog>0</EnabledLog>
             </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>0</EnabledLog>
@@ -266,10 +266,10 @@ and open the template in the editor.
             <LotStartTime>1</LotStartTime>
             
             <SourceType name= "HTEST1" enabled = "1" >
-                <EnabledLog>1</EnabledLog>
+                <EnabledLog>0</EnabledLog>
             </SourceType>
             <SourceType name= "GFDRS" enabled = "1" >
-                <EnabledLog>1</EnabledLog>
+                <EnabledLog>0</EnabledLog>
             </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>0</EnabledLog>
@@ -283,10 +283,10 @@ and open the template in the editor.
             <Time>1</Time><!--never change this one-->
             <LotEndTime>1</LotEndTime>
             <SourceType name= "HTEST1" enabled = "1" >
-                <EnabledLog>1</EnabledLog>
+                <EnabledLog>0</EnabledLog>
             </SourceType>
             <SourceType name= "GFDRS" enabled = "1" >
-                <EnabledLog>1</EnabledLog>
+                <EnabledLog>0</EnabledLog>
             </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>0</EnabledLog>

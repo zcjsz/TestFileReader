@@ -146,6 +146,8 @@ public
 		this.kdfName = null;
 		this.unitId = null;
 		this.mfgStp = null;
+		this.fileLevelDocCnt = 0;
+		this.unitLevelDocCnt = 0;
 
 		if (!this.validateFile(file)) {
 			this.failType = Config.FailureCase.BadFormat;
@@ -191,7 +193,7 @@ public
 		boolean validateFile(File kdfFile) {
 		this.failType = null;
 
-		String kdfName = kdfFile.getName().toLowerCase();
+		String kdfName = kdfFile.getName();
 		String names[] = kdfName.split("kdf.");
 		if (names.length != 2) {
 			return false;
@@ -323,7 +325,7 @@ public
 				FieldType.KdfDate,this.kdfDate,
 				FieldType.TransferTime,this.transferTime,
 				FieldType.DataType,this.getFormat().getDataType(),
-				FieldType.DocCnt,this.unitLevelDocCnt
+				FieldType.DocCnt,this.fileLevelDocCnt
 			);
 		}
 		else {
@@ -338,7 +340,7 @@ public
 				FieldType.KdfDate,this.kdfDate,
 				FieldType.TransferTime,this.transferTime,
 				FieldType.DataType,this.getFormat().getDataType(),
-				FieldType.DocCnt,this.unitLevelDocCnt,
+				FieldType.DocCnt,this.fileLevelDocCnt,
 				FieldType.KdfName,this.kdfName
 			);
 		}
@@ -492,19 +494,33 @@ public
 				String subClass = null;
 				for (String fieldName : des.keySet()) {
 					String fieldValue = des.get(fieldName).toString().trim();
-					if (fieldValue.isEmpty() || fieldName.isEmpty()) {
-						continue;
-					}
-					if (fieldName.equals(Config.testDescId)) {
-						testDescId = fieldValue;
+					
+					if (fieldValue.isEmpty() || fieldName.isEmpty() ) {
 						continue;
 					}
 					if (fieldName.endsWith(Config.subClass)) {
 						subClass = fieldValue;
+						if(this.getFormat().getFieldFiters().contains(fieldValue)){
+							continue;
+						}
 					}
 					if (fieldName.endsWith(Config.baseClass)) {
 						baseClass = fieldValue;
+						if(this.getFormat().getFieldFiters().contains(fieldValue)){
+							continue;
+						}
 					}
+					
+					if (this.getFormat().getFieldFiters().contains(fieldName)) {
+						continue;
+					}
+					
+					
+					if (fieldName.equals(Config.testDescId)) {
+						testDescId = fieldValue;
+						continue;
+					}
+					
 					value += "," + fieldName + "=" + fieldValue;
 				}
 				if (testDescId != null && (!value.isEmpty())) {
@@ -785,7 +801,7 @@ public
 				}
 
 			}
-			this.fileLevelDocCnt += this.unitLevelDocCnt;
+			
 			// IO error and exit for this file
 			if (!this.writeKVString(dataContent)) {
 				this.failType = Config.FailureCase.IOError;
@@ -1213,6 +1229,7 @@ public
 			 * handle the current node here
 			 */
 			String formatNodeString = space + formateNode(node) + "\n";
+			this.fileLevelDocCnt ++;
 
 			if (validateForamtString(formatNodeString)) {
 				formatString += formatNodeString;
@@ -1266,11 +1283,11 @@ public
 	 * @return
 	 */
 	private
-		boolean validateBaseSubClass(String baseSubClass) {
-		//selector and 
-		String[] names = baseSubClass.split(",");
-		String subClassName = null;
-		String baseClassName = null;
+		boolean validateBaseSubClass(String idClass) {
+		//selector and filters 
+		
+		String subClassName = this.testDescRefs.get(idClass).getSubClass();
+		String baseClassName = this.testDescRefs.get(idClass).getBaseClass();
 
 		// validate the base class first
 		if (!this.getFormat().getBaseClassFilters().isEmpty()) {
@@ -1389,8 +1406,7 @@ public
 			if (nodeType.equals(KdfTypes.KDF_RT_EVALUATION)) {
 				value += "," + this.testResultField;
 			}
-			if (!this.subBaseClassField.isEmpty()
-				&& (!this.getFormat().isIgnoreEmptyValueField())) {
+			if (!this.subBaseClassField.isEmpty()) {
 				value += this.subBaseClassField;
 			}
 			value += this.comHashValue;
@@ -1528,12 +1544,6 @@ public
 				}
 			}
 			else {
-//				String[] temp = names[size].split("\\[");
-//				if(temp.length > 1) {
-//					if(temp[temp.length - 1].contains("=")) {
-//						value += "," + (temp[temp.length - 1].replaceAll("]","")).replace(',', '-').trim();
-//					}
-//				}
 			}
 		}
 		return value;
