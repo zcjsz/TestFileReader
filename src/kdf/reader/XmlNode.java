@@ -168,7 +168,9 @@ public
 			}
 		}
 		else {
-			return this.name + "=" + this.value;
+			char cr = 13;
+			char crlf = 10;
+			return this.name + "=" + this.value.replace(',', ' ').replace('=', ' ').replace(cr, ' ').replace(crlf, ' ');
 		}
 
 	}

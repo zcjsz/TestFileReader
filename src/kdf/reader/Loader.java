@@ -529,7 +529,8 @@ public
 						continue;
 					}
 					
-					value += "," + fieldName + "=" + fieldValue;
+					value += "," + fieldName.replace('.', '_') + "=" + fieldValue.replace(',', ' ').replace('=', ' ');
+					
 				}
 				if (testDescId != null && (!value.isEmpty())) {
 					this.testDescRefs.put(testDescId, new TestDesc(baseClass, subClass, value));
@@ -563,7 +564,7 @@ public
 					else if (key.equalsIgnoreCase("binDescription")) {
 						Object o = binDesc.get(key).getValue();
 						if (o != null) {
-							binDescription = o.toString();
+							binDescription = this.formatBinDesc(o.toString());
 						}
 					}
 					else if (key.equalsIgnoreCase("binDescFlag")) {
@@ -610,7 +611,8 @@ public
 					}
 				}
 				if (key != null && (!key.isEmpty()) && value != null && (!value.isEmpty())) {
-					data.put(key, value.trim());
+					data.put(key, value.trim().replace(',', ' ').replace('=', ' '));
+					
 				}
 			}
 			if (this.isDebugMode()) {
@@ -628,8 +630,9 @@ public
 			for (Node comHashNode : comHashRefs) {
 				KDFFieldData comNameField = comHashNode.get("componentName");
 				if (comNameField != null) {
-					String comName = comNameField.getValue().toString();
-					String comClass = comHashNode.get("componentClass").getValue().toString();
+					String comName = comNameField.getValue().toString().replace('.', '_');
+					String comClass = comHashNode.get("componentClass").getValue().toString().replace('.', '_');
+					
 					String comHash = comHashNode.get("componentHash").getValue().toString();
 					String comInst = comHashNode.get("componentInst").getValue().toString();
 					this.comHashRefs.put(comHash, new ComponentHash(comClass, comName));
@@ -1142,7 +1145,7 @@ public
 					else if (key.equalsIgnoreCase("binDescription")) {
 						Object o = binDesc.get(key).getValue();
 						if (o != null) {
-							binDescription = o.toString();
+							binDescription = this.formatBinDesc(o.toString());
 						}
 					}
 					else if (key.equalsIgnoreCase("binDescFlag")) {
@@ -1166,6 +1169,30 @@ public
 				}
 			}
 		}
+	}
+
+	private String formatBinDesc(String binDesc) {
+		int size = binDesc.length();
+		String value = "";
+		int i = 0;
+		while(i < size && i < 128 ) {
+			char chr = binDesc.charAt(i);
+//			if(chr == ',' || chr == '=' || chr == 13 || chr == 10) {
+//				
+//			}
+			if((chr >= 48 && chr <= 57 )
+				|| (chr >= 65 && chr <= 90)
+				|| (chr >= 97 && chr <= 122)
+			) {
+			
+			}
+			else {
+				chr = 32;
+			}
+			value += chr;
+			i++;
+		}
+		return value;
 	}
 
 	private
@@ -1495,7 +1522,8 @@ public
 						}
 					}
 					else {
-						value += "," + fieldName + "=" + fieldValue;
+						value += "," + fieldName.replace('.', '_') + "=" + fieldValue;
+						
 					}
 				}
 			}
@@ -1563,7 +1591,7 @@ public
 
 		while (length-- > 0) {
 			char chr = fieldValue.charAt(length);
-			if (chr == ',' || chr == '=') {
+			if (chr == ',' || chr == '=' || chr == 13 || chr == 10 ) {
 				System.out.printf("Bad Format Field: fieldName=%s, fieldValue=%s\n", fieldName, fieldValue);
 				return false;
 			}

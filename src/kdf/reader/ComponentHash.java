@@ -24,8 +24,8 @@ public
 	 */
 	public
 		ComponentHash(String comClass, String comName) {
-		this.comClass = comClass;
-		this.comName = comName;
+		this.comClass = comClass.replace(',', '_').replace('=', '_');
+		this.comName = comName.replace(',', '_').replace('=', '_');
 	}
 
 	public

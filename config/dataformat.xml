@@ -5,7 +5,12 @@ To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
 
+<!--author: guanghao fan-->
+
 <!--please use Standard Format for XmlNode name " LowerCase -->
+<!--any changes may break the data base -->
+<!--please NEVER edit the configuration unless you are FULLY UNDERSTAND to the setttings-->
+
 <root>
     <LockFilePath>./testdata</LockFilePath>
     
@@ -22,7 +27,7 @@ and open the template in the editor.
     
     
     <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
-    <SourceType name= "HTEST1" enabled = "0" >
+    <SourceType name= "HTEST1" enabled = "1" >
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>0</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
@@ -85,7 +90,7 @@ and open the template in the editor.
         <FieldValueLength>8192</FieldValueLength>
         <EnabledComponentHash>1</EnabledComponentHash>
         <!--comma separated KDFFieldData filters, case sensitive-->
-        <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units</FieldFilter>
+        <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units,startTimestamp,endTimestamp</FieldFilter>
         <!--if enabled, the file name will be added in the unit level doc, default 0-->
         <AddFileNameInUnit>1</AddFileNameInUnit>
         
@@ -164,7 +169,7 @@ and open the template in the editor.
         <FieldValueLength>8192</FieldValueLength>
         <EnabledComponentHash>1</EnabledComponentHash>
         <!--comma separated KDFFieldData filters, case sensitive-->
-        <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units,generatedTestName,paramRefPtr</FieldFilter>
+        <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units,startTimestamp,endTimestamp</FieldFilter>
         <!--if enabled, the file name will be added in the unit level doc, default 0-->
         <AddFileNameInUnit>1</AddFileNameInUnit>
         
@@ -177,7 +182,7 @@ and open the template in the editor.
     </SourceType>
         
     <!--HG00058.1.1_6310_H800D0007101504_SLT_AXFNCP_DS2000DBABC01_20180823_052611_suzamdaslt086_006_MAIN.kdf.20180909090909-->    
-    <SourceType name= "SLT" enabled = "0" >
+    <SourceType name= "SLT" enabled = "1" >
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>0</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
@@ -243,7 +248,7 @@ and open the template in the editor.
         
         <EnabledComponentHash>0</EnabledComponentHash>
         <!--comma separated KDFFieldData filters, case sensitive-->
-        <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units,DEFAULT</FieldFilter>
+        <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units,DEFAULT,startTimestamp,endTimestamp</FieldFilter>
         <!--default the base and sub class always log in the test type node, case sensitive-->
         <SkipTestClass>1</SkipTestClass>
         <!--this is only for no-slt-->
