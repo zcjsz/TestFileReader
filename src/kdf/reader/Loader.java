@@ -500,24 +500,32 @@ public
 					}
 					if (fieldName.endsWith(Config.subClass)) {
 						subClass = fieldValue;
-						if(this.getFormat().getFieldFiters().contains(fieldValue)){
+						// base class and sub class filters need to apply them here since it needs the base and sub class
+						// to generate the generated test name
+						if(this.getFormat().getDataType().equals(Config.DataTypes.SLT)
+							&& this.getFormat().getSubClassFilters().contains(fieldValue)){
 							continue;
 						}
 					}
 					if (fieldName.endsWith(Config.baseClass)) {
 						baseClass = fieldValue;
-						if(this.getFormat().getFieldFiters().contains(fieldValue)){
+						// base class and sub class filters need to apply them here since it needs the base and sub class
+						// to generate the generated test name
+						if(this.getFormat().getDataType().equals(Config.DataTypes.SLT)
+							&& this.getFormat().getBaseClassFilters().contains(fieldValue)){
 							continue;
 						}
 					}
-					
-					if (this.getFormat().getFieldFiters().contains(fieldName)) {
-						continue;
-					}
-					
-					
 					if (fieldName.equals(Config.testDescId)) {
 						testDescId = fieldValue;
+						continue;
+					}
+					// apply only after the base and sub class and also the testDescId
+					if (this.getFormat().getTestDescFieldFilters().contains(fieldName)) {
+						continue;
+					}
+					if((!this.getFormat().getTestDescFieldSelectors().isEmpty())
+						&& (!this.getFormat().getTestDescFieldSelectors().contains(fieldName))) {
 						continue;
 					}
 					
@@ -1188,8 +1196,10 @@ public
 
 		space = "";
 		String nodeName = node.getName();
+		boolean isFlow = false;
 		if (nodeName.equals(KdfTypes.KDF_RT_FLOW)) {
 			this.flowContextField = "";
+			isFlow = true;
 		}
 
 		if (nodeName.equals(KdfTypes.KDF_RT_TEST)) {
@@ -1245,6 +1255,9 @@ public
 			}
 
 		}
+		if(isFlow && this.getFormat().getFlowContextFilters().contains(node.get("context"))) {
+				return formatString;
+		}
 
 		// return immediately after slt test
 		if (this.getFormat().getDataType().equals(Config.DataTypes.SLT) && nodeName.equals(KdfTypes.KDF_RT_TEST)) {
@@ -1284,6 +1297,11 @@ public
 	 */
 	private
 		boolean validateBaseSubClass(String idClass) {
+			
+		// slt class filters is in the readTestDesc method, slt TestDesc is different from ate	
+		if(this.getFormat().getDataType().equals(Config.DataTypes.SLT)) {
+			return true;
+		}	
 		//selector and filters 
 		
 		String subClassName = this.testDescRefs.get(idClass).getSubClass();

@@ -21,6 +21,13 @@ public
 	class DataFormat {
 	
 	private
+		ArrayList<String> testDescFieldFilters = new ArrayList();
+	private
+		ArrayList<String> testDescFieldSelectors = new ArrayList();
+	private
+		ArrayList<String> flowContextFilters = new ArrayList();
+	
+	private
 		boolean productionMode = true;
 	
 	private
@@ -303,7 +310,22 @@ public
 					case "SkipTestClass":
 						this.skipTestClass = fieldValue.equals("1");
 						break;
-
+						
+					case "TestDescFieldFilter":
+						for (String filter : fieldValue.split(",")) {
+							this.testDescFieldFilters.add(filter.trim());
+						}
+						break;
+					case "TestDescFieldSelector":
+						for (String selector : fieldValue.split(",")) {
+							this.testDescFieldSelectors.add(selector.trim());
+						}
+						break;
+					case "FlowContextFilter":
+						for (String filter : fieldValue.split(",")) {
+							this.flowContextFilters.add(filter.trim());
+						}
+						break;	
 					default:
 						System.out.printf("Error: this filed: %s is not supportted!\n", fieldName);
 						System.exit(1);
@@ -899,6 +921,21 @@ public
 	public
 	boolean isProductionMode() {
 		return productionMode;
+	}
+
+	public
+	ArrayList<String> getTestDescFieldFilters() {
+		return testDescFieldFilters;
+	}
+
+	public
+	ArrayList<String> getTestDescFieldSelectors() {
+		return testDescFieldSelectors;
+	}
+
+	public
+	ArrayList<String> getFlowContextFilters() {
+		return flowContextFilters;
 	}
 	
 	
