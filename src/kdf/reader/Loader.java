@@ -1370,7 +1370,7 @@ public
 		String startTimeField = this.getFieldKVStr(node, "startTimestamp", "startTimestamp");
 		String endTimeField = this.getFieldKVStr(node, "endTimestamp", "endTimestamp");
 		String alarmField = this.getFieldKVStr(node, "alarm", "alarm");
-
+		
 		this.testResultField = testResultField;
 		if (!testResultField.isEmpty()) {
 			value += "," + testResultField;
@@ -1390,8 +1390,30 @@ public
 				value += "," + alarmField;
 			}
 		}
+		
+		// here add the test type node test time
+		value += this.getTestTimeValue(node);
+		
 		return value;
 
+	}
+	
+	private String getTestTimeValue(Node node) {
+		String value = "";
+		if(this.getFormat().getFieldFiters().contains("TestTime")) {
+			return value;
+		}
+		// here add the test type node test time
+		if(node.containsKey("startTimestamp")) {
+			String startTimeValue = node.get("startTimestamp").toString().trim();
+			if(node.containsKey("endTimestamp")) {
+				String endTimeValue = node.get("endTimestamp").toString().trim();
+				if(startTimeValue.length() == 13 && endTimeValue.length() == 13) {
+					value = ",TestTime=" + (Long.valueOf(endTimeValue) - Long.valueOf(startTimeValue))/1000.0;
+				}
+			}
+		}
+		return value;
 	}
 
 	/**
@@ -1482,6 +1504,7 @@ public
 				this.flowContextField = this.getFieldKVStr(node, "context", "context");
 //				this.testResultField += this.getFieldKVStr(node, "result", "flowResult");
 				testCntInFlow = 0;
+				value += this.getTestTimeValue(node);
 			}
 			return value;
 		}

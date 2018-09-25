@@ -636,8 +636,9 @@ public
 				continue;
 			}
 			if (node.getValue() != null && (!node.getValue().isEmpty())) {
-				//never log the unit start time and end time into test level data
-				if(node.isStartTime() || node.isEndTime()) {
+				// never log the unit start time and end time into test level data
+				// never log the unit tets time to test level doc
+				if(node.isTimeNode() || node.isUnitTestTimeNode()) {
 					continue;
 				}
 				value += "," + node.toKVString();
