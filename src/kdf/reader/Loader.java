@@ -31,6 +31,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+import java.util.ArrayList;
 
 /**
  *
@@ -110,6 +111,8 @@ public
 		int unitLevelDocCnt = 0;
 	private
 		int fileLevelDocCnt = 0;
+	private
+		ArrayList<String> allFields = new ArrayList();
 
 	public
 		Loader() {
@@ -205,7 +208,7 @@ public
 		if (names[names.length - 1].length() != 14 || (!names[names.length - 1].startsWith("20"))) {
 			return false;
 		}
-		this.transferTime = names[1];
+		this.transferTime = this.formatTimeStr(names[1]);
 		this.kdfName = names[0] + "kdf";
 
 		boolean skip = false;
@@ -361,7 +364,7 @@ public
 			+ "," + FieldType.TransferTime + "=" + this.transferTime
 			+ "," + FieldType.DataType + "=" + this.getFormat().getDataType()
 			+ "," + FieldType.DocCnt + "=" + this.fileLevelDocCnt
-			+ "," + FieldType.FileTime + "=" + this.formatFileOpenTime()
+			+ "," + FieldType.FileTime + "=" + this.formatTimeStr(this.fileOpenTime)
 			;
 		value += this.getFormat().getFileDocTimeKVStr() + "\n";
 		if(this.isDebugMode()) {
@@ -727,7 +730,7 @@ public
 		 *
 		 */
 		// the lotHeadStr does't contains lot open/start/end time, we use the FieldType.FileTime as the timestamper
-		String lotHeadStr = format.getLotHeadKVString() + "," + FieldType.FileTime + "=" + this.formatFileOpenTime();
+		String lotHeadStr = format.getLotHeadKVString() + "," + FieldType.FileTime + "=" + this.formatTimeStr(this.fileOpenTime);
 
 		readBinDesc();
 		System.out.printf("%s: opening kdf time is  %d\n", LocalDateTime.now(), (System.currentTimeMillis() - jobStartTime));
@@ -893,12 +896,15 @@ public
 
 	/**
 	 * append the file level doc to es stream
-	 *
+	 * only for no-slt since slt unit/file is the same
 	 * @return
 	 */
 	private
 		boolean writeFileKVString() {
 		// IO error and exit for this file
+		if(!this.getFormat().getDataType().equals(Config.DataTypes.SLT)) {
+			return true;
+		}
 		if (!this.writeKVString(this.getAteFileKVStr())) {
 			this.failType = Config.FailureCase.IOError;
 			this.logIoErrorToES("FailWriteLogFile");
@@ -1197,7 +1203,7 @@ public
 
 	private
 		String printNodeInfo(Node node, int level) {
-		this.unitLevelDocCnt++;
+		
 		String formatString = "";
 		String space = "";
 		switch (level) {
@@ -1266,10 +1272,10 @@ public
 			 * handle the current node here
 			 */
 			String formatNodeString = space + formateNode(node) + "\n";
-			this.fileLevelDocCnt ++;
-
 			if (validateForamtString(formatNodeString)) {
 				formatString += formatNodeString;
+				this.fileLevelDocCnt ++;
+				this.unitLevelDocCnt++;
 			}
 			else {
 				System.out.println("--------------------------------------------------------------------");
@@ -1277,7 +1283,7 @@ public
 				System.out.println("FATAL Error: es can not read this node string");
 				System.out.println("Node=" + node);
 				System.out.printf("formatString is:%s", formatNodeString);
-				this.unitLevelDocCnt--;
+				
 				//System.exit(1);
 			}
 
@@ -1457,10 +1463,8 @@ public
 		String formateNode(Node node) {
 		String value = "";
 		String nodeType = node.getName().trim();
-		if (nodeType.equals(RecordTypes.KDF_RT_ULSD)) {
-			return this.formatULSDNode(node);
-		}
-		else {
+		
+		
 			//add head for some nodes
 			if (!this.nodeHead.isEmpty()) {
 				value += this.nodeHead;
@@ -1487,8 +1491,23 @@ public
 				value += this.formatTestNode(node);
 				return value;
 			}
+			
+			
+//			if (nodeType.equals(RecordTypes.KDF_RT_ULSD)) {
+//				value += this.formatULSDNode(node);
+//				return value;
+//			}
+			boolean isLog = true;
+			if (nodeType.equals(RecordTypes.KDF_RT_ULSD)) {
+				isLog = false;
+			}
 
 			for (String fieldName : node.keySet()) {
+				Byte fieldType = node.get(fieldName).getType();
+				
+				if((!this.allFields.contains(fieldName)) && (fieldType == 11 || fieldType == 22 || fieldType == 33   )) {
+					this.allFields.add(fieldName);
+				}
 				String fieldValue = node.get(fieldName).toString().trim();
 
 				if (fieldName.isEmpty()) {
@@ -1499,7 +1518,7 @@ public
 				}
 
 				if (!fieldValue.isEmpty()) {
-					if (!this.isFormatField(fieldValue, fieldName)) {
+					if (!this.isFormatField(fieldValue, fieldName, isLog)) {
 						continue;
 
 					}
@@ -1509,7 +1528,7 @@ public
 							System.out.println("Multip Pin found: " + fieldValue);
 						}
 						if (pinName != null) {
-							value += ",pin=" + pinName;
+							value += "," + FieldType.Pin + "=" + pinName;
 						}
 					}
 					else if (fieldName.equals(FieldType.PatternId)) {
@@ -1518,7 +1537,7 @@ public
 							System.out.println("Multip Patterns found: " + fieldValue);
 						}
 						if (pattern != null) {
-							value += ",pattern=" + pattern;
+							value += "," + FieldType.Pattern + "=" + pattern;
 						}
 					}
 					else {
@@ -1535,7 +1554,7 @@ public
 				value += this.getTestTimeValue(node);
 			}
 			return value;
-		}
+		
 	}
 
 	/**
@@ -1554,7 +1573,7 @@ public
 			return value;
 		}
 		String fieldValue = fieldData.toString().trim();
-		if ((!fieldValue.isEmpty()) && this.isFormatField(fieldValue, fieldName)) {
+		if ((!fieldValue.isEmpty()) && this.isFormatField(fieldValue, fieldName, true)) {
 			if (aliasName != null) {
 				fieldName = aliasName;
 			}
@@ -1580,7 +1599,7 @@ public
 	}
 
 	private
-		boolean isFormatField(String fieldValue, String fieldName) {
+		boolean isFormatField(String fieldValue, String fieldName, boolean isLog) {
 		int length = fieldValue.length();
 		if (length > this.format.getFieldValueLengthLimit()) {
 			if (this.isDebugMode()) {
@@ -1592,7 +1611,9 @@ public
 		while (length-- > 0) {
 			char chr = fieldValue.charAt(length);
 			if (chr == ',' || chr == '=' || chr == 13 || chr == 10 ) {
-				System.out.printf("Bad Format Field: fieldName=%s, fieldValue=%s\n", fieldName, fieldValue);
+				if(isLog){
+					System.out.printf("Bad Format Field: fieldName=%s, fieldValue=%s\n", fieldName, fieldValue);
+				}
 				return false;
 			}
 		}
@@ -1877,12 +1898,12 @@ public
 		this.root.clearContent();
 
 	}
-
+		
 	private
-		String formatFileOpenTime() {
-		return this.fileOpenTime.substring(0, 4) + "-" + this.fileOpenTime.substring(4, 6) + "-" + this.fileOpenTime.substring(6, 8)
-			+ "T" + this.fileOpenTime.substring(8, 10) + ":" + this.fileOpenTime.substring(10, 12) + ":"
-			+ this.fileOpenTime.substring(12, 14) + ".00+08:00";
+		String formatTimeStr(String timeStr) {
+		return timeStr.substring(0, 4) + "-" + timeStr.substring(4, 6) + "-" + timeStr.substring(6, 8)
+			+ "T" + timeStr.substring(8, 10) + ":" + timeStr.substring(10, 12) + ":"
+			+ timeStr.substring(12, 14) + ".00+08:00";
 	}
 
 	/**
@@ -2001,7 +2022,8 @@ public
 				}
 			}
 		}
-
+		
+		System.out.println(loader.allFields.toString());
 		System.out.println("total time = " + (System.currentTimeMillis() - startTime));
 		startTime = System.currentTimeMillis();
 	}
