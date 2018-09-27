@@ -31,14 +31,14 @@
 #  half_float: A half-precision 16-bit IEEE 754 floating point number, restricted to finite values. 
 #  scaled_float: A finite floating point number that is backed by a long, scaled by a fixed double scaling factor. 
 
-PUT _template/my-test
+PUT _template/all-test-back
 {
-    "order": 0,
+  "order": 0,
     "version": 1001,
     "index_patterns": [
-      "a-wafer-sort-test-*",
-      "a-slt-test-*",
-      "a-ft-test-*"
+      "wafer-sort-test-*",
+      "slt-test-*",
+      "ft-test-*"
     ],
     "settings": {
       "index": {
@@ -60,6 +60,14 @@ PUT _template/my-test
             "type": "keyword"
           },
           
+          
+          
+          "endTimestamp": {
+            "type": "date"
+          },
+          "startTimestamp": {
+            "type": "date"
+          },
           "FileTime": {
             "type": "date"
           },
@@ -78,13 +86,35 @@ PUT _template/my-test
           "LotEndTime": {
             "type": "date"
           },
+          "TransferTime": {
+            "type": "date"
+          },
           
-          
-          
+          "description": {
+            "type" : "keyword"
+          },
+          "structureName": {
+            "type": "keyword"
+          },
           "context": {
             "type": "keyword"
           },
-          "Device" : {
+          "units": {
+            "type": "keyword"
+          },
+          "segmentName": {
+            "type": "keyword"
+          },
+          "expression": {
+            "type": "keyword"
+          },
+          "name": {
+            "type": "keyword"
+          },
+          "failingArrayName": {
+            "type": "keyword"
+          },
+           "Device" : {
             "type": "keyword"
           },
           "DataType": {
@@ -118,6 +148,9 @@ PUT _template/my-test
           "Tester": {
             "type": "keyword"
           },
+          "Type": {
+            "type": "keyword"
+          },
           "UnitId": {
             "type": "keyword"
           },
@@ -134,13 +167,22 @@ PUT _template/my-test
             "type": "keyword"
           },
           
+          
+          
+          "componentHash": {
+            "type": "text"
+          },
+          "bitValues": {
+            "type": "text"
+          },
+          
+          
+          
           "TestTime": {
-            "type": "float",
-            "index": false
+            "type": "float"
           },
           "value": {
-            "type": "float",
-            "index": false
+            "type": "float"
           },
           
           
@@ -156,7 +198,15 @@ PUT _template/my-test
           "Y": {
             "type": "byte"
           },
-          
+          "alarm": {
+            "type": "byte"
+          },
+          "result": {
+            "type": "byte"
+          },
+          "timeout": {
+            "type": "byte"
+          },
           
           
           "KDFDate": {
@@ -168,53 +218,18 @@ PUT _template/my-test
           
           "DocCnt": {
             "type": "integer"
-            , "index": false
           },
           "GrossTime": {
             "type": "integer"
-            , "index": false
           },
           "UnitCnt": {
             "type": "short"
-            , "index": false
           }
           
        
          
         },
         "dynamic_templates": [
-          {
-            "byte": {
-              "match": "timeout,alarm,result",
-              "mapping": {
-                "type": "boolean"
-              }
-            }
-          },
-          {
-            "date": {
-              "match": "TransferTime,endTimestamp,startTimestamp",
-              "mapping": {
-                "type": "date"
-              }
-            }
-          },
-          {
-            "keyword": {
-              "match": "WaferLot,LotNumber,DIE_1,DIE_2,DIE_3,units,segmentName,expression,name,failingArrayName,description,structureName,LotNumber",
-              "mapping": {
-                "type": "keyword"
-              }
-            }
-          },
-          {
-            "text": {
-                "match": "componentHash,bitValues",
-                "mapping": {
-                  "type": "text"
-               }
-            }
-          },
           {
           "integers": {
             "match_mapping_type": "long",
@@ -232,6 +247,14 @@ PUT _template/my-test
           }
          },
          {
+          "keyword": {
+            "match": "WaferLot,LotNumber,DIE_1,DIE_2,DIE_3",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+          {
             "string_fields": {
               "match_mapping_type": "string",
               "mapping": {
@@ -243,7 +266,7 @@ PUT _template/my-test
       }
     },
     "aliases": {}
-}
+  }
 
 PUT _ingest/pipeline/ft-test
 {

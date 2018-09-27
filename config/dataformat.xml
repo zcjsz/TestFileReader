@@ -28,7 +28,7 @@ and open the template in the editor.
     
     <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
-    <SourceType name= "HTEST1" enabled = "0" >
+    <SourceType name= "HTEST1" enabled = "1" >
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>0</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
@@ -78,12 +78,15 @@ and open the template in the editor.
         <ULSDNodeFilter></ULSDNodeFilter>
         
         <!--comma separated filters and selectors for sub and main class, case sensitive-->
+        <!--HSIO,PWRDOMAIN,SETUPINFO,SCAN,FUSE,PSSHORTS,PSCURRENT,DIODE,CONTINUITY,DIECRACKMON,CREST,ULSDQUERY,SETUP,COMPONENT,DATARIVER,UNITINFO-->
         <BaseClasFilter></BaseClasFilter>
         <BaseClasSelector></BaseClasSelector>
+        
         <SubClasFilter></SubClasFilter>
         <SubClasSelector></SubClasSelector>
         
         <!--comma separated Node Type filters, , case sensitive-->
+        <!--ULSD,PinMeasure,Evaluation,StructureMeasure,Flow,Test,BitString,PatternFailInfo,PatternPinFail,PatternResult,Unit,File-->
         <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
         <!--comma separated Node Type selectors-->
         <NodeTypeSelector></NodeTypeSelector>
@@ -106,17 +109,17 @@ and open the template in the editor.
         <!--comma separated node types, PinMeasure , StructureMeasure,Evaluation-->
         <!--Evaluation has not result, and it inherit the test level result-->
         <!--if skil a Node, it means all the child nodes will be ignored too-->
-        <LogFailOnlyNodeSelector>PinMeasure</LogFailOnlyNodeSelector>
+        <LogFailOnlyNodeSelector></LogFailOnlyNodeSelector>
         
         <!--only log fail for those base class in the filter, it only works on Test Type child node-->
-        <!--RINGOSC , CONTINUITY , HSIO ,IOSPEC ,PWRDOMAIN,PLL,TCC,SCAN,SETUPINFO,PSSHORTS,PSCURRENT,FUSE,DIODE,MISCIO,CREST,DATARIVER,JTAG,MBIST,EVV,DIECRACKMON,COMPONENT-->
-        <LogFailOnlyBaseClassSelector>CONTINUITY</LogFailOnlyBaseClassSelector>
+        <!--HSIO,PWRDOMAIN,SETUPINFO,SCAN,FUSE,PSSHORTS,PSCURRENT,DIODE,CONTINUITY,DIECRACKMON,CREST,ULSDQUERY,SETUP,COMPONENT,DATARIVER,UNITINFO-->
+        <LogFailOnlyBaseClassSelector></LogFailOnlyBaseClassSelector>
     </SourceType>
     
     
     <!--GFDRS_S6310A1AB0PG_P_ATC607_H800S.00_WS1_BBIYG148MVB1_1_-5_180905_051627.kdf.20190909090909-->
     <!--NEVER try to change the SourceType name here-->
-    <SourceType name= "GFDRS" enabled = "1" >
+    <SourceType name= "GFDRS" enabled = "0" >
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>0</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
@@ -186,6 +189,7 @@ and open the template in the editor.
         <FieldValueLength>8192</FieldValueLength>
         <EnabledComponentHash>1</EnabledComponentHash>
         <!--comma separated KDFFieldData filters, case sensitive-->
+        <!--startTimestamp,endTimestamp-->
         <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units,startTimestamp,endTimestamp,connectTimeout,portNumber,queryTimeout,queryType,networkError,hostName</FieldFilter>
         <!--if enabled, the file name will be added in the unit level doc, default 0-->
         <AddFileNameInUnit>1</AddFileNameInUnit>
@@ -201,16 +205,16 @@ and open the template in the editor.
         <!--comma separated node types, PinMeasure , StructureMeasure,Evaluation-->
         <!--Evaluation has not result, and it inherit the test level result-->
         <!--if skil a Node, it means all the child nodes will be ignored too-->
-        <LogFailOnlyNodeSelector>PinMeasure</LogFailOnlyNodeSelector>
+        <LogFailOnlyNodeSelector></LogFailOnlyNodeSelector>
         
         <!--only log fail for those base class in the filter, it only works on Test Type child node-->
         <!--RINGOSC , CONTINUITY , HSIO ,IOSPEC ,PWRDOMAIN,PLL,TCC,SCAN,SETUPINFO,PSSHORTS,PSCURRENT,FUSE,DIODE,MISCIO,CREST,DATARIVER,JTAG,MBIST,EVV,DIECRACKMON,COMPONENT-->
-        <LogFailOnlyBaseClassSelector>CONTINUITY</LogFailOnlyBaseClassSelector>
+        <LogFailOnlyBaseClassSelector></LogFailOnlyBaseClassSelector>
     </SourceType>
         
     <!--HG00058.1.1_6310_H800D0007101504_SLT_AXFNCP_DS2000DBABC01_20180823_052611_suzamdaslt086_006_MAIN.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
-    <SourceType name= "SLT" enabled = "1" >
+    <SourceType name= "SLT" enabled = "0" >
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>0</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
@@ -280,7 +284,7 @@ and open the template in the editor.
         <!--default the base and sub class always log in the test type node, case sensitive-->
         <SkipTestClass>1</SkipTestClass>
         <!--this is only for no-slt-->
-        <AddFileNameInUnit>0</AddFileNameInUnit>
+        <AddFileNameInUnit>1</AddFileNameInUnit>
         
         <!--filter and selector for test desc field, case sensitive-->
         <TestDescFieldFilter>paramRefPtr</TestDescFieldFilter>
