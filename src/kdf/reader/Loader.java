@@ -75,7 +75,7 @@ public
 	private
 		String flowContextField = null;
 	private
-		String testResultField = null;
+		String testResultFieldValue = null;
 	private
 		String subBaseClassField = null;
 	private
@@ -804,7 +804,7 @@ public
 				this.nodeHead = testItemHeadStr;
 //				this.nodeHead = "unit_no=" + unitNo;
 				flowContextField = "";
-				testResultField = "";
+				testResultFieldValue = "";
 				subBaseClassField = "";
 				comHashValue = "";
 				String nodeKVString = printNodeInfo(item, 0);
@@ -1240,7 +1240,7 @@ public
 			testCntInFlow++;
 			subBaseClassField = "";
 			this.comHashValue = "";
-			this.testResultField = "";
+			this.testResultFieldValue = "";
 
 			String idClass = node.get("testDescId").toString();
 			if (idClass != null && this.testDescRefs.containsKey(idClass)) {
@@ -1404,9 +1404,9 @@ public
 		String endTimeField = this.getFieldKVStr(node, "endTimestamp", "endTimestamp");
 		String alarmField = this.getFieldKVStr(node, "alarm", "alarm");
 		
-		this.testResultField = testResultField;
 		if (!testResultField.isEmpty()) {
 			value += "," + testResultField;
+			this.testResultFieldValue = testResultField;
 		}
 		if (!this.getFormat().getFieldFiters().contains("startTimestamp")) {
 			if (!startTimeField.isEmpty()) {
@@ -1475,7 +1475,7 @@ public
 			}
 
 			if (nodeType.equals(KdfTypes.KDF_RT_EVALUATION)) {
-				value += "," + this.testResultField;
+				value += "," + this.testResultFieldValue;
 			}
 			if (!this.subBaseClassField.isEmpty()) {
 				value += this.subBaseClassField;
