@@ -58,5 +58,9 @@ public
 		String HardBinDesc = "HBinDesc";
 	final static
 		String BinType = "BinType";
+	final static
+		String Pin= "Pin";
+	final static
+		String Pattern = "Pattern";
 
 }
