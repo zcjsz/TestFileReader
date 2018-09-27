@@ -364,7 +364,7 @@ public
 			+ "," + FieldType.KdfMonth + "=" + this.kdfMonth
 			+ "," + FieldType.KdfDate + "=" + this.kdfDate
 			+ "," + FieldType.TransferTime + "=" + this.transferTime
-			+ "," + FieldType.DataType + "=" + this.getFormat().getDataType()
+//			+ "," + FieldType.DataType + "=" + this.getFormat().getDataType()
 			+ "," + FieldType.DocCnt + "=" + this.fileLevelDocCnt
 			+ "," + FieldType.FileTime + "=" + this.formatTimeStr(this.fileOpenTime)
 			;
@@ -904,9 +904,9 @@ public
 	private
 		boolean writeFileKVString() {
 		// IO error and exit for this file
-		if(!this.getFormat().getDataType().equals(Config.DataTypes.SLT)) {
-			return true;
-		}
+//		if(this.getFormat().getDataType().equals(Config.DataTypes.SLT)) {
+//			return true;
+//		}
 		if (!this.writeKVString(this.getAteFileKVStr())) {
 			this.failType = Config.FailureCase.IOError;
 			this.logIoErrorToES("FailWriteLogFile");
