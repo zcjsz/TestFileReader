@@ -763,7 +763,7 @@ public
 			 */
 			String unitKVStr = lotHeadStr + format.getUnitDocKVString() + getSlaveNodeKVString();
 
-			if (this.getFormat().isAddFileName() && (!this.getFormat().getDataType().equals(Config.DataTypes.SLT))) {
+			if (this.getFormat().isAddFileName()) {
 				unitKVStr += this.getFileNameKVStr();
 			}
 
@@ -794,6 +794,7 @@ public
 				System.out.printf("Unit#%d KV String:\n%s\n", unitNo, unitKVStr);
 			}
 			this.unitLevelDocCnt = 1;
+			this.fileLevelDocCnt = 1;
 
 			for (Node item : unit.getChildren()) {
 
