@@ -113,6 +113,8 @@ public
 		int fileLevelDocCnt = 0;
 	private
 		ArrayList<String> allFields = new ArrayList();
+	private
+		String baseClass = null;
 
 	public
 		Loader() {
@@ -1233,18 +1235,20 @@ public
 		if (nodeName.equals(KdfTypes.KDF_RT_FLOW)) {
 			this.flowContextField = "";
 			isFlow = true;
+			baseClass = null;
 		}
 
 		if (nodeName.equals(KdfTypes.KDF_RT_TEST)) {
 			// reset all the test related items here
-			testCntInFlow++;
-			subBaseClassField = "";
+			this.baseClass = null;
+			this.testCntInFlow++;
+			this.subBaseClassField = "";
 			this.comHashValue = "";
 			this.testResultFieldValue = "";
 
 			String idClass = node.get("testDescId").toString();
 			if (idClass != null && this.testDescRefs.containsKey(idClass)) {
-				subBaseClassField = this.testDescRefs.get(idClass).getValue();
+				this.subBaseClassField = this.testDescRefs.get(idClass).getValue();
 
 				// return immediately if validate failed
 				if (!validateBaseSubClass(idClass)) {
@@ -1260,8 +1264,8 @@ public
 
 		}
 
-		if (!validateNodeType(nodeName)) {
-			// skip those nodes
+		if (!validateNodeType(nodeName, node)) {
+//			 skip those nodes
 			if (this.isDebugMode()) {
 				System.out.println("Skip this Node Type: " + node);
 			}
@@ -1308,17 +1312,38 @@ public
 
 	/**
 	 * method to check if the logging is disabled to this node
+	 * validate the node name filter
+	 * validate the log fail filter
 	 *
 	 * @return
 	 */
 	private
-		boolean validateNodeType(String nodeType) {
+		boolean validateNodeType(String nodeType, Node node) {
 		if ((!this.getFormat().getNodeTypeFilters().isEmpty()) && this.getFormat().getNodeTypeFilters().contains(nodeType)) {
 			return false;
 		}
 		if ((!this.getFormat().getNodeTypeSelectors().isEmpty()) && (!this.getFormat().getNodeTypeSelectors().contains(nodeType))) {
 			return false;
 		}
+		
+		/**
+		 * log fail filters
+		 * A: fail node type selector
+		 * B: base calss selector
+		 */
+		if(this.getFormat().getLogOnlyFailNodes().contains(nodeType)
+			&& this.getFormat().getLogFailOnlyBaseClasses().contains(this.baseClass)) {
+			KDFFieldData fieldData = node.get("result");
+			if (fieldData == null) {
+				return true;
+			}
+			String fieldValue = fieldData.toString().trim();
+			if(this.isDebugMode()) {
+				System.out.println();
+			}
+			return fieldValue.equals("0");
+		}
+		
 		return true;
 	}
 
@@ -1339,6 +1364,7 @@ public
 		
 		String subClassName = this.testDescRefs.get(idClass).getSubClass();
 		String baseClassName = this.testDescRefs.get(idClass).getBaseClass();
+		this.baseClass = baseClassName;
 
 		// validate the base class first
 		if (!this.getFormat().getBaseClassFilters().isEmpty()) {

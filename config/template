@@ -1,0 +1,349 @@
+# Explain keyword
+
+# index:
+# Should the field be searchable? Accepts true (default) and false. 
+
+# eager_global_ordinals:
+# Should global ordinals be loaded eagerly on refresh? Accepts true or false (default). Enabling this is a good idea on fields that are frequently used for terms aggregations. 
+
+# ignore_above:
+# Do not index any string longer than this value. Defaults to 2147483647 so that all values would be accepted.Please however note that default dynamic mapping rules create a sub keyword field that overrides this default by setting ignore_above: 256. 
+
+# index_options:
+# What information should be stored in the index, for scoring purposes. Defaults to docs but can also be set to freqs to take term frequency into account when computing scores. 
+
+# norms:
+# Whether field-length should be taken into account when scoring queries. Accepts true or false (default)
+
+# those are all string type  
+# context, units, structureName, componentHash, bitValues, segmentName, expression, name, description, failingArrayName, hostName, queriedTests, results, status
+
+
+# number type list
+# BinType, DocCnt, GrossTime, HBin, KDFDate, KDFMonth ,SBin,Site,TestTime ,TransferTime ,UnitCnt,WaferNumber,X,Y,alarm,result,value 
+
+#  long: A signed 64-bit integer with a minimum value of -263 and a maximum value of 263-1
+#  integer: A signed 32-bit integer with a minimum value of -231 and a maximum value of 231-1
+#  short :A signed 16-bit integer with a minimum value of -32,768 and a maximum value of 32,767. 
+#  byte: A signed 8-bit integer with a minimum value of -128 and a maximum value of 127.
+#  double: A double-precision 64-bit IEEE 754 floating point number, restricted to finite values
+#  float: A single-precision 32-bit IEEE 754 floating point number, restricted to finite values  
+#  half_float: A half-precision 16-bit IEEE 754 floating point number, restricted to finite values. 
+#  scaled_float: A finite floating point number that is backed by a long, scaled by a fixed double scaling factor. 
+
+PUT _template/my-test
+{
+    "order": 0,
+    "version": 1001,
+    "index_patterns": [
+      "a-wafer-sort-test-*",
+      "a-slt-test-*",
+      "a-ft-test-*"
+    ],
+    "settings": {
+      "index": {
+        "number_of_shards": "3",
+        "number_of_replicas": "2",
+        "refresh_interval": "30s"
+      }
+    },
+    "mappings": {
+      "doc": {
+        "date_detection": false,
+        "numeric_detection": true,
+        "dynamic": true,
+        "properties": {
+          "@timestamp": {
+            "type": "date"
+          },
+          "@version": {
+            "type": "keyword"
+          },
+          
+          "FileTime": {
+            "type": "date"
+          },
+          "DoneTime": {
+            "type": "date"
+          },
+          "EndTestTime": {
+            "type": "date"
+          },
+          "StartTestTime": {
+            "type": "date"
+          },
+          "LotStartTime": {
+            "type": "date"
+          },
+          "LotEndTime": {
+            "type": "date"
+          },
+          
+          
+          
+          "context": {
+            "type": "keyword"
+          },
+          "Device" : {
+            "type": "keyword"
+          },
+          "DataType": {
+            "type": "keyword"
+          },
+       
+          "HBinDesc": {
+            "type": "keyword"
+          },
+          "KDFName": {
+            "type": "keyword"
+          },
+          "MfgStep": {
+            "type": "keyword"
+          },
+          "Operation": {
+            "type": "keyword"
+          },
+          "Program": {
+            "type": "keyword"
+          },
+          "ProgramVersion": {
+            "type": "keyword"
+          },
+          "SBinDesc": {
+            "type": "keyword"
+          },
+          "TestCode": {
+            "type": "keyword"
+          },
+          "Tester": {
+            "type": "keyword"
+          },
+          "UnitId": {
+            "type": "keyword"
+          },
+          "generatedTestName": {
+            "type": "keyword"
+          },
+          "SBin": {
+            "type": "keyword"
+          },
+          "HBin": {
+            "type": "keyword"
+          },
+          "Site": {
+            "type": "keyword"
+          },
+          
+          "TestTime": {
+            "type": "float",
+            "index": false
+          },
+          "value": {
+            "type": "float",
+            "index": false
+          },
+          
+          
+          "BinType": {
+            "type": "byte"
+          },
+          "WaferNumber": {
+            "type": "byte"
+          },
+          "X": {
+            "type": "byte"
+          },
+          "Y": {
+            "type": "byte"
+          },
+          
+          
+          
+          "KDFDate": {
+            "type": "integer"
+          },
+          "KDFMonth": {
+            "type": "integer"
+          },
+          
+          "DocCnt": {
+            "type": "integer"
+            , "index": false
+          },
+          "GrossTime": {
+            "type": "integer"
+            , "index": false
+          },
+          "UnitCnt": {
+            "type": "short"
+            , "index": false
+          }
+          
+       
+         
+        },
+        "dynamic_templates": [
+          {
+            "byte": {
+              "match": "timeout,alarm,result",
+              "mapping": {
+                "type": "boolean"
+              }
+            }
+          },
+          {
+            "date": {
+              "match": "TransferTime,endTimestamp,startTimestamp",
+              "mapping": {
+                "type": "date"
+              }
+            }
+          },
+          {
+            "keyword": {
+              "match": "WaferLot,LotNumber,DIE_1,DIE_2,DIE_3,units,segmentName,expression,name,failingArrayName,description,structureName,LotNumber",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "text": {
+                "match": "componentHash,bitValues",
+                "mapping": {
+                  "type": "text"
+               }
+            }
+          },
+          {
+          "integers": {
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+         },
+         {
+          "float": {
+            "match_mapping_type": "double",
+            "mapping": {
+              "type": "float"
+            }
+          }
+         },
+         {
+            "string_fields": {
+              "match_mapping_type": "string",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "aliases": {}
+}
+
+PUT _ingest/pipeline/ft-test
+{
+ "description": "to parse the filebeat message",
+    "processors": [
+      {
+        "kv": {
+          "field": "message",
+          "field_split": ",",
+          "value_split": "="
+        }
+      },
+      {
+        "remove": {
+          "field": [
+            "message",
+            "source",
+            "offset",
+            "prospector",
+            "beat"
+          ]
+        }
+      },
+      {
+        "date_index_name": {
+          "field": "FileTime",
+          "index_name_prefix": "ft-test-",
+          "date_rounding": "M"
+        }
+      }
+    ]
+  
+}
+
+
+  
+PUT _ingest/pipeline/wafer-sort-test
+{
+ "description": "to parse the filebeat message",
+    "processors": [
+      {
+        "kv": {
+          "field": "message",
+          "field_split": ",",
+          "value_split": "="
+        }
+      },
+      {
+        "remove": {
+          "field": [
+            "message",
+            "source",
+            "offset",
+            "prospector",
+            "beat"
+          ]
+        }
+      },
+      {
+        "date_index_name": {
+          "field": "FileTime",
+          "index_name_prefix": "wafer-sort-test-",
+          "date_rounding": "M"
+        }
+      }
+    ]
+  
+}
+
+
+  
+PUT _ingest/pipeline/slt-test
+{
+ "description": "to parse the filebeat message",
+    "processors": [
+      {
+        "kv": {
+          "field": "message",
+          "field_split": ",",
+          "value_split": "="
+        }
+      },
+      {
+        "remove": {
+          "field": [
+            "message",
+            "source",
+            "offset",
+            "prospector",
+            "beat"
+          ]
+        }
+      },
+      {
+        "date_index_name": {
+          "field": "FileTime",
+          "index_name_prefix": "slt-test-",
+          "date_rounding": "M"
+        }
+      }
+    ]
+  
+}

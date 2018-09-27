@@ -21,6 +21,8 @@ public
 	class DataFormat {
 	
 	private
+		ArrayList<String> logFailOnlyBaseClasses = new ArrayList();
+	private
 		ArrayList<String> logOnlyFailNodes = new ArrayList();
 	private
 		ArrayList<String> testDescFieldFilters = new ArrayList();
@@ -176,11 +178,17 @@ public
 					case "AddFileNameInUnit":
 						this.addFileName = fieldValue.equals("1");
 						break;
-					case "LogFailOnlyNode":
+					case "LogFailOnlyNodeSelector":
 						for (String name : fieldValue.split(",")) {
 							this.logOnlyFailNodes.add(name.trim());
 						}
 						break;
+					case "LogFailOnlyBaseClassSelector":
+						for (String name : fieldValue.split(",")) {
+							this.logFailOnlyBaseClasses.add(name.trim());
+						}
+						break;	
+						
 					case "Factory":
 						this.factory = fieldValue;
 						break;
@@ -949,6 +957,11 @@ public
 	public
 	ArrayList<String> getLogOnlyFailNodes() {
 		return logOnlyFailNodes;
+	}
+
+	public
+	ArrayList<String> getLogFailOnlyBaseClasses() {
+		return logFailOnlyBaseClasses;
 	}
 	
 	
