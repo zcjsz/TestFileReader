@@ -794,7 +794,6 @@ public
 				System.out.printf("Unit#%d KV String:\n%s\n", unitNo, unitKVStr);
 			}
 			this.unitLevelDocCnt = 1;
-			this.fileLevelDocCnt = 1;
 
 			for (Node item : unit.getChildren()) {
 
@@ -818,6 +817,7 @@ public
 				}
 
 			}
+			this.fileLevelDocCnt += this.unitLevelDocCnt;
 			
 			// IO error and exit for this file
 			if (!this.writeKVString(dataContent)) {
@@ -1279,7 +1279,6 @@ public
 			String formatNodeString = space + formateNode(node) + "\n";
 			if (validateForamtString(formatNodeString)) {
 				formatString += formatNodeString;
-				this.fileLevelDocCnt ++;
 				this.unitLevelDocCnt++;
 			}
 			else {
