@@ -54,6 +54,14 @@ public
 		int endIndex = -1;
 	private
 		boolean unitIdNode = false;
+	private
+		boolean waferNumberNode = false;
+	private
+		boolean waferLotNode = false;
+	private
+		boolean xNode = false;
+	private
+		boolean yNode = false;
 
 	/**
 	 *
@@ -343,6 +351,52 @@ public
 	public
 	String getTimeLongValue() {
 		return timeLongValue;
+	}
+	
+
+	public
+	void setyNode(boolean yNode) {
+		this.yNode = yNode;
+	}
+
+	public
+	void setxNode(boolean xNode) {
+		this.xNode = xNode;
+	}
+
+	public
+	void setWaferNumberNode(boolean waferNumberNode) {
+		this.waferNumberNode = waferNumberNode;
+	}
+
+	public
+	void setWaferLotNode(boolean waferLotNode) {
+		this.waferLotNode = waferLotNode;
+	}
+
+	public
+	void setTimeLongValue(String timeLongValue) {
+		this.timeLongValue = timeLongValue;
+	}
+
+	public
+	boolean isyNode() {
+		return yNode;
+	}
+
+	public
+	boolean isxNode() {
+		return xNode;
+	}
+
+	public
+	boolean isWaferNumberNode() {
+		return waferNumberNode;
+	}
+
+	public
+	boolean isWaferLotNode() {
+		return waferLotNode;
 	}
 	public static
 		void main(String[] args) {
