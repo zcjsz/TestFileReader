@@ -62,5 +62,12 @@ public
 		String Pin= "Pin";
 	final static
 		String Pattern = "Pattern";
+	final static
+		String DieType = "DieType";
+	final static
+		String MasterDie = "MasterDie";
+	final static
+		String MasterDieId =  "MasterDieId";
+	
 
 }
