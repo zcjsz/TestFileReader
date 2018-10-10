@@ -87,14 +87,14 @@ and open the template in the editor.
         
         <!--comma separated Node Type filters, , case sensitive-->
         <!--ULSD,PinMeasure,Evaluation,StructureMeasure,Flow,Test,BitString,PatternFailInfo,PatternPinFail,PatternResult,Unit,File-->
-        <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
+        <!--NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter-->
         <!--comma separated Node Type selectors-->
         <NodeTypeSelector></NodeTypeSelector>
         
         <FieldValueLength>8192</FieldValueLength>
         <EnabledComponentHash>1</EnabledComponentHash>
         <!--comma separated KDFFieldData filters, case sensitive-->
-        <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units,startTimestamp,endTimestamp,connectTimeout,portNumber,queryTimeout,queryType,networkError,hostName</FieldFilter>
+        <!--FieldFilter>lowSpecLimit,highSpecLimit,sequence,units,startTimestamp,endTimestamp,connectTimeout,portNumber,queryTimeout,queryType,networkError,hostName</FieldFilter-->
         <!--if enabled, the file name will be added in the unit level doc, default 0-->
         <AddFileNameInUnit>1</AddFileNameInUnit>
         
@@ -103,7 +103,7 @@ and open the template in the editor.
         <TestDescFieldSelector>baseClass,subClass</TestDescFieldSelector>
         
         <!--flow type node, flow context filters, full name in case any mistakes-->
-        <FlowContextFilter>ImportVariables,TPInitialize</FlowContextFilter>
+        <FlowContextFilter></FlowContextFilter>
         
         <!--this filter only apply to below kdf Node Types which extend the Test Type node-->
         <!--comma separated node types, PinMeasure , StructureMeasure,Evaluation-->
@@ -114,12 +114,14 @@ and open the template in the editor.
         <!--only log fail for those base class in the filter, it only works on Test Type child node-->
         <!--HSIO,PWRDOMAIN,SETUPINFO,SCAN,FUSE,PSSHORTS,PSCURRENT,DIODE,CONTINUITY,DIECRACKMON,CREST,ULSDQUERY,SETUP,COMPONENT,DATARIVER,UNITINFO-->
         <LogFailOnlyBaseClassSelector></LogFailOnlyBaseClassSelector>
+        <!--slave unit id will append to test level doc if enabled, default false-->
+        <AppendSlaveUnitId2Test>1</AppendSlaveUnitId2Test>
     </SourceType>
     
     
     <!--GFDRS_S6310A1AB0PG_P_ATC607_H800S.00_WS1_BBIYG148MVB1_1_-5_180905_051627.kdf.20190909090909-->
     <!--NEVER try to change the SourceType name here-->
-    <SourceType name= "GFDRS" enabled = "0" >
+    <SourceType name= "GFDRS" enabled = "1" >
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>0</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
@@ -181,7 +183,7 @@ and open the template in the editor.
         <SubClasSelector></SubClasSelector>
         <!--comma separated Node Type filters, case sensitive-->
         <!--PinMeasure,StructureMeasure,Flow,Test,Evaluation,BitString,PatternFailInfo,PatternPinFail,PatternResult,BistFailArray-->
-        <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
+        <!--NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter-->
         <!--comma separated Node Type selectors, case sensitive-->
         <NodeTypeSelector></NodeTypeSelector>
         
@@ -190,7 +192,7 @@ and open the template in the editor.
         <EnabledComponentHash>1</EnabledComponentHash>
         <!--comma separated KDFFieldData filters, case sensitive-->
         <!--startTimestamp,endTimestamp-->
-        <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units,startTimestamp,endTimestamp,connectTimeout,portNumber,queryTimeout,queryType,networkError,hostName</FieldFilter>
+        <!--FieldFilter>lowSpecLimit,highSpecLimit,sequence,units,startTimestamp,endTimestamp,connectTimeout,portNumber,queryTimeout,queryType,networkError,hostName</FieldFilter-->
         <!--if enabled, the file name will be added in the unit level doc, default 0-->
         <AddFileNameInUnit>1</AddFileNameInUnit>
         
@@ -214,7 +216,7 @@ and open the template in the editor.
         
     <!--HG00058.1.1_6310_H800D0007101504_SLT_AXFNCP_DS2000DBABC01_20180823_052611_suzamdaslt086_006_MAIN.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
-    <SourceType name= "SLT" enabled = "0" >
+    <SourceType name= "SLT" enabled = "1" >
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>0</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
@@ -292,6 +294,9 @@ and open the template in the editor.
         
         <!--flow type node, flow context filters, full name in case any mistakes-->
         <FlowContextFilter></FlowContextFilter>
+        
+        <!--slave unit id will append to test level doc if enabled, default false-->
+        <AppendSlaveUnitId2Test>1</AppendSlaveUnitId2Test>
     </SourceType>
         
         
