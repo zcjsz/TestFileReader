@@ -21,6 +21,8 @@ public
 	class DataFormat {
 	
 	private
+		boolean appendSlaveUnitId2Test = false;
+	private
 		ArrayList<String> logFailOnlyBaseClasses = new ArrayList();
 	private
 		ArrayList<String> logOnlyFailNodes = new ArrayList();
@@ -164,6 +166,9 @@ public
 					case "EnabledComponentHash":
 						this.enabledComponentHash = fieldValue.equals("1");
 						break;
+					case "AppendSlaveUnitId2Test":
+						this.appendSlaveUnitId2Test = fieldValue.equals("1");
+						break;	
 						
 					case "GenerateMappingFile":
 						this.generateMappingFile = fieldValue.equals("1");
@@ -613,12 +618,49 @@ public
 
 		return value;
 	}
-
+		
 	public
 		String getUnitDocKVString() {
 		String value = "," + FieldType.Type + "=" + FieldType.Unit;
 		for (XmlNode node : this.getUnit().getNodes().values()) {
 			if (!node.isEnabledLog()) {
+				continue;
+			}
+			if (node.getValue() != null && (!node.getValue().isEmpty())) {
+				value += "," + node.toKVString();
+			}
+		}
+		if (!this.ignoreEmptyValueField) {
+			for (XmlNode node : this.lotHead.values()) {
+				if (!node.isEnabledLog()) {
+					continue;
+				}
+				if (node.getValue() == null || node.getValue().isEmpty()) {
+					value += "," + node.toKVString();
+				}
+			}
+		}
+		value += "," + FieldType.SoftBinDesc + "=" + this.getUnit().getSoftBinDescValue();
+		value += "," + FieldType.HardBinDesc + "=" + this.getUnit().getHardBinDescValue();
+		value += "," + FieldType.BinType + "=" + this.getUnit().getFlagIntValue();
+		value += "," + FieldType.DieType + "=" + FieldType.MasterDie;
+
+		return value;
+
+	}
+	/**
+	 * skip all the master die info
+	 * @return 
+	 */
+	public
+		String getSlaveUnitDocKVString() {
+		String value = "," + FieldType.Type + "=" + FieldType.Unit;
+		for (XmlNode node : this.getUnit().getNodes().values()) {
+			if (!node.isEnabledLog()) {
+				continue;
+			}
+			
+			if(node.isUnitIdNode() || node.isWaferNumberNode() || node.isWaferLotNode() || node.isxNode() || node.isyNode()) {
 				continue;
 			}
 			if (node.getValue() != null && (!node.getValue().isEmpty())) {
@@ -962,6 +1004,11 @@ public
 	public
 	ArrayList<String> getLogFailOnlyBaseClasses() {
 		return logFailOnlyBaseClasses;
+	}
+
+	public
+	boolean isAppendSlaveUnitId2Test() {
+		return appendSlaveUnitId2Test;
 	}
 	
 	
