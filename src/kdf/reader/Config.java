@@ -491,14 +491,17 @@ public
 						else if (isWaferNumber) {
 							dataFormat.getUnit().setWaferNumberNode(xmlNode);
 							setUpIndex(xmlNode, subString);
+							xmlNode.setWaferNumberNode(true);
 						}
 						else if (isXCoord) {
 							dataFormat.getUnit().setxCoordNode(xmlNode);
 							setUpIndex(xmlNode, subString);
+							xmlNode.setxNode(true);
 						}
 						else if (isYCoord) {
 							dataFormat.getUnit().setyCoordNode(xmlNode);
 							setUpIndex(xmlNode, subString);
+							xmlNode.setyNode(true);
 						}
 						else if (isHardBin) {
 							dataFormat.getUnit().setHardBinNode(xmlNode);
@@ -523,6 +526,7 @@ public
 							else {
 								dataFormat.getUnit().setWaferLotNode(xmlNode);
 								setUpIndex(xmlNode, subString);
+								xmlNode.setWaferLotNode(true);
 							}
 						}
 						else {
