@@ -115,6 +115,8 @@ public
 		ArrayList<String> allFields = new ArrayList();
 	private
 		String baseClass = null;
+	private
+		int slaveUnitCnt = 0;
 
 	public
 		Loader() {
@@ -741,6 +743,7 @@ public
 		StringBuilder dataContent = new StringBuilder();
 		for (Node unit : units) {
 			unitNo++;
+			slaveUnitCnt = 0;
 			if (unitNo > 800) {
 				break;
 			}
@@ -762,16 +765,18 @@ public
 			 * kdf file name in the unit level doc for ate only.
 			 */
 			String unitKVStr = lotHeadStr + format.getUnitDocKVString() + getSlaveNodeKVString();
+			String slaveKVStr = this.getSlaveUnitKVString(lotHeadStr + format.getSlaveUnitDocKVString());
 
 			if (this.getFormat().isAddFileName()) {
 				unitKVStr += this.getFileNameKVStr();
 			}
 
-			if (validateForamtString(unitKVStr)) {
-				dataContent.append(unitKVStr).append("\n");
+			if (validateFullForamtString(unitKVStr)) {
+				dataContent.append(slaveKVStr + unitKVStr).append("\n");
+				
 			}
 			else {
-				System.err.println("Error Unit Doc: \n" + unitKVStr);
+				System.err.println("Error Unit Doc: \n" + slaveKVStr + unitKVStr);
 				System.err.flush();
 				return false;
 			}
@@ -784,7 +789,10 @@ public
 			 * <SlaveNodeKVString> which contains the slave die info for the
 			 * whole part
 			 */
-			String testItemHeadStr = lotHeadStr + format.getUnitHeadTestKVStr() + getSlaveNodeKVString();
+			String testItemHeadStr = lotHeadStr + format.getUnitHeadTestKVStr();
+			if(this.getFormat().isAppendSlaveUnitId2Test()) {
+				testItemHeadStr += getSlaveNodeKVString();
+			}
 
 			/**
 			 * print and log unit data
@@ -793,7 +801,7 @@ public
 //				format.printUnitInfo();
 				System.out.printf("Unit#%d KV String:\n%s\n", unitNo, unitKVStr);
 			}
-			this.unitLevelDocCnt = 1;
+			this.unitLevelDocCnt = this.slaveUnitCnt + 1;
 
 			for (Node item : unit.getChildren()) {
 
@@ -1276,9 +1284,10 @@ public
 			/**
 			 * handle the current node here
 			 */
-			String formatNodeString = space + formateNode(node) + "\n";
-			if (validateForamtString(formatNodeString)) {
-				formatString += formatNodeString;
+			
+			String formatNodeString = formateNode(node) + "\n";
+			if (validatePartForamtString(formatNodeString)) {
+				formatString += space + this.nodeHead + formatNodeString;
 				this.unitLevelDocCnt++;
 			}
 			else {
@@ -1406,15 +1415,48 @@ public
 	 * @return
 	 */
 	private
-		boolean validateForamtString(String formatString) {
+		boolean validatePartForamtString(String formatString) {
 		int length = formatString.length();
 		int commaCnt = 0;
 		int equalityCnt = 0;
 		while (length-- > 0) {
-			if (formatString.charAt(length) == ',') {
+			char chr = formatString.charAt(length);
+//			if(chr == '\n') {
+//				System.out.println("Error: bad format string which contains LF," + formatString);
+//				return false;
+//			}
+			if (chr == ',') {
 				commaCnt++;
 			}
-			else if (formatString.charAt(length) == '=') {
+			else if (chr == '=') {
+				equalityCnt++;
+			}
+		}
+		return (commaCnt == equalityCnt);
+
+	}
+	/**
+	 * validate a string return false if this string contains char ',' or '='
+	 * else return true
+	 *
+	 * @param formatString
+	 * @return
+	 */
+	private
+		boolean validateFullForamtString(String formatString) {
+		int length = formatString.length();
+		int commaCnt = 0;
+		int equalityCnt = 0;
+		while (length-- > 0) {
+			char chr = formatString.charAt(length);
+//			if(chr == '\n') {
+//				System.out.println("Error: bad format string which contains LF," + formatString);
+//				return false;
+//			}
+			if (chr == ',') {
+				commaCnt++;
+			}
+			else if (chr == '=') {
 				equalityCnt++;
 			}
 		}
@@ -1490,12 +1532,6 @@ public
 		String value = "";
 		String nodeType = node.getName().trim();
 		
-		
-			//add head for some nodes
-			if (!this.nodeHead.isEmpty()) {
-				value += this.nodeHead;
-			}
-
 			if (!this.flowContextField.isEmpty()) {
 				value += "," + this.flowContextField;
 			}
@@ -1708,6 +1744,54 @@ public
 
 				if (componentHash != null && componentHash.getComName() != null && (!componentHash.getComName().isEmpty())) {
 					value += "," + componentHash.getComName() + "=" + slaveUnit.getUnitId();
+				}
+			}
+		}
+		return value;
+	}
+	private
+		String getSlaveUnitKVString(String lotHeadStr) {
+		String value = "";
+		if (this.getFormat().getDataType().equals(Config.DataTypes.WaferSort)) {
+			return value;
+		}
+		for (SlaveUnit slaveUnit : this.getFormat().getUnit().getSlaveUnits()) {
+			if (slaveUnit.getComHash() != null) {
+				ComponentHash componentHash = this.comHashRefs.get(slaveUnit.getComHash());
+
+				if (componentHash != null && componentHash.getComName() != null && (!componentHash.getComName().isEmpty())) {
+					//value += "," + componentHash.getComName() + "=" + slaveUnit.getUnitId();
+					String tempStr = "";
+					XmlNode waferNumberNode = this.getFormat().getUnit().getWaferNumberNode();
+					XmlNode waferLotNode = this.getFormat().getUnit().getWaferLotNode();
+					XmlNode xNode = this.getFormat().getUnit().getxCoordNode();
+					XmlNode yNode = this.getFormat().getUnit().getyCoordNode();
+					tempStr += "," + FieldType.Type + "=" + FieldType.Unit;
+					tempStr += "," + this.getFormat().getUnit().getUnitIdNode().getName() + "=" + slaveUnit.getUnitId();
+					tempStr += "," + FieldType.DieType + "=" + componentHash.getComName();
+					String masterDieId = this.getFormat().getUnit().getUnitIdNode().getValue();
+					if (!masterDieId.isEmpty()) {
+						tempStr += "," + FieldType.MasterDieId + "=" + this.getFormat().getUnit().getUnitIdNode().getValue();
+					}
+						
+					if (slaveUnit.getUnitId().length() > this.getFormat().getUnit().getyCoordNode().getEndIndex()) {
+						tempStr += "," + waferNumberNode.getName() + "=" 
+							+ (Integer.valueOf(slaveUnit.getUnitId().substring(waferNumberNode.getStartIndex(), waferNumberNode.getEndIndex())).toString());
+						tempStr += "," + xNode.getName() + "="
+							+ (Integer.valueOf(slaveUnit.getUnitId().substring(xNode.getStartIndex(), xNode.getEndIndex())).toString());
+						tempStr += "," + yNode.getName() + "="
+							+ (Integer.valueOf(slaveUnit.getUnitId().substring(yNode.getStartIndex(), yNode.getEndIndex())).toString());
+						tempStr += "," + waferLotNode.getName() + "="
+							+ slaveUnit.getUnitId().substring(waferLotNode.getStartIndex(), waferLotNode.getEndIndex())
+							+ "."
+							+ slaveUnit.getUnitId().substring(waferLotNode.getEndIndex(), waferLotNode.getEndIndex() + 2);
+					}
+					tempStr += "\n";
+////					if(validatePartForamtString(tempStr)) {
+						value += lotHeadStr + tempStr;
+						slaveUnitCnt ++;
+//					}
+					
 				}
 			}
 		}
