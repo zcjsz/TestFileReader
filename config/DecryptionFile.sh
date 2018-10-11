@@ -226,13 +226,12 @@ move_smap()
     for file in ./*
     do
       if [ -d $file ]; then
-        IFS=$'\n'
-        OLDIFS="$IFS"
+        removeXls="rm -f ./$file/*xlsx"
+        $removeXls
         for kdfFile in $(ls ./$file)
           do
-            IFS=$OLDIFS
             fullKDF="./$file/$kdfFile"
-            echo $fullKDF
+            #echo $fullKDF
             # move kdf file to destination
             # check if the lot dir exist
             lotPath="$DestPath$SMAP_PATH$file/"
