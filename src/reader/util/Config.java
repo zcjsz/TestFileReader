@@ -3,7 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package reader.kdf;
+package reader.util;
+
 
 import java.io.File;
 import java.util.ArrayList;
@@ -17,6 +18,8 @@ import org.dom4j.Element;
 import org.dom4j.ElementHandler;
 import org.dom4j.ElementPath;
 import org.dom4j.io.SAXReader;
+import reader.kdf.DataFormat;
+import reader.kdf.XmlNode;
 
 /**
  *
@@ -36,30 +39,30 @@ public
 	public static
 		HashMap<String, DataFormat> dataFormats = new HashMap();
 
-	static
+	public static
 		enum DataTypes {
 		WaferSort, ATE, SLT
 	};
 
-	static
+	public static
 		enum FailureCase {
 		BadFormat, OpenFailure, Exception, RepeatKDF,IOError
 	};
 
-	static
+	public static
 		enum KdfRename {
 		exception, done, skip, openErr
 	}
-	static
+	public static
 		enum EventType {
 		KDFDone, KDFRepeat, KDFBadFormat, KDFOpenFailure,IOError
 	}
 
-	static
+	public static
 		String testDescId = null;
-	static
+	public static
 		String baseClass = null;
-	static
+	public static
 		String subClass = null;
 
 	public
