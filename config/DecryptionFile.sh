@@ -28,8 +28,29 @@ if [ ! $# -eq 2 ];then
     exit 1
 fi
 
-SourcePath=$1
-DestPath=$2
+AppPath=`pwd $0`
+
+cd $1
+if [ $? = 0 ]; then
+    SourcePath=`pwd`
+    cd $AppPath
+    if [ $? = 0 ]; then
+        cd $2
+        if [ $? = 0 ]; then
+            DestPath=`pwd`
+        else
+            echo "path $2 doesn't exist"
+            exit 1
+        fi
+    fi
+else
+    echo "path $1 doesn't exist"
+    exit 1
+fi
+
+echo "full app path is $AppPath"
+echo "full source path is $SourcePath"
+echo "full destination path is $DestPath"
 
 change_dir_to_sort()
 {
@@ -164,15 +185,22 @@ move_dis()
           do
             fullKDF="./$file/$kdfFile"
             # move kdf file to destination
-            mvCmd="$Move$fullKDF $DestPath$WAT_PATH$kdfFile.$TIME"
-            $mvCmd
+            # check if the lot dir exist
+            lotPath="$DestPath$WAT_PATH$file/"
+            mkdir -p $lotPath
             if [ $? = 0 ]; then
-              echo "successed to move dis file $kdfFile to $DestPath$WAT_PATH"
+                mvCmd="$Move$fullKDF $lotPath$kdfFile.$TIME"
+                $mvCmd
+                if [ $? = 0 ]; then
+                  echo "successed to move dis file $kdfFile to $lotPath"
+                else
+                  echo "failed to execute command $mvCmd"
+                  echo "failed to move $kdfFile to $lotPath"
+                fi
+                echo""
             else
-              echo "failed to execute command $mvCmd"
-              echo "failed to move $kdfFile to $DestPath$WAT_PATH"
+                echo "failed to mkdir for path: $lotPath"
             fi
-            echo""
           done
       fi
     done
