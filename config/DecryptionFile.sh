@@ -31,6 +31,7 @@ REMOVEFile="rm -f "
 SORT_PATH="/SORT/"
 WAT_PATH="/WAT/"
 SMAP_PATH="/SMAP/"
+ENG_PATH="/EngSORT"
 
 if [ ! $# -eq 2 ];then
     echo $Usage
@@ -68,6 +69,17 @@ echo "full destination path is $DestPath"
 change_dir_to_sort()
 {
     path=$SourcePath$SORT_PATH
+    $ChDir$path
+    if [ $? = 0 ]; then
+      echo `pwd`
+    else
+      exit 1
+    fi
+}
+
+change_dir_to_eng()
+{
+    path=$SourcePath$ENG_PATH
     $ChDir$path
     if [ $? = 0 ]; then
       echo `pwd`
@@ -182,6 +194,29 @@ move_sort_kdf()
             else
               echo "failed to execute command $mvCmd"
               echo "failed to move $kdfFile to $DestPath$SORT_PATH"
+            fi
+            echo ""
+          done
+      fi
+    done
+}
+
+move_eng_kdf()
+{
+    for file in `ls ./`
+    do
+      if [ -d $file ]; then
+        for kdfFile in `ls ./$file | grep .kdf`
+          do
+            fullKDF="./$file/$kdfFile"
+            # move kdf file to destination
+            mvCmd="$Move$fullKDF $DestPath$ENG_PATH$kdfFile.$TIME"
+            $mvCmd
+            if [ $? = 0 ]; then
+              echo "successed to move kdf file $kdfFile to $DestPath$ENG_PATH"
+            else
+              echo "failed to execute command $mvCmd"
+              echo "failed to move $kdfFile to $DestPath$ENG_PATH"
             fi
             echo ""
           done
@@ -304,6 +339,12 @@ clean_up()
 change_dir_to_sort
 decrypt_extract $SORT_PATH
 move_sort_kdf
+remove_rmap
+clean_up
+
+change_dir_to_eng
+decrypt_extract $ENG_PATH
+move_eng_kdf
 remove_rmap
 clean_up
 
