@@ -879,6 +879,112 @@ and open the template in the editor.
             <IsSoftBin>1</IsSoftBin>
         </XmlNode>
     </Unit>
+    <SourceType name= "WAT" enabled = "1" >
+        <Enabled>1</Enabled>
+        <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
+        <ProductionMode>0</ProductionMode>
+        <!--LogToFile means save the kdf raw data in the log file, default 1-->
+        <LogToFile>1</LogToFile>
+        <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
+        <GenerateMappingFile>0</GenerateMappingFile>
+        
+        <Customer>Hygon</Customer>
+        <Factory>GFDRS</Factory>
+        <KDFPath>/home/ghfan/kdf/WAT</KDFPath>
+        <!--xml path is to store the generated test item log file-->
+        <XmlPath>/data/wat_log/</XmlPath>
+        <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
+        <MappingPath>/data/wat_mapping</MappingPath>
+        <!--kdf archive file is to store the kdf file which has been parsed successfully-->
+        <KDFArchivePath>/data/wat_archive</KDFArchivePath>
+        
+        <!--never trun on debug mode in production mode, default 0-->
+        <DebugMode>0</DebugMode>
+        
+        <!--comma separated filters, case sensitive-->
+        <FilterOut>sbo</FilterOut><!--filter out kdf whose name contains sbo-->
+        <!--comma separated selectors, case sensitive-->
+        <Selector>GFDRS</Selector> <!--select kdf whose name contains GFDRS-->
+        
+        <!--tester type field-->
+        <TesterTypeIndex>2</TesterTypeIndex>
+        <TesterType>P:93k_data,S:sapphire_data</TesterType>
+        
+        
+        <!--list length while kdf name is split by underline-->
+        <UnderLineCnt>11</UnderLineCnt>
+        <!--below params are filed name index in the kdf name-->
+        <LotNumberIndex>4</LotNumberIndex>
+        <TesterNumberIndex>3</TesterNumberIndex>
+        <MfgStepIndex>5</MfgStepIndex>
+        <TestCodeIndex></TestCodeIndex>
+        <WaferNumberIndex>7</WaferNumberIndex>
+        <SiteIndex></SiteIndex>
+        <KDFMonthIndex>9</KDFMonthIndex>
+        <SourceTypeIndex>0</SourceTypeIndex>
+        <!--comma separated file open time indices -->
+        <FileOpenTimeIndex>9,10</FileOpenTimeIndex>
+        
+        <!--if enabled, the file name will be added in the unit level doc, default 0-->
+        <AddFileNameInUnit>1</AddFileNameInUnit>
+        
+        
+        <LogFailOnlyNodeSelector></LogFailOnlyNodeSelector>
+        
+    </SourceType>
+    <SourceType name= "SMAP" enabled = "1" >
+        <Enabled>1</Enabled>
+        <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
+        <ProductionMode>0</ProductionMode>
+        <!--LogToFile means save the kdf raw data in the log file, default 1-->
+        <LogToFile>1</LogToFile>
+        <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
+        <GenerateMappingFile>0</GenerateMappingFile>
+        
+        <Customer>Hygon</Customer>
+        <Factory>GFDRS</Factory>
+        <KDFPath>/home/ghfan/kdf/SMAP</KDFPath>
+        <!--xml path is to store the generated test item log file-->
+        <XmlPath>/data/smap_log/</XmlPath>
+        <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
+        <MappingPath>/data/smap_mapping</MappingPath>
+        <!--kdf archive file is to store the kdf file which has been parsed successfully-->
+        <KDFArchivePath>/data/smap_archive</KDFArchivePath>
+        
+        <!--never trun on debug mode in production mode, default 0-->
+        <DebugMode>0</DebugMode>
+        
+        <!--comma separated filters, case sensitive-->
+        <FilterOut>sbo</FilterOut><!--filter out kdf whose name contains sbo-->
+        <!--comma separated selectors, case sensitive-->
+        <Selector>GFDRS</Selector> <!--select kdf whose name contains GFDRS-->
+        
+        <!--tester type field-->
+        <TesterTypeIndex>2</TesterTypeIndex>
+        <TesterType>P:93k_data,S:sapphire_data</TesterType>
+        
+        
+        <!--list length while kdf name is split by underline-->
+        <UnderLineCnt>11</UnderLineCnt>
+        <!--below params are filed name index in the kdf name-->
+        <LotNumberIndex>4</LotNumberIndex>
+        <TesterNumberIndex>3</TesterNumberIndex>
+        <MfgStepIndex>5</MfgStepIndex>
+        <TestCodeIndex></TestCodeIndex>
+        <WaferNumberIndex>7</WaferNumberIndex>
+        <SiteIndex></SiteIndex>
+        <KDFMonthIndex>9</KDFMonthIndex>
+        <SourceTypeIndex>0</SourceTypeIndex>
+        <!--comma separated file open time indices -->
+        <FileOpenTimeIndex>9,10</FileOpenTimeIndex>
+        
+        <!--if enabled, the file name will be added in the unit level doc, default 0-->
+        <AddFileNameInUnit>1</AddFileNameInUnit>
+        
+        
+        <LogFailOnlyNodeSelector></LogFailOnlyNodeSelector>
+        
+    </SourceType>
     
     
 </root>

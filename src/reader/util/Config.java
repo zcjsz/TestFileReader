@@ -64,6 +64,10 @@ public
 		String baseClass = null;
 	public static
 		String subClass = null;
+	public static
+		DataFormat watFormat;
+	public static
+		DataFormat smapFormat;
 
 	public
 		Config(String configFile) {
@@ -185,7 +189,15 @@ public
 					System.out.println("Fatal Error: duplicate source data found " + dataFormat.getSourceType());
 					System.exit(1);
 				}
-				Config.dataFormats.put(dataFormat.getSourceType(), dataFormat);
+				if(dataFormat.getSourceType().equalsIgnoreCase("wat")){
+					Config.watFormat = dataFormat;
+				}
+				else if(dataFormat.getSourceType().equalsIgnoreCase("smap")){
+					Config.smapFormat = dataFormat;
+				}
+				else{
+					Config.dataFormats.put(dataFormat.getSourceType(), dataFormat);
+				}
 			}
 
 			@Override
