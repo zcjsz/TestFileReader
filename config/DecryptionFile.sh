@@ -1,14 +1,29 @@
 #!/bin/sh
 
 # script to decrypt the gpg files in the given folder
-# usage: DecryptionBatch <Folder>
+# usage: DecryptionBatch <source> <destinaltion>
 
 
 AppName="FileDecrypt"
 RemoveFile="rm -f "
 UnzipFile="tar -zxvf "
 ChDir="cd "
-Usage="$0 SourceFile DestinationFile"
+Usage="this script is to transfer the hygon kdf/wat/smap files to a destination file\n
+a typical source file contains SORT/WAT/SMAP etc\n
+the steps to proceed files are:\n 
+1)this script will first try decrypt the gpg file and then extract the tar.gz file and then remove the gpg and tar.gz files\n
+2)move all the kdf files to the cooresponding folder while a timestamp will be append to the file name\n
+  eg. SORT/Lot/abc.xxx.kdf will move to destination/SORT/abc.xxx.kdf.20180101010101, skip the lot dir\n
+  and then clean up all the empty kdf lot folder\n
+3)move all the dis files to the cooresponding folder while a timestamp will be append to the file name\n
+  e.g WAT/Lot/abc.dis will move to destination/WAT/Lot/abc.xxx.dis.20180101010101\n
+  and then remove the empty lot folder\n
+4)  
+
+  
+$0 SourceFile DestinationFile"
+
+
 Move="mv "
 RMDIR="rmdir --ignore-fail-on-non-empty "
 REMOVEFile="rm -f "
@@ -17,17 +32,15 @@ SORT_PATH="/SORT/"
 WAT_PATH="/WAT/"
 SMAP_PATH="/SMAP/"
 
-TIME=$(date "+%Y%m%d%H%M%S")
-echo "start task on $TIME"
-DATE=`expr substr $TIME 1 8`
-#echo $DATE
-
 if [ ! $# -eq 2 ];then
     echo $Usage
-    echo "please set the input file directory"
+    echo "please set the source and destination file"
     exit 1
 fi
 
+TIME=$(date "+%Y%m%d%H%M%S")
+echo "start task on $TIME"
+DATE=`expr substr $TIME 1 8`
 AppPath=`pwd $0`
 
 cd $1
@@ -206,6 +219,43 @@ move_dis()
     done
 }
 
+move_smap()
+{
+    
+    
+    for file in ./*
+    do
+      if [ -d $file ]; then
+        IFS=$'\n'
+        OLDIFS="$IFS"
+        for kdfFile in $(ls ./$file)
+          do
+            IFS=$OLDIFS
+            fullKDF="./$file/$kdfFile"
+            echo $fullKDF
+            # move kdf file to destination
+            # check if the lot dir exist
+            lotPath="$DestPath$SMAP_PATH$file/"
+            mkdir -p $lotPath
+            if [ $? = 0 ]; then
+                mvCmd="$Move$fullKDF $lotPath$kdfFile.$TIME"
+                $mvCmd
+                if [ $? = 0 ]; then
+                  echo "successed to move smap file $kdfFile to $lotPath"
+                else
+                  echo "failed to execute command $mvCmd"
+                  echo "failed to move $kdfFile to $lotPath"
+                fi
+                echo""
+            else
+                echo "failed to mkdir for path: $lotPath"
+            fi
+          done
+      fi
+    done
+    
+}
+
 remove_rmap()
 {
     for file in `ls ./`
@@ -262,4 +312,9 @@ change_dir_to_wat
 decrypt_extract $WAT_PATH
 clean_up
 move_dis
+clean_up
+
+change_dir_to_smap
+decrypt_extract $SMAP_PATH
+move_smap
 clean_up
