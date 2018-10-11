@@ -31,7 +31,7 @@ REMOVEFile="rm -f "
 SORT_PATH="/SORT/"
 WAT_PATH="/WAT/"
 SMAP_PATH="/SMAP/"
-ENG_PATH="/EngSORT"
+ENG_PATH="/EngSORT/"
 
 if [ ! $# -eq 2 ];then
     echo $Usage
@@ -209,6 +209,7 @@ move_eng_kdf()
         for kdfFile in `ls ./$file | grep .kdf`
           do
             fullKDF="./$file/$kdfFile"
+            mkdir -p $DestPath$ENG_PATH
             # move kdf file to destination
             mvCmd="$Move$fullKDF $DestPath$ENG_PATH$kdfFile.$TIME"
             $mvCmd
