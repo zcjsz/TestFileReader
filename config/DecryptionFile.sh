@@ -16,12 +16,12 @@ the steps to proceed files are:\n
   eg. SORT/Lot/abc.xxx.kdf will move to destination/SORT/abc.xxx.kdf.20180101010101, skip the lot dir\n
   and then clean up all the empty kdf lot folder\n
 3)move all the dis files to the cooresponding folder while a timestamp will be append to the file name\n
-  e.g WAT/Lot/abc.dis will move to destination/WAT/Lot/abc.xxx.dis.20180101010101\n
+  e.g WAT/Lot/abc.xxx.dis will move to destination/WAT/Lot/abc.xxx.dis.20180101010101\n
   and then remove the empty lot folder\n
-4)  
-
-  
-$0 SourceFile DestinationFile"
+4)move all the smap files to the cooresponding folder while a timestamp will be append to the file name\n
+  e.g SMAP/Lot/abc.smap will move to destination/SMAP/Lot/abc.smap.20180101010101\n
+  and then remove the empty lot folder\n
+Usage: $0 SourceFile DestinationFile"
 
 
 Move="mv "
