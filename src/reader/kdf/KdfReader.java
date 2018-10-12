@@ -5,6 +5,8 @@
  */
 package reader.kdf;
 
+import reader.util.DataFormat;
+import reader.util.XmlNode;
 import com.amd.kdf.KDFFieldData;
 import com.amd.kdf.collection.KDFCollectionFilter;
 import com.amd.kdf.collection.KDFInstanceTree;
@@ -33,13 +35,14 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import java.util.ArrayList;
 import reader.util.Config;
+import reader.util.FieldType;
 
 /**
  *
  * @author ghfan
  */
 public
-	class Loader extends KdfLoader {
+	class KdfReader extends KdfLoader{
 
 	private
 		KDFCollectionFilter kdfFilter = null;
@@ -120,7 +123,7 @@ public
 		int slaveUnitCnt = 0;
 
 	public
-		Loader() {
+		KdfReader() {
 		super(null);
 	}
 
@@ -132,17 +135,11 @@ public
 		this.comHashRefs.clear();
 
 	}
-
-	public
-		boolean loadFile(File file) {
-		this.clearRefs();
-		debugMode = this.getFormat().isDebugMode();
-		this.file = file;
-
-		jobStartTime = System.currentTimeMillis();
-		System.out.printf("\n%s: start proceed kdf %s\n", LocalDateTime.now(), file.getName());
-
+		
+	private
+		void init(){
 		//reset all the variables
+		this.clearRefs();
 		this.testLogFile = null;
 		this.mappingFile = null;
 		this.kdfMonth = null;
@@ -156,7 +153,18 @@ public
 		this.mfgStp = null;
 		this.fileLevelDocCnt = 0;
 		this.unitLevelDocCnt = 0;
+	}
 
+	public
+		boolean loadFile(File file) {
+		debugMode = this.getFormat().isDebugMode();
+		this.file = file;
+		
+		
+		jobStartTime = System.currentTimeMillis();
+		System.out.printf("\n%s: start proceed kdf %s\n", LocalDateTime.now(), file.getName());
+		this.init();
+		
 		if (!this.validateFile(file)) {
 			this.failType = Config.FailureCase.BadFormat;
 			this.logBadFormatFileToES();
@@ -172,7 +180,7 @@ public
 			this.addFile("", "");
 		}
 		catch (Exception ex) {
-			Logger.getLogger(Loader.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(KdfReader.class.getName()).log(Level.SEVERE, null, ex);
 			this.failType = Config.FailureCase.OpenFailure;
 			this.logOpenFailureToES();
 			return false;
@@ -946,7 +954,7 @@ public
 				Files.delete(this.mappingFile.toPath());
 			}
 			catch (IOException ex) {
-				Logger.getLogger(Loader.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(KdfReader.class.getName()).log(Level.SEVERE, null, ex);
 				return false;
 			}
 		}
@@ -981,7 +989,7 @@ public
 
 			}
 			catch (IOException ex) {
-				Logger.getLogger(Loader.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(KdfReader.class.getName()).log(Level.SEVERE, null, ex);
 				return false;
 			}
 			return true;
@@ -1002,7 +1010,7 @@ public
 
 			}
 			catch (IOException ex) {
-				Logger.getLogger(Loader.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(KdfReader.class.getName()).log(Level.SEVERE, null, ex);
 				return false;
 			}
 			return true;
@@ -1021,7 +1029,7 @@ public
 			}
 		}
 		catch (IOException ex) {
-			Logger.getLogger(Loader.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(KdfReader.class.getName()).log(Level.SEVERE, null, ex);
 			return false;
 		}
 	}
@@ -1033,7 +1041,7 @@ public
 				Files.delete(this.testLogFile.toPath());
 			}
 			catch (IOException ex) {
-				Logger.getLogger(Loader.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(KdfReader.class.getName()).log(Level.SEVERE, null, ex);
 				return false;
 			}
 		}
@@ -2004,7 +2012,7 @@ public
 
 		}
 		catch (IOException ex) {
-			Logger.getLogger(Loader.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(KdfReader.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		this.root.clearContent();
 
@@ -2091,7 +2099,7 @@ public
 		}
 		catch (IOException ex) {
 			System.out.println("EventType:ArchieveFailure");
-			Logger.getLogger(Loader.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(KdfReader.class.getName()).log(Level.SEVERE, null, ex);
 			return false;
 		}
 		return true;
@@ -2121,7 +2129,7 @@ public
 		void main(String[] args) throws Exception {
 		long startTime = System.currentTimeMillis();
 		new Config("config/dataformat.xml");
-		Loader loader = new Loader();
+		KdfReader loader = new KdfReader();
 
 		File testDataFile = new File("./testdata/KDF");
 		for (File stageFile : testDataFile.listFiles()) {

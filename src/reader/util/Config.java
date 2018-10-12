@@ -18,8 +18,6 @@ import org.dom4j.Element;
 import org.dom4j.ElementHandler;
 import org.dom4j.ElementPath;
 import org.dom4j.io.SAXReader;
-import reader.kdf.DataFormat;
-import reader.kdf.XmlNode;
 
 /**
  *
@@ -41,7 +39,7 @@ public
 
 	public static
 		enum DataTypes {
-		WaferSort, ATE, SLT
+		WaferSort, ATE, SLT, WAT, SMAP
 	};
 
 	public static
@@ -65,9 +63,9 @@ public
 	public static
 		String subClass = null;
 	public static
-		DataFormat watFormat;
+		DataFormat watFormat = null;
 	public static
-		DataFormat smapFormat;
+		DataFormat smapFormat = null;
 
 	public
 		Config(String configFile) {
@@ -195,9 +193,7 @@ public
 				else if(dataFormat.getSourceType().equalsIgnoreCase("smap")){
 					Config.smapFormat = dataFormat;
 				}
-				else{
-					Config.dataFormats.put(dataFormat.getSourceType(), dataFormat);
-				}
+				Config.dataFormats.put(dataFormat.getSourceType(), dataFormat);
 			}
 
 			@Override
@@ -277,6 +273,7 @@ public
 			boolean isLotOpenTime = false;
 			boolean isLotEndTime = false;
 			boolean enabledLog = true;
+			int index = -1;
 
 			for (Element node : nodes) {
 				String nodeName = node.getName().trim().toLowerCase();
@@ -306,13 +303,29 @@ public
 							fieldNames.add(value);
 						}
 						break;
+					case "index":
+						if(value.isEmpty()){
+							System.out.printf("Fatal Error: please set the index for this head xml node %s\n", xmlNodeName);
+							System.exit(1);
+						}
+						index = Integer.valueOf(value);
+						if(index < 0){
+							System.out.printf("Fatal Error: the index must be grate or equals 0 for this head xml node %s\n", xmlNodeName);
+							System.exit(1);
+						}
+						break;
 					case "sourcetype":
+						//source type must be initialized before head content
 						String sourceType = node.attributeValue("name").trim();
-						if (!Config.dataFormats.containsKey(sourceType)) {
+						DataFormat dataFormat = null;
+						if (Config.dataFormats.containsKey(sourceType)){
+							dataFormat = Config.dataFormats.get(sourceType);
+						}
+						else{
 							System.out.printf("Fatal Error: please setup this source type: %s first\n", sourceType);
 							System.exit(1);
 						}
-
+						
 						XmlNode xmlNode = new XmlNode(xmlNodeName);
 						nodeEnabled = node.attributeValue("enabled").trim().equals("1");
 						enabledLog = node.elementTextTrim("EnabledLog").equals("1");
@@ -320,11 +333,11 @@ public
 							String aliasName = node.elementTextTrim("AliasName").trim();
 							xmlNode.setName(aliasName);
 						}
-						if (Config.dataFormats.get(sourceType).getLotHead().containsKey(xmlNodeName)) {
+						if(dataFormat.getLotHead().containsKey(xmlNodeName)){
 							System.out.printf("Fatal Error: duplicate head xml node found %s\n", xmlNodeName);
 							System.exit(1);
 						}
-						Config.dataFormats.get(sourceType).getLotHead().put(xmlNodeName, xmlNode);
+						dataFormat.getLotHead().put(xmlNodeName, xmlNode);
 						xmlNode.setEnabledLog(enabledLog);
 						xmlNode.setEnabled(nodeEnabled);
 
@@ -335,7 +348,7 @@ public
 						System.exit(1);
 				}
 			}
-
+				
 			for (DataFormat dataFormat : Config.dataFormats.values()) {
 				XmlNode xmlNode = dataFormat.getLotHead().get(xmlNodeName);
 				if (xmlNode == null) {
@@ -353,6 +366,7 @@ public
 					xmlNode.setLotOpenTime(isLotOpenTime);
 					xmlNode.setLotStartTime(isLotStartTime);
 					xmlNode.setLotEndTime(isLotEndTime);
+					xmlNode.setIndex(index);
 				}
 				else {
 					dataFormat.getLotHead().remove(xmlNodeName);
@@ -454,7 +468,11 @@ public
 						break;
 					case "sourcetype":
 						String sourceType = node.attributeValue("name").trim();
-						if (!Config.dataFormats.containsKey(sourceType)) {
+						DataFormat dataFormat = null;
+						if (Config.dataFormats.containsKey(sourceType)){
+							dataFormat = Config.dataFormats.get(sourceType);
+						}
+						else{
 							System.out.printf("Fatal Error: please setup this source type: %s first\n", sourceType);
 							System.exit(1);
 						}
@@ -462,11 +480,11 @@ public
 						XmlNode xmlNode = new XmlNode(xmlNodeName);
 						nodeEnabled = node.attributeValue("enabled").trim().equals("1");
 						enabledLog = node.elementTextTrim("EnabledLog").equals("1");
-						if (Config.dataFormats.get(sourceType).getUnit().getNodes().containsKey(xmlNodeName)) {
+						if (dataFormat.getUnit().getNodes().containsKey(xmlNodeName)) {
 							System.out.printf("Fatal Error: duplicate unit xml node found %s\n", xmlNodeName);
 							System.exit(1);
 						}
-						Config.dataFormats.get(sourceType).getUnit().getNodes().put(xmlNodeName, xmlNode);
+						dataFormat.getUnit().getNodes().put(xmlNodeName, xmlNode);
 						xmlNode.setEnabledLog(enabledLog);
 						xmlNode.setEnabled(nodeEnabled);
 

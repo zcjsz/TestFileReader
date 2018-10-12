@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package reader.kdf;
+package reader.util;
 
+import reader.util.XmlNode;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import org.dom4j.Element;
+import reader.kdf.Bin;
 import reader.util.Config;
 
 /**
@@ -359,6 +361,10 @@ public
 
 	public
 		boolean validate() {
+		if(this.getSourceType().equalsIgnoreCase(Config.DataTypes.SMAP.name())
+			||this.getSourceType().equalsIgnoreCase(Config.DataTypes.WAT.name())){
+			return true;
+		}
 		if (this.getCustomer() == null
 			|| this.getLotEndTimeNode() == null
 			|| this.getLotOpenTimeNode() == null
@@ -487,7 +493,7 @@ public
 		}
 	}
 
-	void calTestTime() {
+	public void calTestTime() {
 		String startTime = null;
 		String endTime = null;
 		double testTime = 0;
@@ -570,7 +576,7 @@ public
 		}
 	}
 
-	void clearAll() {
+	public void clearAll() {
 		for (XmlNode node : this.getLotHead().values()) {
 			node.resetValue();
 		}

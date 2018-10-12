@@ -6,31 +6,55 @@
 package reader.smap;
 
 import java.io.File;
+import reader.Reader;
+import reader.util.DataFormat;
 import reader.util.Config;
 
 /**
  *
  * @author ghfan
  */
-public
-	class SmapReader {
+final
+	class SampReader extends Reader {
 
 	public
-		SmapReader() {
+		SampReader(DataFormat format) {
+		super(format);
 	}
 
+	@Override
 	public
-		boolean loadFile(File file) {
-		return false;
+		boolean readFile() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public
+		void init() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public
+		boolean writeLogFile() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	public static
 		void main(String[] args) {
-		SmapReader reader = new SmapReader();
-		File smapPath = new File(Config.smapFormat.getKdfPath());
-		for (File lotFile : smapPath.listFiles()) {
-			reader.loadFile(lotFile);
+		long startTime = System.currentTimeMillis();
+		new Config("config/dataformat.xml");
+		Reader reader = new SampReader(Config.smapFormat);
+
+ 		File testDataFile = new File("./testdata/KDF/SMAP");
+		for (File lotFile : testDataFile.listFiles()) {
+			for (File file : lotFile.listFiles()) {
+				reader.loadFile(file);
+			}
 		}
+
+		System.out.println("total time = " + (System.currentTimeMillis() - startTime));
+		startTime = System.currentTimeMillis();
 
 	}
 

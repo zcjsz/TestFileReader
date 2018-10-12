@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package reader.kdf;
+package reader.util;
 
 /**
  *
@@ -12,62 +12,61 @@ package reader.kdf;
 public
 	class FieldType {
 
-	final static
+	public final static
 		String PinRefPtr = "pinRefPtr";
-	final static
+	public final static
 		String PatternId = "patternId";
-	final static
+	public final static
 		String KdfName = "KDFName";
-	final static
+	public final static
 		String KdfDate = "KDFDate";
-	final static
+	public final static
 		String LotNumber = "LotNumber";
-	final static
+	public final static
 		String MfgStep = "MfgStep";
-	final static
+	public final static
 		String UnitCnt = "UnitCnt";
-	final static
+	public final static
 		String KdfMonth = "KDFMonth";
-	final static
+	public final static
 		String TransferTime = "TransferTime";
-	final static
+	public final static
 		String DataType = "DataType";
-	final static
+	public final static
 		String EventType = "EventType";
-	final static
+	public final static
 		String FileName = "FileName";
-	final static
+	public final static
 		String DoneTime = "DoneTime";
-	final static
+	public final static
 		String DocCnt = "DocCnt";
-	final static
+	public final static
 		String GrossTime = "GrossTime";
-	final static
+	public final static
 		String Failure = "Failure";
-	final static
+	public final static
 		String Type = "Type";
-	final static
+	public final static
 		String File = "File";
-	final static
+	public final static
 		String FileTime= "FileTime";
-	final static
+	public final static
 		String Unit = "Unit";
-	final static
+	public final static
 		String SoftBinDesc = "SBinDesc";
-	final static
+	public final static
 		String HardBinDesc = "HBinDesc";
-	final static
+	public final static
 		String BinType = "BinType";
-	final static
+	public final static
 		String Pin= "Pin";
-	final static
+	public final static
 		String Pattern = "Pattern";
-	final static
+	public final static
 		String DieType = "DieType";
-	final static
+	public final static
 		String MasterDie = "MasterDie";
-	final static
-		String MasterDieId =  "MasterDieId";
-	
+	public final static
+		String MasterDieId =  "MasterDieId"; 
 
 }

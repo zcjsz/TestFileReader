@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package reader.kdf;
+package reader.util;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -18,6 +18,9 @@ import reader.util.Config;
  */
 public
 	class XmlNode {
+	
+	private
+		int index = -1;
 
 	private
 		String name = null;
@@ -398,6 +401,16 @@ public
 	public
 	boolean isWaferLotNode() {
 		return waferLotNode;
+	}
+
+	public
+	int getIndex() {
+		return index;
+	}
+
+	public
+	void setIndex(int index) {
+		this.index = index;
 	}
 	public static
 		void main(String[] args) {
