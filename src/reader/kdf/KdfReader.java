@@ -1775,7 +1775,7 @@ public
 					XmlNode waferLotNode = this.getFormat().getUnit().getWaferLotNode();
 					XmlNode xNode = this.getFormat().getUnit().getxCoordNode();
 					XmlNode yNode = this.getFormat().getUnit().getyCoordNode();
-					tempStr += "," + FieldType.Type + "=" + FieldType.Unit;
+//					tempStr += "," + FieldType.Type + "=" + FieldType.Unit;
 					tempStr += "," + this.getFormat().getUnit().getUnitIdNode().getName() + "=" + slaveUnit.getUnitId();
 					tempStr += "," + FieldType.DieType + "=" + componentHash.getComName();
 					String masterDieId = this.getFormat().getUnit().getUnitIdNode().getValue();
