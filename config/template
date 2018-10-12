@@ -31,6 +31,106 @@
 #  half_float: A half-precision 16-bit IEEE 754 floating point number, restricted to finite values. 
 #  scaled_float: A finite floating point number that is backed by a long, scaled by a fixed double scaling factor. 
 
+# BE CAREFUL about the dynamic field sequence
+
+#[------date type, cnt = 7 -------]
+
+# @timestamp   	date 					
+# DoneTime   	date 					
+# EndTestTime   	date 					
+# FileTime   	date 					
+# LotEndTime   	date 					
+# LotStartTime   	date 					
+# StartTestTime   	date 					
+# TransferTime   	date
+
+#[------keyword type, cnt = 45 -------]
+#    	string 					
+# DIE_2   	string 					
+# DIE_3   	string 					
+# Device   	string 					
+# Dib   	string 					
+# DieType   	string 					
+# FileName   	string 					
+# HBin   	string 					
+# HBinDesc   	string 					
+# KDFName   	string 					
+# LotNumber   	string 					
+# MasterDieId   	string 					
+# MfgStep   	string 					
+# Operation   	string 					
+# PartNumber   	string 					
+# Pattern   	string 					
+# Pin   	string 					
+# Program   	string 					
+# ProgramVersion   	string 					
+# SBin   	string 					
+# SBinDesc   	string 					
+# Site   	string 					
+# TestCode   	string 					
+# Tester   	string 					
+# Type   	string 					
+# UnitId   	string 					
+# WaferLot   	string 					
+# baseClass   	string 					
+# bistControllerId   	string 					
+# comClass   	string 					
+# comName   	string 					
+# context   	string 					
+# expression   	string 					
+# failingArrayName   	string 					
+# failingMacroId   	string 					
+# failingMacroSubId   	string 					
+# generatedTestName   	string 					
+# hostName   	string 					
+# name   	string 					
+# queriedTests   	string 					
+# queryType   	string 					
+# segmentName   	string 					
+# status   	string 					
+# structureName   	string 					
+# subClass   	string 					
+# units   	string
+# description   	string 	
+
+#[------text type, cnt = 4 -------]
+# bitValues   	string 					
+# componentHash   	string 					
+# highSpecLimit   	string 					
+# lowSpecLimit   	string 					
+
+
+#[------number type, cnt = 29 -------]
+# BinType   	number 					
+# DocCnt   	number 					
+# GrossTime   	number 					
+# KDFDate   	number 					
+# KDFMonth   	number 					
+# TestTime   	number 					
+# UnitCnt   	number 					
+# UnitSeq   	number 					
+# WaferNumber   	number 					
+# X   	number 					
+# Y   	number 					
+# alarm   	number 					
+# connectTime   	number 					
+# connectTimeout   	number 					
+# cycle   	number 					
+# endTimestamp   	number 					
+# networkError   	number 					
+# portNumber   	number 					
+# queryTimeout   	number 					
+# recvTime   	number 					
+# repCount   	number 					
+# result   	number 					
+# sequence   	number 					
+# startTimestamp   	number 					
+# timeout   	number 					
+# timestamp   	number 					
+# totalQueryTime   	number 					
+# value   	number 					
+# vector   	number
+
 PUT _template/all-test
 {
   "order": 0,
@@ -366,7 +466,7 @@ PUT _template/all-test
           "key_word_31": {
             "match": "description",
             "mapping": {
-              "type": "text"
+              "type": "keyword"
             }
           }
          },
@@ -471,6 +571,7 @@ PUT _template/all-test
             "match": "units",
             "mapping": {
               "type": "keyword"
+              
             }
           }
          },
@@ -485,6 +586,22 @@ PUT _template/all-test
          {
           "key_word_46": {
             "match": "queryType",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "key_word_47": {
+            "match": "DieType",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "key_word_48": {
+            "match": "MasterDieId",
             "mapping": {
               "type": "keyword"
             }
@@ -633,16 +750,9 @@ PUT _template/all-test
             }
           }
          },
+        
          {
           "short_5": {
-            "match": "sequence",
-            "mapping": {
-              "type": "short"
-            }
-          }
-         },
-         {
-          "short_6": {
             "match": "portNumber",
             "mapping": {
               "type": "short"
@@ -666,7 +776,7 @@ PUT _template/all-test
           "float_2": {
             "match": "TestTime",
             "mapping": {
-              "type": "half_float"
+              "type": "float"
             }
           }
          },
@@ -674,7 +784,7 @@ PUT _template/all-test
           "float_3": {
             "match": "connectTime",
             "mapping": {
-              "type": "half_float"
+              "type": "float"
             }
           }
          },
@@ -682,7 +792,7 @@ PUT _template/all-test
           "float_4": {
             "match": "recvTime",
             "mapping": {
-              "type": "half_float"
+              "type": "float"
             }
           }
          },
@@ -690,7 +800,7 @@ PUT _template/all-test
           "float_5": {
             "match": "totalQueryTime",
             "mapping": {
-              "type": "half_float"
+              "type": "float"
             }
           }
          },
@@ -748,6 +858,14 @@ PUT _template/all-test
          {
           "integer_7": {
             "match": "repCount",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+          {
+          "integer_8": {
+            "match": "sequence",
             "mapping": {
               "type": "integer"
             }
