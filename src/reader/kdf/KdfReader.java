@@ -2111,6 +2111,10 @@ public
 			if (!format.isEnabled()) {
 				continue;
 			}
+			if(format.getDataType().equals(Config.DataTypes.SMAP)
+				||format.getDataType().equals(Config.DataTypes.WAT)){
+				continue;
+			}
 			String sourceType = file.getName().split("_")[format.getSourceTypeIndex()];
 			if (sourceType.equals(format.getSourceType()) || sourceType.toLowerCase().contains(format.getSourceType().toLowerCase())) {
 				this.setFormat(format);
@@ -2130,7 +2134,7 @@ public
 		long startTime = System.currentTimeMillis();
 		new Config("config/dataformat.xml");
 		KdfReader loader = new KdfReader();
-
+		
 		File testDataFile = new File("./testdata/KDF");
 		for (File stageFile : testDataFile.listFiles()) {
 			if (stageFile.isDirectory()) {
