@@ -2135,16 +2135,27 @@ public
 		new Config("config/dataformat.xml");
 		KdfReader loader = new KdfReader();
 		
-		File testDataFile = new File("./testdata/KDF");
-		for (File stageFile : testDataFile.listFiles()) {
-			if (stageFile.isDirectory()) {
-				for (File file : stageFile.listFiles()) {
-					if (loader.chooseFormat(file)) {
-						loader.loadFile(file);
-					}
-				}
+		File stageFile = new File("./testdata/KDF/SORT");
+		for (File file : stageFile.listFiles()) {
+			if (loader.chooseFormat(file)) {
+				loader.loadFile(file);
 			}
 		}
+		
+		stageFile = new File("./testdata/KDF/SLT");
+		for (File file : stageFile.listFiles()) {
+			if (loader.chooseFormat(file)) {
+				loader.loadFile(file);
+			}
+		}
+		stageFile = new File("./testdata/KDF/FT");
+		for (File file : stageFile.listFiles()) {
+			if (loader.chooseFormat(file)) {
+				loader.loadFile(file);
+			}
+		}
+		
+		
 		
 		System.out.println(loader.allFields.toString());
 		System.out.println("total time = " + (System.currentTimeMillis() - startTime));

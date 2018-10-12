@@ -217,6 +217,9 @@ public
 						break;
 					case "DataType":
 						this.dataType = Config.DataTypes.valueOf(fieldValue);
+						if(this.dataType == null) {
+							System.out.println("Fatal Error: DataType value must be one of " + Arrays.toString(Config.DataTypes.values()));
+						}
 						break;
 					case "DebugMode":
 						this.debugMode = fieldValue.equals("1");
