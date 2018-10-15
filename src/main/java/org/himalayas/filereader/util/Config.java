@@ -3,8 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package reader.util;
-
+package org.himalayas.filereader.util;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -19,10 +18,6 @@ import org.dom4j.ElementHandler;
 import org.dom4j.ElementPath;
 import org.dom4j.io.SAXReader;
 
-/**
- *
- * @author ghfan
- */
 public
 	class Config {
 
@@ -44,16 +39,17 @@ public
 
 	public static
 		enum FailureCase {
-		BadFormat, OpenFailure, Exception, RepeatKDF,IOError
+		BadFormat, OpenFailure, Exception, RepeatKDF, IOError
 	};
 
 	public static
 		enum KdfRename {
 		exception, done, skip, openErr
 	}
+
 	public static
 		enum EventType {
-		KDFDone, KDFRepeat, KDFBadFormat, KDFOpenFailure,IOError
+		KDFDone, KDFRepeat, KDFBadFormat, KDFOpenFailure, IOError
 	}
 
 	public static
@@ -187,10 +183,10 @@ public
 					System.out.println("Fatal Error: duplicate source data found " + dataFormat.getSourceType());
 					System.exit(1);
 				}
-				if(dataFormat.getSourceType().equalsIgnoreCase("wat")){
+				if (dataFormat.getSourceType().equalsIgnoreCase("wat")) {
 					Config.watFormat = dataFormat;
 				}
-				else if(dataFormat.getSourceType().equalsIgnoreCase("smap")){
+				else if (dataFormat.getSourceType().equalsIgnoreCase("smap")) {
 					Config.smapFormat = dataFormat;
 				}
 				Config.dataFormats.put(dataFormat.getSourceType(), dataFormat);
@@ -294,7 +290,7 @@ public
 						break;
 					case "lotendtime":
 						isLotEndTime = value.equals("1");
-						break;	
+						break;
 					case "lotopentime":
 						isLotOpenTime = value.equals("1");
 						break;
@@ -304,12 +300,12 @@ public
 						}
 						break;
 					case "index":
-						if(value.isEmpty()){
+						if (value.isEmpty()) {
 							System.out.printf("Fatal Error: please set the index for this head xml node %s\n", xmlNodeName);
 							System.exit(1);
 						}
 						index = Integer.valueOf(value);
-						if(index < 0){
+						if (index < 0) {
 							System.out.printf("Fatal Error: the index must be grate or equals 0 for this head xml node %s\n", xmlNodeName);
 							System.exit(1);
 						}
@@ -318,22 +314,22 @@ public
 						//source type must be initialized before head content
 						String sourceType = node.attributeValue("name").trim();
 						DataFormat dataFormat = null;
-						if (Config.dataFormats.containsKey(sourceType)){
+						if (Config.dataFormats.containsKey(sourceType)) {
 							dataFormat = Config.dataFormats.get(sourceType);
 						}
-						else{
+						else {
 							System.out.printf("Fatal Error: please setup this source type: %s first\n", sourceType);
 							System.exit(1);
 						}
-						
+
 						XmlNode xmlNode = new XmlNode(xmlNodeName);
 						nodeEnabled = node.attributeValue("enabled").trim().equals("1");
 						enabledLog = node.elementTextTrim("EnabledLog").equals("1");
-						if(node.elements("AliasName").size() > 0) {
+						if (node.elements("AliasName").size() > 0) {
 							String aliasName = node.elementTextTrim("AliasName").trim();
 							xmlNode.setName(aliasName);
 						}
-						if(dataFormat.getLotHead().containsKey(xmlNodeName)){
+						if (dataFormat.getLotHead().containsKey(xmlNodeName)) {
 							System.out.printf("Fatal Error: duplicate head xml node found %s\n", xmlNodeName);
 							System.exit(1);
 						}
@@ -348,7 +344,7 @@ public
 						System.exit(1);
 				}
 			}
-				
+
 			for (DataFormat dataFormat : Config.dataFormats.values()) {
 				XmlNode xmlNode = dataFormat.getLotHead().get(xmlNodeName);
 				if (xmlNode == null) {
@@ -469,10 +465,10 @@ public
 					case "sourcetype":
 						String sourceType = node.attributeValue("name").trim();
 						DataFormat dataFormat = null;
-						if (Config.dataFormats.containsKey(sourceType)){
+						if (Config.dataFormats.containsKey(sourceType)) {
 							dataFormat = Config.dataFormats.get(sourceType);
 						}
-						else{
+						else {
 							System.out.printf("Fatal Error: please setup this source type: %s first\n", sourceType);
 							System.exit(1);
 						}

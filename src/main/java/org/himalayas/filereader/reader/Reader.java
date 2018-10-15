@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package reader;
+package org.himalayas.filereader.reader;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,8 +12,8 @@ import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import java.time.LocalDateTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import reader.util.DataFormat;
-import reader.util.Config;
+import org.himalayas.filereader.util.Config;
+import org.himalayas.filereader.util.DataFormat;
 
 /**
  *

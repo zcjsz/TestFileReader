@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package reader.smap;
+package org.himalayas.filereader.smap;
 
 import java.io.File;
-import reader.Reader;
-import reader.util.DataFormat;
-import reader.util.Config;
+import org.himalayas.filereader.reader.Reader;
+import org.himalayas.filereader.util.Config;
+import org.himalayas.filereader.util.DataFormat;
 
 /**
  *
@@ -46,7 +46,7 @@ final
 		new Config("config/dataformat.xml");
 		Reader reader = new SampReader(Config.smapFormat);
 
- 		File testDataFile = new File("./testdata/KDF/SMAP");
+		File testDataFile = new File("./testdata/KDF/SMAP");
 		for (File lotFile : testDataFile.listFiles()) {
 			for (File file : lotFile.listFiles()) {
 				reader.loadFile(file);

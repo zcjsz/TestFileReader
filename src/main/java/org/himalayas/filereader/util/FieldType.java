@@ -3,12 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package reader.util;
+package org.himalayas.filereader.util;
 
-/**
- *
- * @author ghfan
- */
 public
 	class FieldType {
 
@@ -49,7 +45,7 @@ public
 	public final static
 		String File = "File";
 	public final static
-		String FileTime= "FileTime";
+		String FileTime = "FileTime";
 	public final static
 		String Unit = "Unit";
 	public final static
@@ -59,7 +55,7 @@ public
 	public final static
 		String BinType = "BinType";
 	public final static
-		String Pin= "Pin";
+		String Pin = "Pin";
 	public final static
 		String Pattern = "Pattern";
 	public final static
@@ -67,6 +63,6 @@ public
 	public final static
 		String MasterDie = "MasterDie";
 	public final static
-		String MasterDieId =  "MasterDieId"; 
+		String MasterDieId = "MasterDieId";
 
 }
