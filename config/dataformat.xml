@@ -499,6 +499,7 @@ and open the template in the editor.
             <Field>lotId</Field>
             <Field>LOT_ID</Field>
             <Index>1</Index>
+            <LotNumber>1</LotNumber>
                 
             <SourceType name= "HTEST1" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
@@ -839,6 +840,7 @@ and open the template in the editor.
             <Field>TESTPHASE</Field>
             <Field>mfgStepName</Field>
             <Index>2</Index>
+            <Operation>1</Operation>
             
             <SourceType name= "HTEST1" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
@@ -1209,7 +1211,7 @@ and open the template in the editor.
             </SourceType>
             <IsSoftBin>1</IsSoftBin>
         </XmlNode>
-    </Unit>
+    </Unit>   
     
     
     

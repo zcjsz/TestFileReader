@@ -133,6 +133,10 @@ public
 		ArrayList<String> nodeTypeSelectors = new ArrayList();
 	private
 		ArrayList<String> fieldFiters = new ArrayList();
+	private
+		XmlNode lotNumberNode = null;
+	private
+		XmlNode operationNode = null;
 
 	public
 		DataFormat(Element sourceData) {
@@ -396,6 +400,8 @@ public
 			|| this.getUnit().getWaferNumberNode() == null
 			|| this.getUnit().getxCoordNode() == null
 			|| this.getUnit().getyCoordNode() == null
+			|| this.getLotNumberNode() == null
+			|| this.getOperationNode() == null
 			|| (this.dataType.equals(Config.DataTypes.SLT) && this.unitIdIndex == -1)
 			|| ((!this.dataType.equals(Config.DataTypes.WaferSort)) && this.getUnit().getWaferLotNode() == null)) {
 			this.printConfig();
@@ -1018,6 +1024,26 @@ public
 	public
 		boolean isAppendSlaveUnitId2Test() {
 		return appendSlaveUnitId2Test;
+	}
+
+	public
+		void setLotNumberNode(XmlNode lotNumberNode) {
+		this.lotNumberNode = lotNumberNode;
+	}
+
+	public
+		void setOperationNode(XmlNode operationNode) {
+		this.operationNode = operationNode;
+	}
+
+	public
+		XmlNode getLotNumberNode() {
+		return lotNumberNode;
+	}
+
+	public
+		XmlNode getOperationNode() {
+		return operationNode;
 	}
 
 }

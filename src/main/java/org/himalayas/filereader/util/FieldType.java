@@ -64,5 +64,7 @@ public
 		String MasterDie = "MasterDie";
 	public final static
 		String MasterDieId = "MasterDieId";
+	public final static
+		String Rank = "Rank";
 
 }

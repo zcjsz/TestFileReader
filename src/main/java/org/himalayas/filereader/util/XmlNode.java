@@ -61,6 +61,10 @@ public
 		boolean xNode = false;
 	private
 		boolean yNode = false;
+	private
+		boolean lotNumberNode = false;
+	private
+		boolean operationNode = false;
 
 	/**
 	 *

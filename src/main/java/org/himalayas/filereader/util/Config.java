@@ -270,6 +270,8 @@ public
 			boolean isLotEndTime = false;
 			boolean enabledLog = true;
 			int index = -1;
+			boolean isLotNumber = false;
+			boolean isOperation = false;
 
 			for (Element node : nodes) {
 				String nodeName = node.getName().trim().toLowerCase();
@@ -279,6 +281,12 @@ public
 					System.exit(1);
 				}
 				switch (nodeName) {
+					case "lotnumber":
+						isLotNumber = value.equals("1");
+						break;
+					case "operation":
+						isOperation = value.equals("1");
+						break;	
 					case "time":
 						isTime = value.equals("1");
 						break;
@@ -363,6 +371,13 @@ public
 					xmlNode.setLotStartTime(isLotStartTime);
 					xmlNode.setLotEndTime(isLotEndTime);
 					xmlNode.setIndex(index);
+					if(isLotNumber) {
+						dataFormat.setLotNumberNode(xmlNode);
+					}
+					if(isOperation) {
+						dataFormat.setOperationNode(xmlNode);
+					}
+					
 				}
 				else {
 					dataFormat.getLotHead().remove(xmlNodeName);
@@ -587,6 +602,23 @@ public
 				+ "    the start index must less than end index\n", xmlNode.getName());
 			System.exit(1);
 		}
+	}
+	
+	public static DataFormat getFTFormat(){
+		for(DataFormat format: Config.dataFormats.values()) {
+			if(format.getDataType().equals(Config.DataTypes.ATE)) {
+				return format;
+			}
+		}
+		return null;
+	}
+	public static DataFormat getSLTFormat(){
+		for(DataFormat format: Config.dataFormats.values()) {
+			if(format.getDataType().equals(Config.DataTypes.SLT)) {
+				return format;
+			}
+		}
+		return null;
 	}
 
 	public static
