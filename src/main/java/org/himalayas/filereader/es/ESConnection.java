@@ -126,7 +126,7 @@ public
 		this.unitIDName = Config.getFTFormat().getUnit().getUnitIdNode().getName();
 		this.startTimeName = Config.getFTFormat().getUnit().getStartTimeNode().getName();
 		this.testTimeName = Config.getFTFormat().getUnit().getTestTimeNode().getName();
-		String[] includeFields = new String[]{unitIDName, FieldType.BinType, startTimeName, "UnitSeq", this.testTimeName};
+		String[] includeFields = new String[]{unitIDName, FieldType.BinType, startTimeName, "UnitSeq", this.testTimeName, FieldType.DieType};
 		String[] excludeFields = new String[]{"_type"};
 
 		this.searchUnitRequest.source(new SearchSourceBuilder()
@@ -164,18 +164,25 @@ public
 	 */
 	private
 		boolean getLotData(String lotNumber, String operation, Config.DataTypes dataType) {
-		this.getLotInfo().getDataSets().clear();
+		this.getLotInfo().reset();
+		this.getLotInfo().setLotNumber(lotNumber);
+		this.getLotInfo().setOperation(operation);
+		
 		this.unitNo = 0;
+		this.getLotInfo().setWaferSort(dataType.equals(Config.DataTypes.WaferSort));
 
 		if (dataType.equals(Config.DataTypes.ATE)) {
 //			searchSourceBuilder.query(this.getFTQueryBuilder("HG50099B", "FT-FUSE"));
 			this.searchUnitRequest.source().query(this.getFTQueryBuilder(lotNumber, operation, FieldType.Unit));
+			this.getLotInfo().setDataFormat(Config.getFTFormat());
 		}
 		else if (dataType.equals(Config.DataTypes.SLT)) {
 			this.searchUnitRequest.source().query(this.getSLTQueryBuilder(lotNumber, operation, FieldType.Unit));
+			this.getLotInfo().setDataFormat(Config.getSLTFormat());
 		}
 		else {
 			this.searchUnitRequest.source().query(this.getSORTQueryBuilder(lotNumber, operation, FieldType.Unit));
+			this.getLotInfo().setDataFormat(Config.watFormat);
 		}
 		try {
 			searchResponse = client.search(searchUnitRequest, RequestOptions.DEFAULT);
@@ -293,6 +300,8 @@ public
 			String unitID = (String) sourceAsMap.get(unitIDName);
 			String startTime = (String) sourceAsMap.get(startTimeName);
 			int binType = Integer.valueOf((String) sourceAsMap.get(FieldType.BinType));
+			boolean masterDie = ((String) sourceAsMap.get(FieldType.DieType)).equals(FieldType.MasterDie);
+			
 			double testTime = Double.valueOf((String) sourceAsMap.get(this.testTimeName));
 
 			System.out.printf("UnitNo= %d, %s\n", ++this.unitNo, hit.getSourceAsString());
@@ -306,6 +315,7 @@ public
 			if (dataSet == null) {
 				dataSet = new DataSet(unitID);
 				this.getLotInfo().getDataSets().put(unitID, dataSet);
+				dataSet.setMasterDie(masterDie);
 			}
 			dataSet.getUnitData().add(new Doc(id, binType, startTime, index, testTime));
 		}
@@ -319,7 +329,7 @@ public
 			bulkRequest.timeout(TimeValue.timeValueMinutes(5));
 
 			for (DataSet dataSet : this.getLotInfo().getDataSets().values()) {
-				this.getLotInfo().totalUniqueUnitCntInc(dataSet.getUnitData().size());
+				
 				for (Doc doc : dataSet.getUnitData()) {
 					/**
 					 * generate the bulk update request
@@ -334,8 +344,7 @@ public
 					/**
 					 * cal lot kpi
 					 */
-					this.getLotInfo().totalUnitTestTimeInc(doc.getTestTime());
-					this.getLotInfo().totalTestedUnitCntInc(1);
+					
 
 				}
 			}
@@ -446,8 +455,10 @@ public
 		es.init();
 		es.getLotData("HG50099B", "FT-FUSE", Config.DataTypes.ATE);
 		es.getLotInfo().calInsertion();
+		es.getLotInfo().calKPI();
 		es.updateInto();
 		es.getLotAggData("HG50099B", "FT-FUSE", Config.DataTypes.ATE);
+		System.out.print(es.getLotInfo().toString());
 		es.close();
 
 	}

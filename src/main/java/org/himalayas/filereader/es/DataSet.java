@@ -14,11 +14,14 @@ import java.util.Comparator;
  */
 public
 	class DataSet {
-
+	
 	private
 		String unitId = null;
 	private
+		boolean masterDie = false;
+	private
 		ArrayList<Doc> unitData = new ArrayList();
+
 	public
 		DataSet(String unitID) {
 		this.unitId = unitID;
@@ -30,7 +33,7 @@ public
 	}
 
 	public
-	String getUnitId() {
+		String getUnitId() {
 		return unitId;
 	}
 
@@ -39,7 +42,6 @@ public
 //		unitData.sort(Comparator.comparing(Doc::getStartTime));
 //		this.size = this.unitData.size();
 //	}
-
 	public
 		void sortMotherLotInserction() {
 		unitData.sort(Comparator.comparing(Doc::getStartTime));
@@ -59,6 +61,26 @@ public
 
 			}
 		}
+	}
+
+	public
+		Doc getFirstUnit() {
+		return this.unitData.get(0);
+	}
+
+	public
+		Doc getLastUnit() {
+		return this.unitData.get(this.unitData.size() - 1);
+	}
+
+	public
+		boolean isMasterDie() {
+		return masterDie;
+	}
+
+	public
+		void setMasterDie(boolean masterDie) {
+		this.masterDie = masterDie;
 	}
 
 }

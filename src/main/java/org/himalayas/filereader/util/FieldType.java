@@ -16,10 +16,10 @@ public
 		String KdfName = "KDFName";
 	public final static
 		String KdfDate = "KDFDate";
-	public final static
-		String LotNumber = "LotNumber";
-	public final static
-		String MfgStep = "MfgStep";
+//	public final static
+//		String LotNumber = "LotNumber";
+//	public final static
+//		String MfgStep = "MfgStep";
 	public final static
 		String UnitCnt = "UnitCnt";
 	public final static
@@ -66,5 +66,65 @@ public
 		String MasterDieId = "MasterDieId";
 	public final static
 		String Rank = "Rank";
+
+	
+	// lot info field
+	public final static
+		String Lot_UPH = "UPH";
+	public final static
+		String Lot_UPHGood = "UPHGood";
+
+	public final static
+		String Lot_AvgFailTestTime = "AvgFailTestTime";
+
+	public final static
+		String Lot_AvgPassTestTime = "AvgPassTestTime";
+
+	public final static
+		String Lot_AvgTestTime = "AvgTestTime";
+
+	public final static
+		String Lot_FirstFailCnt = "FirstFailUnitCnt";
+	public final static
+		String Lot_FirstPassCnt = "FirstPassUnitCnt";
+	public final static
+		String Lot_GrossTestTime = "GrossTestTime";
+	public final static
+		String Lot_KdfFinalYield = "KdfFinalYield";
+	public final static
+		String Lot_KdfFirstYield = "KdfFirstYield";
+	public final static
+		String Lot_KdfFtrd = "KdfFtrd";
+	public final static
+		String Lot_KdfIr = "KdfIr";
+	public final static
+		String Lot_LastFailCnt = "LastFailUnitCnt";
+	public final static
+		String Lot_LastPassCnt = "LastPassUnitCnt";
+	public final static
+		String Lot_TotalFailCnt = "FailUnitCnt";
+	public final static
+		String Lot_TotalPassCnt = "PassUnitCnt";
+
+	public final static
+		String Lot_TotalFailTestTime = "FailTestTime";
+	public final static
+		String Lot_FileCnt = "FileCnt";
+
+	public final static
+		String Lot_TotalPassTestTime = "PassTestTime";
+	public final static
+		String Lot_TotalTestedUnitCnt = "TestedUnitCnt";
+
+	public final static
+		String Lot_TotalUniqueUnitCnt = "UniqueUnitCnt";
+
+	public final static
+		String Lot_TotalUnitTestTime = "UnitTestTime";
+	
+	public final static
+		String Lot_KDFLot = "KDFLot";
+	public final static
+		String Lot_Doc_id = "_id";
 
 }
