@@ -25,6 +25,8 @@ public
 		String waferNumber = null;
 	private
 		String motherLotInsertion = null;
+	private
+		double testTime = 0;
 
 	/**
 	 * 
@@ -33,11 +35,12 @@ public
 	 * @param startTime 
 	 */
 	public
-	Doc(String id, int binType, String startTime, String index) {
+	Doc(String id, int binType, String startTime, String index, double testTime) {
 		this.id = id;
 		this.binType = binType;
 		this.startTime = startTime;
 		this.index = index;
+		this.testTime = testTime;
 	}
 
 	public
@@ -94,6 +97,12 @@ public
 	String getIndex() {
 		return index;
 	}
+
+	public
+	double getTestTime() {
+		return testTime;
+	}
+	
 
 	
 	

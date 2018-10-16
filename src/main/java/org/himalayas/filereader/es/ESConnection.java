@@ -38,6 +38,11 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.Scroll;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.himalayas.filereader.util.Config;
 import org.himalayas.filereader.util.FieldType;
@@ -51,10 +56,12 @@ public
 
 	private
 		RestHighLevelClient client = null;
+
 	private
-		SearchSourceBuilder searchSourceBuilder = null;
+		SearchRequest searchUnitRequest = null;
 	private
-		SearchRequest searchRequest = null;
+		SearchRequest searchFileRequest = null;
+
 	private
 		String unitIDName = null;
 	private
@@ -67,6 +74,12 @@ public
 		LotInfo lotInfo = new LotInfo();
 	private
 		int unitNo = 0;
+	private
+		String testTimeName = null;
+	private
+		AggregationBuilder aggregation = null;
+	private
+		SearchResponse searchResponse = null;
 
 	public
 		ESConnection() {
@@ -75,7 +88,14 @@ public
 	public
 		boolean init() {
 		StatusLogger.getLogger().setLevel(Level.INFO);
+		this.initClient();
+		this.initSearchUnitRequest();
+		this.initSearchFileRequest();
+		return true;
+	}
 
+	private
+		void initClient() {
 		credentialsProvider.setCredentials(AuthScope.ANY,
 			new UsernamePasswordCredentials("admin", "admin"));
 
@@ -93,28 +113,45 @@ public
 		});
 
 		this.client = new RestHighLevelClient(builder);
-		this.searchRequest = new SearchRequest();
-		this.searchRequest.indices("*-test-*");
-		this.searchRequest.scroll(scroll);
 
-		this.searchSourceBuilder = new SearchSourceBuilder();
+	}
 
-		//max = 10000
-		this.searchSourceBuilder.size(500);
-		this.searchSourceBuilder.timeout(new TimeValue(180, TimeUnit.SECONDS));
-		this.searchSourceBuilder.fetchSource(true);
+	private
+		void initSearchUnitRequest() {
+		this.searchUnitRequest = new SearchRequest();
+		this.searchUnitRequest.indices("*-test-*");
+		this.searchUnitRequest.scroll(scroll);
 
 		// source unit_id, bin_type
 		this.unitIDName = Config.getFTFormat().getUnit().getUnitIdNode().getName();
 		this.startTimeName = Config.getFTFormat().getUnit().getStartTimeNode().getName();
-		String[] includeFields = new String[]{unitIDName, FieldType.BinType, startTimeName, "UnitSeq"};
+		this.testTimeName = Config.getFTFormat().getUnit().getTestTimeNode().getName();
+		String[] includeFields = new String[]{unitIDName, FieldType.BinType, startTimeName, "UnitSeq", this.testTimeName};
 		String[] excludeFields = new String[]{"_type"};
-		this.searchSourceBuilder.fetchSource(includeFields, excludeFields);
 
-		this.searchRequest.source(searchSourceBuilder);
+		this.searchUnitRequest.source(new SearchSourceBuilder()
+			.size(500)
+			.timeout(new TimeValue(180, TimeUnit.SECONDS))
+			.fetchSource(true)
+			.fetchSource(includeFields, excludeFields));
+
+	}
+
+	private
+		void initSearchFileRequest() {
+		this.searchFileRequest = new SearchRequest();
+		this.searchFileRequest.indices("*-test-*");
+		this.searchFileRequest.source(new SearchSourceBuilder()
+			.size(0)
+			.timeout(new TimeValue(180, TimeUnit.SECONDS))
+			.fetchSource(false));
+
 //		searchSourceBuilder.profile(true);
+//		this.aggregation = AggregationBuilders.global("LotInfo")
+//			.subAggregation(AggregationBuilders.sum(FieldType.GrossTime).field(FieldType.GrossTime))
+//			.subAggregation(AggregationBuilders.sum(FieldType.UnitCnt).field(FieldType.Unit));
+		this.aggregation = AggregationBuilders.sum(FieldType.GrossTime).field(FieldType.GrossTime);
 
-		return true;
 	}
 
 	/**
@@ -132,16 +169,16 @@ public
 
 		if (dataType.equals(Config.DataTypes.ATE)) {
 //			searchSourceBuilder.query(this.getFTQueryBuilder("HG50099B", "FT-FUSE"));
-			this.searchSourceBuilder.query(this.getFTQueryBuilder(lotNumber, operation));
+			this.searchUnitRequest.source().query(this.getFTQueryBuilder(lotNumber, operation, FieldType.Unit));
 		}
 		else if (dataType.equals(Config.DataTypes.SLT)) {
-			this.searchSourceBuilder.query(this.getSLTQueryBuilder(lotNumber, operation));
+			this.searchUnitRequest.source().query(this.getSLTQueryBuilder(lotNumber, operation, FieldType.Unit));
 		}
 		else {
-			this.searchSourceBuilder.query(this.getSORTQueryBuilder(lotNumber, operation));
+			this.searchUnitRequest.source().query(this.getSORTQueryBuilder(lotNumber, operation, FieldType.Unit));
 		}
 		try {
-			SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+			searchResponse = client.search(searchUnitRequest, RequestOptions.DEFAULT);
 
 			RestStatus status = searchResponse.status();
 			TimeValue took = searchResponse.getTook();
@@ -158,7 +195,7 @@ public
 			String scrollId = searchResponse.getScrollId();
 			SearchHit[] searchHits = searchResponse.getHits().getHits();
 			this.fillData(searchHits);
-			
+
 			while (searchHits != null && searchHits.length > 0) {
 				SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId);
 				scrollRequest.scroll(scroll);
@@ -183,6 +220,69 @@ public
 
 	}
 
+	/**
+	 *
+	 * @param lotNumber
+	 * @param operation
+	 * @param dataType
+	 * @return
+	 */
+	private
+		boolean getLotAggData(String lotNumber, String operation, Config.DataTypes dataType) {
+		this.unitNo = 0;
+
+		if (dataType.equals(Config.DataTypes.ATE)) {
+//			searchSourceBuilder.query(this.getFTQueryBuilder("HG50099B", "FT-FUSE"));
+			this.searchFileRequest.source().query(this.getFTAggQueryBuilder(lotNumber, operation, FieldType.File));
+		}
+		else if (dataType.equals(Config.DataTypes.SLT)) {
+			this.searchFileRequest.source().query(this.getSLTAggQueryBuilder(lotNumber, operation, FieldType.File));
+		}
+		else {
+			this.searchFileRequest.source().query(this.getSORTAggQueryBuilder(lotNumber, operation, FieldType.File));
+		}
+		try {
+
+			this.searchFileRequest.source().aggregation(aggregation);
+			searchResponse = client.search(searchFileRequest, RequestOptions.DEFAULT);
+
+			RestStatus status = searchResponse.status();
+			TimeValue took = searchResponse.getTook();
+			Boolean terminatedEarly = searchResponse.isTerminatedEarly();
+			boolean timedOut = searchResponse.isTimedOut();
+
+			int totalShards = searchResponse.getTotalShards();
+			int successfulShards = searchResponse.getSuccessfulShards();
+			int failedShards = searchResponse.getFailedShards();
+			for (ShardSearchFailure failure : searchResponse.getShardFailures()) {
+				// failures should be handled here
+			}
+
+			long totalHits = searchResponse.getHits().getTotalHits();
+			this.getLotInfo().setTotalFileCnt(totalHits);
+
+			this.fillLotData();
+		}
+		catch (IOException ex) {
+			Logger.getLogger(ESConnection.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+			return false;
+		}
+		return true;
+
+	}
+
+	private
+		void fillLotData() {
+		Aggregations aggregations = this.searchResponse.getAggregations();
+////		Global lotAggInfo = aggregations.get("LotInfo");
+		for (Aggregation agg : aggregations) {
+			String name = agg.getName();
+			if (name.equals(FieldType.GrossTime)) {
+				this.getLotInfo().setGrossTestTime(((Sum) agg).getValue());
+			}
+		}
+	}
+
 	private
 		void fillData(SearchHit[] searchHits) {
 		for (SearchHit hit : searchHits) {
@@ -193,6 +293,7 @@ public
 			String unitID = (String) sourceAsMap.get(unitIDName);
 			String startTime = (String) sourceAsMap.get(startTimeName);
 			int binType = Integer.valueOf((String) sourceAsMap.get(FieldType.BinType));
+			double testTime = Double.valueOf((String) sourceAsMap.get(this.testTimeName));
 
 			System.out.printf("UnitNo= %d, %s\n", ++this.unitNo, hit.getSourceAsString());
 
@@ -206,18 +307,23 @@ public
 				dataSet = new DataSet(unitID);
 				this.getLotInfo().getDataSets().put(unitID, dataSet);
 			}
-			dataSet.getUnitData().add(new Doc(id, binType, startTime, index));
+			dataSet.getUnitData().add(new Doc(id, binType, startTime, index, testTime));
 		}
 	}
 
 	public
 		void updateInto() {
+
 		try {
 			BulkRequest bulkRequest = new BulkRequest();
 			bulkRequest.timeout(TimeValue.timeValueMinutes(5));
 
 			for (DataSet dataSet : this.getLotInfo().getDataSets().values()) {
+				this.getLotInfo().totalUniqueUnitCntInc(dataSet.getUnitData().size());
 				for (Doc doc : dataSet.getUnitData()) {
+					/**
+					 * generate the bulk update request
+					 */
 					Map<String, Object> jsonMap = new HashMap<>();
 					jsonMap.put(FieldType.Rank, doc.getMotherLotInsertion());
 					System.out.printf("%s,Time=%s,%s\n", dataSet.getUnitId(), doc.getMotherLotInsertion(), doc.getStartTime());
@@ -225,6 +331,12 @@ public
 						doc.getIndex(),
 						"doc",
 						doc.getId()).doc(jsonMap));
+					/**
+					 * cal lot kpi
+					 */
+					this.getLotInfo().totalUnitTestTimeInc(doc.getTestTime());
+					this.getLotInfo().totalTestedUnitCntInc(1);
+
 				}
 			}
 
@@ -258,34 +370,67 @@ public
 	}
 
 	public
-		QueryBuilder getFTQueryBuilder(String lotNumber, String operation) {
+		QueryBuilder getFTQueryBuilder(String lotNumber, String operation, String nodeType) {
 		QueryBuilder queryBuilder = QueryBuilders.boolQuery()
 			//                .must(QueryBuilders.termsQuery("date", LocalDate.now().minusDays(1).toString(DateTimeFormat.forPattern("yyyyMMdd")),  LocalDate.now().toString(DateTimeFormat.forPattern("yyyyMMdd"))))
 			.must(QueryBuilders.termQuery(Config.getFTFormat().getLotNumberNode().getName(), lotNumber))
 			.must(QueryBuilders.termQuery(Config.getFTFormat().getOperationNode().getName(), operation))
-//			.must(QueryBuilders.termQuery(FieldType.DieType, FieldType.MasterDie))
-			.must(QueryBuilders.termQuery(FieldType.Type, FieldType.Unit));
+			//			.must(QueryBuilders.termQuery(FieldType.DieType, FieldType.MasterDie))
+			.must(QueryBuilders.termQuery(FieldType.Type, nodeType));
 		return queryBuilder;
 	}
 
 	public
-		QueryBuilder getSLTQueryBuilder(String lotNumber, String operation) {
+		QueryBuilder getSLTQueryBuilder(String lotNumber, String operation, String nodeType) {
 		QueryBuilder queryBuilder = QueryBuilders.boolQuery()
 			//                .must(QueryBuilders.termsQuery("date", LocalDate.now().minusDays(1).toString(DateTimeFormat.forPattern("yyyyMMdd")),  LocalDate.now().toString(DateTimeFormat.forPattern("yyyyMMdd"))))
 			.must(QueryBuilders.termQuery(Config.getSLTFormat().getLotNumberNode().getName(), lotNumber))
 			.must(QueryBuilders.termQuery(Config.getSLTFormat().getOperationNode().getName(), operation))
-//			.must(QueryBuilders.termQuery(FieldType.DieType, FieldType.MasterDie))
-			.must(QueryBuilders.termQuery(FieldType.Type, FieldType.Unit));
+			//			.must(QueryBuilders.termQuery(FieldType.DieType, FieldType.MasterDie))
+			.must(QueryBuilders.termQuery(FieldType.Type, nodeType));
 		return queryBuilder;
 	}
 
 	public
-		QueryBuilder getSORTQueryBuilder(String lotNumber, String operation) {
+		QueryBuilder getSORTQueryBuilder(String lotNumber, String operation, String nodeType) {
 		QueryBuilder queryBuilder = QueryBuilders.boolQuery()
 			//                .must(QueryBuilders.termsQuery("date", LocalDate.now().minusDays(1).toString(DateTimeFormat.forPattern("yyyyMMdd")),  LocalDate.now().toString(DateTimeFormat.forPattern("yyyyMMdd"))))
 			.must(QueryBuilders.termQuery(Config.watFormat.getLotNumberNode().getName(), lotNumber))
 			.must(QueryBuilders.termQuery(Config.watFormat.getOperationNode().getName(), operation))
-			.must(QueryBuilders.termQuery(FieldType.Type, FieldType.Unit));
+			.must(QueryBuilders.termQuery(FieldType.Type, nodeType));
+		return queryBuilder;
+	}
+
+	public
+		QueryBuilder getFTAggQueryBuilder(String lotNumber, String operation, String nodeType) {
+		QueryBuilder queryBuilder = QueryBuilders.boolQuery()
+			//                .must(QueryBuilders.termsQuery("date", LocalDate.now().minusDays(1).toString(DateTimeFormat.forPattern("yyyyMMdd")),  LocalDate.now().toString(DateTimeFormat.forPattern("yyyyMMdd"))))
+			.must(QueryBuilders.termQuery(Config.getFTFormat().getLotNumberNode().getName(), lotNumber))
+			//			.must(QueryBuilders.termQuery(Config.getFTFormat().getOperationNode().getName(), operation))
+			.must(QueryBuilders.termQuery("MfgStep", operation))
+			//			.must(QueryBuilders.termQuery(FieldType.DieType, FieldType.MasterDie))
+			.must(QueryBuilders.termQuery(FieldType.Type, nodeType));
+		return queryBuilder;
+	}
+
+	public
+		QueryBuilder getSLTAggQueryBuilder(String lotNumber, String operation, String nodeType) {
+		QueryBuilder queryBuilder = QueryBuilders.boolQuery()
+			//                .must(QueryBuilders.termsQuery("date", LocalDate.now().minusDays(1).toString(DateTimeFormat.forPattern("yyyyMMdd")),  LocalDate.now().toString(DateTimeFormat.forPattern("yyyyMMdd"))))
+			.must(QueryBuilders.termQuery(Config.getSLTFormat().getLotNumberNode().getName(), lotNumber))
+			.must(QueryBuilders.termQuery(Config.getSLTFormat().getOperationNode().getName(), operation))
+			//			.must(QueryBuilders.termQuery(FieldType.DieType, FieldType.MasterDie))
+			.must(QueryBuilders.termQuery(FieldType.Type, nodeType));
+		return queryBuilder;
+	}
+
+	public
+		QueryBuilder getSORTAggQueryBuilder(String lotNumber, String operation, String nodeType) {
+		QueryBuilder queryBuilder = QueryBuilders.boolQuery()
+			//                .must(QueryBuilders.termsQuery("date", LocalDate.now().minusDays(1).toString(DateTimeFormat.forPattern("yyyyMMdd")),  LocalDate.now().toString(DateTimeFormat.forPattern("yyyyMMdd"))))
+			.must(QueryBuilders.termQuery(Config.watFormat.getLotNumberNode().getName(), lotNumber))
+			.must(QueryBuilders.termQuery(Config.watFormat.getOperationNode().getName(), operation))
+			.must(QueryBuilders.termQuery(FieldType.Type, nodeType));
 		return queryBuilder;
 	}
 
@@ -295,13 +440,14 @@ public
 	}
 
 	public static
-		void main(String[] args) {
+		void main(String[] args) throws IOException {
 		new Config("config/dataformat.xml");
 		ESConnection es = new ESConnection();
 		es.init();
 		es.getLotData("HG50099B", "FT-FUSE", Config.DataTypes.ATE);
 		es.getLotInfo().calInsertion();
 		es.updateInto();
+		es.getLotAggData("HG50099B", "FT-FUSE", Config.DataTypes.ATE);
 		es.close();
 
 	}

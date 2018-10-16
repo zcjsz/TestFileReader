@@ -17,9 +17,13 @@ public
 	private
 		HashMap<String, DataSet> dataSets = new HashMap();
 	private
-		double totalTestTime = 0;
+		double totalTouchDownTestTime = 0;
 	private
-		double avgTestTime = 0;
+		double totalUnitTestTime = 0;
+	private
+		double avgTouchDownTestTime = 0;
+	private
+		double avgUnitTestTime = 0;
 	private
 		double kdfFirstYield = 0;
 	private
@@ -36,6 +40,14 @@ public
 		int uph = 0;
 	private
 		double avgIndexTime = 0;
+	private
+		int totalTestedUnitCnt = 0;
+	private
+		int totalUniqueUnitCnt = 0;
+	private
+		int totalTouchDownCnt = 0;
+	private
+		long totalFileCnt = 0;
 
 	public
 		LotInfo() {
@@ -47,24 +59,56 @@ public
 	}
 
 	public
-		double getTotalTestTime() {
-		return totalTestTime;
+	double getTotalTouchDownTestTime() {
+		return totalTouchDownTestTime;
 	}
 
 	public
-		void setTotalTestTime(double totalTestTime) {
-		this.totalTestTime = totalTestTime;
+	void setTotalTouchDownTestTime(double totalTouchDownTestTime) {
+		this.totalTouchDownTestTime = totalTouchDownTestTime;
+	}
+	
+	public
+	void totalTouchDownTestTimeInc(double totalTouchDownTestTime) {
+		this.totalTouchDownTestTime += totalTouchDownTestTime;
 	}
 
 	public
-		double getAvgTestTime() {
-		return avgTestTime;
+	double getTotalUnitTestTime() {
+		return totalUnitTestTime;
 	}
 
 	public
-		void setAvgTestTime(double avgTestTime) {
-		this.avgTestTime = avgTestTime;
+	void setTotalUnitTestTime(double totalUnitTestTime) {
+		this.totalUnitTestTime = totalUnitTestTime;
 	}
+	public
+	void totalUnitTestTimeInc(double totalUnitTestTime) {
+		this.totalUnitTestTime += totalUnitTestTime;
+	}
+	
+
+	public
+	double getAvgTouchDownTestTime() {
+		return avgTouchDownTestTime;
+	}
+
+	public
+	void setAvgTouchDownTestTime(double avgTouchDownTestTime) {
+		this.avgTouchDownTestTime = avgTouchDownTestTime;
+	}
+
+	public
+	double getAvgUnitTestTime() {
+		return avgUnitTestTime;
+	}
+
+	public
+	void setAvgUnitTestTime(double avgUnitTestTime) {
+		this.avgUnitTestTime = avgUnitTestTime;
+	}
+
+	
 
 	public
 		double getKdfFirstYield() {
@@ -152,5 +196,29 @@ public
 			dataSet.sortMotherLotInserction();
 		}
 	}
+
+	public
+	void totalTestedUnitCntInc(int totalTestedUnitCnt) {
+		this.totalTestedUnitCnt += totalTestedUnitCnt;
+	}
+
+	public
+	void totalUniqueUnitCntInc(int totalUniqueUnitCnt) {
+		this.totalUniqueUnitCnt += totalUniqueUnitCnt;
+	}
+
+	public
+	void setTotalTestedUnitCnt(int totalTestedUnitCnt) {
+		this.totalTestedUnitCnt = totalTestedUnitCnt;
+	}
+
+	public
+	void setTotalFileCnt(long totalFileCnt) {
+		this.totalFileCnt = totalFileCnt;
+	}
+	
+	
+	
+	
 
 }

@@ -19,9 +19,6 @@ public
 		String unitId = null;
 	private
 		ArrayList<Doc> unitData = new ArrayList();
-	private
-		int size = 0;
-
 	public
 		DataSet(String unitID) {
 		this.unitId = unitID;
