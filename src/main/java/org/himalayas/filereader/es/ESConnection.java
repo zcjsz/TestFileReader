@@ -101,7 +101,7 @@ public
 
 		//max = 10000
 		this.searchSourceBuilder.size(500);
-		this.searchSourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
+		this.searchSourceBuilder.timeout(new TimeValue(180, TimeUnit.SECONDS));
 		this.searchSourceBuilder.fetchSource(true);
 
 		// source unit_id, bin_type
