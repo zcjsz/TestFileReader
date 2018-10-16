@@ -167,7 +167,7 @@ public
 		this.getLotInfo().reset();
 		this.getLotInfo().setLotNumber(lotNumber);
 		this.getLotInfo().setOperation(operation);
-		
+
 		this.unitNo = 0;
 		this.getLotInfo().setWaferSort(dataType.equals(Config.DataTypes.WaferSort));
 
@@ -301,7 +301,7 @@ public
 			String startTime = (String) sourceAsMap.get(startTimeName);
 			int binType = Integer.valueOf((String) sourceAsMap.get(FieldType.BinType));
 			boolean masterDie = ((String) sourceAsMap.get(FieldType.DieType)).equals(FieldType.MasterDie);
-			
+
 			double testTime = Double.valueOf((String) sourceAsMap.get(this.testTimeName));
 
 			System.out.printf("UnitNo= %d, %s\n", ++this.unitNo, hit.getSourceAsString());
@@ -329,7 +329,7 @@ public
 			bulkRequest.timeout(TimeValue.timeValueMinutes(5));
 
 			for (DataSet dataSet : this.getLotInfo().getDataSets().values()) {
-				
+
 				for (Doc doc : dataSet.getUnitData()) {
 					/**
 					 * generate the bulk update request
@@ -341,11 +341,6 @@ public
 						doc.getIndex(),
 						"doc",
 						doc.getId()).doc(jsonMap));
-					/**
-					 * cal lot kpi
-					 */
-					
-
 				}
 			}
 

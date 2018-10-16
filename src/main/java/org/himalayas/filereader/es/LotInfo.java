@@ -457,11 +457,11 @@ public
 	@Override
 	public
 		String toString() {
-		return FieldType.Type + "=" + FieldType.Lot_KDFLot + "," 
+		return FieldType.Type + "=" + FieldType.Lot_KDFLot + ","
 			+ this.dataFormat.getLotNumberNode().getName() + "=" + this.lotNumber + ","
 			+ this.dataFormat.getOperationNode().getName() + "=" + this.operation + ","
-			+ FieldType.Lot_Doc_id + "=" + (this.lotNumber  +"_" + this.operation) + ","
-			+ FieldType.Lot_AvgFailTestTime + "=" +  this.valueOf2f(this.avgFailTestTime) + ","
+			+ FieldType.Lot_Doc_id + "=" + (this.lotNumber + "_" + this.operation) + ","
+			+ FieldType.Lot_AvgFailTestTime + "=" + this.valueOf2f(this.avgFailTestTime) + ","
 			+ FieldType.Lot_AvgPassTestTime + "=" + this.valueOf2f(this.avgPassTestTime) + ","
 			+ FieldType.Lot_AvgTestTime + "=" + this.valueOf2f(this.avgUnitTestTime) + ","
 			+ FieldType.Lot_FileCnt + "=" + this.totalFileCnt + ","
@@ -482,7 +482,7 @@ public
 			+ FieldType.Lot_TotalUniqueUnitCnt + "=" + this.totalUniqueUnitCnt + ","
 			+ FieldType.Lot_TotalUnitTestTime + "=" + this.valueOf2f(this.totalUnitTestTime) + ","
 			+ FieldType.Lot_UPH + "=" + this.uph + ","
-			+ FieldType.Lot_UPHGood+ "=" + this.uphGood + "\n";
+			+ FieldType.Lot_UPHGood + "=" + this.uphGood + "\n";
 	}
 
 	public
@@ -491,28 +491,33 @@ public
 	}
 
 	public
-	void setOperation(String operation) {
+		void setOperation(String operation) {
 		this.operation = operation;
 	}
 
 	public
-	void setLotNumber(String lotNumber) {
+		void setLotNumber(String lotNumber) {
 		this.lotNumber = lotNumber;
 	}
-	
-	
-	private String valueOf4f(float in){
-        return  String.format("%.4f",in);
-    }
-    private  String valueOf4f(double in){
-        return  String.format("%.4f",in) ;
-    }
-	
-	private  String valueOf2f(float in){
-        return String.format("%.2f",in);
-    }
-    private  String valueOf2f(double in){
-        return String.format("%.2f",in) ;
-    }
+
+	private
+		String valueOf4f(float in) {
+		return String.format("%.4f", in);
+	}
+
+	private
+		String valueOf4f(double in) {
+		return String.format("%.4f", in);
+	}
+
+	private
+		String valueOf2f(float in) {
+		return String.format("%.2f", in);
+	}
+
+	private
+		String valueOf2f(double in) {
+		return String.format("%.2f", in);
+	}
 
 }
