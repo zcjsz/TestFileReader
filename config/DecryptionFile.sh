@@ -338,7 +338,7 @@ clean_up()
 }
 
 change_dir_to_sort
-decrypt_extract $SORT_PATH
+decrypt_extract
 move_sort_kdf
 remove_rmap
 clean_up
