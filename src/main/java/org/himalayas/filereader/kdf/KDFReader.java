@@ -280,13 +280,13 @@ public
 		void logOpenFailureToES() {
 		System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
 			FieldType.EventType, Config.EventType.KDFOpenFailure,
-			FieldType.LotNumber, this.lotNumber,
+			this.getFormat().getLotNumberNode().getName(), this.lotNumber,
 			FieldType.KdfMonth, this.kdfMonth,
 			FieldType.KdfDate, this.kdfDate,
 			FieldType.TransferTime, this.transferTime,
 			FieldType.KdfName, this.kdfName,
 			FieldType.DataType, this.getFormat().getDataType(),
-			FieldType.MfgStep, this.mfgStp
+			this.getFormat().getOperationNode().getName(), this.mfgStp
 		);
 	}
 
@@ -294,13 +294,13 @@ public
 		void logRepeatFileToES() {
 		System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
 			FieldType.EventType, Config.EventType.KDFRepeat,
-			FieldType.LotNumber, this.lotNumber,
+			this.getFormat().getLotNumberNode().getName(), this.lotNumber,
 			FieldType.KdfMonth, this.kdfMonth,
 			FieldType.KdfDate, this.kdfDate,
 			FieldType.TransferTime, this.transferTime,
 			FieldType.KdfName, this.kdfName,
 			FieldType.DataType, this.getFormat().getDataType(),
-			FieldType.MfgStep, this.mfgStp
+			this.getFormat().getOperationNode().getName(), this.mfgStp
 		);
 	}
 
@@ -318,13 +318,13 @@ public
 		System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
 			FieldType.EventType,Config.EventType.IOError,
 			FieldType.Failure,func,
-			FieldType.LotNumber,this.lotNumber,
+			this.getFormat().getLotNumberNode().getName(),this.lotNumber,
 			FieldType.KdfMonth,this.kdfMonth,
 			FieldType.KdfDate,this.kdfDate,
 			FieldType.TransferTime,this.transferTime,
 			FieldType.KdfName,this.kdfName,
 			FieldType.DataType,this.getFormat().getDataType(),
-			FieldType.MfgStep,this.mfgStp
+			this.getFormat().getOperationNode().getName(),this.mfgStp
 		);
 	}
 
@@ -336,8 +336,8 @@ public
 				FieldType.DoneTime,ZonedDateTime.now().toOffsetDateTime(),
 				FieldType.KdfName,this.kdfName,
 				FieldType.UnitCnt,this.unitCnt,
-				FieldType.LotNumber,this.lotNumber,
-				FieldType.MfgStep,this.mfgStp,
+				this.getFormat().getLotNumberNode().getName(),this.lotNumber,
+				this.getFormat().getOperationNode().getName(),this.mfgStp,
 				FieldType.KdfMonth,this.kdfMonth,
 				FieldType.KdfDate,this.kdfDate,
 				FieldType.TransferTime,this.transferTime,
@@ -351,8 +351,8 @@ public
 				FieldType.DoneTime,ZonedDateTime.now().toOffsetDateTime(),
 				this.getFormat().getUnit().getUnitIdNode().getName(),this.getFormat().getUnit().getUnitIdNode().getXmlValue(),
 				FieldType.UnitCnt,this.unitCnt,
-				FieldType.LotNumber,this.lotNumber,
-				FieldType.MfgStep,this.mfgStp,
+				this.getFormat().getLotNumberNode().getName(),this.lotNumber,
+				this.getFormat().getOperationNode().getName(),this.mfgStp,
 				FieldType.KdfMonth,kdfMonth,
 				FieldType.KdfDate,this.kdfDate,
 				FieldType.TransferTime,this.transferTime,
@@ -371,8 +371,8 @@ public
 			+ "," + FieldType.DoneTime + "=" + ZonedDateTime.now().toOffsetDateTime()
 			+ "," + FieldType.KdfName + "=" + this.kdfName
 			+ "," + FieldType.UnitCnt + "=" + this.unitCnt
-			+ "," + FieldType.LotNumber + "=" + this.lotNumber
-			+ "," + FieldType.MfgStep + "=" + this.mfgStp
+			+ "," + this.getFormat().getLotNumberNode().getName() + "=" + this.lotNumber
+			+ "," + this.getFormat().getOperationNode().getName() + "=" + this.mfgStp
 			+ "," + FieldType.KdfMonth + "=" + this.kdfMonth
 			+ "," + FieldType.KdfDate + "=" + this.kdfDate
 			+ "," + FieldType.TransferTime + "=" + this.transferTime
