@@ -16,6 +16,9 @@ import org.himalayas.filereader.kdf.Bin;
 
 public
 	class DataFormat {
+	
+	private
+		String lotIndex = null;
 
 	private
 		boolean appendSlaveUnitId2Test = false;
@@ -198,6 +201,9 @@ public
 					case "Factory":
 						this.factory = fieldValue;
 						break;
+					case "LotIndex":
+						this.lotIndex = fieldValue;
+						break;	
 					case "Customer":
 						this.customer = fieldValue;
 						break;
@@ -1045,5 +1051,11 @@ public
 		XmlNode getOperationNode() {
 		return operationNode;
 	}
+
+	public
+	String getLotIndex() {
+		return lotIndex;
+	}
+	
 
 }

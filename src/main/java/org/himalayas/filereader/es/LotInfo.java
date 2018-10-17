@@ -6,7 +6,7 @@
 package org.himalayas.filereader.es;
 
 import java.util.HashMap;
-import org.himalayas.filereader.util.DataFormat;
+import java.util.Map;
 import org.himalayas.filereader.util.FieldType;
 
 /**
@@ -15,6 +15,14 @@ import org.himalayas.filereader.util.FieldType;
  */
 public
 	class LotInfo {
+	
+	private
+		String doc_Id = null;
+
+	private
+		String lotNumberName = null;
+	private
+		String operationName = null;
 
 	private
 		String lotNumber = null;
@@ -23,8 +31,6 @@ public
 
 	private
 		boolean waferSort = false;
-	private
-		DataFormat dataFormat = null;
 
 	private
 		HashMap<String, DataSet> dataSets = new HashMap();
@@ -89,7 +95,11 @@ public
 
 	public
 		void reset() {
-		this.dataFormat = null;
+		this.lotNumber = null;
+		this.lotNumberName = null;
+		this.operation = null;
+		this.operationName = null;
+		
 		this.uph = 0;
 		this.uphGood = 0;
 		this.waferSort = false;
@@ -458,9 +468,9 @@ public
 	public
 		String toString() {
 		return FieldType.Type + "=" + FieldType.Lot_KDFLot + ","
-			+ this.dataFormat.getLotNumberNode().getName() + "=" + this.lotNumber + ","
-			+ this.dataFormat.getOperationNode().getName() + "=" + this.operation + ","
-			+ FieldType.Lot_Doc_id + "=" + (this.lotNumber + "_" + this.operation) + ","
+			+ this.lotNumberName + "=" + this.lotNumber + ","
+			+ this.operationName + "=" + this.operation + ","
+			+ FieldType.Lot_Doc_id + "=" + this.doc_Id + ","
 			+ FieldType.Lot_AvgFailTestTime + "=" + this.valueOf2f(this.avgFailTestTime) + ","
 			+ FieldType.Lot_AvgPassTestTime + "=" + this.valueOf2f(this.avgPassTestTime) + ","
 			+ FieldType.Lot_AvgTestTime + "=" + this.valueOf2f(this.avgUnitTestTime) + ","
@@ -486,8 +496,37 @@ public
 	}
 
 	public
-		void setDataFormat(DataFormat dataFormat) {
-		this.dataFormat = dataFormat;
+		Map<String, Object> getJsonMap() {
+		Map<String, Object> jsonMap = new HashMap<>();
+		jsonMap.put(FieldType.Type, FieldType.Lot_KDFLot);
+		jsonMap.put(this.lotNumberName, this.lotNumber);
+		jsonMap.put(this.operationName, this.operation);
+		jsonMap.put(FieldType.Lot_Doc_id, this.doc_Id);
+		jsonMap.put(FieldType.Lot_AvgFailTestTime, this.valueOf2f(this.avgFailTestTime));
+		jsonMap.put(FieldType.Lot_AvgPassTestTime, this.valueOf2f(this.avgPassTestTime));
+		jsonMap.put(FieldType.Lot_AvgTestTime, this.valueOf2f(this.avgUnitTestTime));
+		jsonMap.put(FieldType.Lot_FileCnt, this.totalFileCnt);
+		jsonMap.put(FieldType.Lot_FirstFailCnt, this.firstFailCnt);
+		jsonMap.put(FieldType.Lot_FirstPassCnt, this.firstPassCnt);
+		jsonMap.put(FieldType.Lot_GrossTestTime, this.valueOf2f(this.grossTestTime));
+		jsonMap.put(FieldType.Lot_KdfFinalYield, this.valueOf4f(this.kdfFinalYield));
+		jsonMap.put(FieldType.Lot_KdfFirstYield, this.valueOf4f(this.kdfFirstYield));
+		jsonMap.put(FieldType.Lot_KdfFtrd, this.valueOf4f(this.kdfFtrd));
+		jsonMap.put(FieldType.Lot_KdfIr, this.valueOf4f(this.kdfIr));
+		jsonMap.put(FieldType.Lot_LastFailCnt, this.lastFailCnt);
+		jsonMap.put(FieldType.Lot_LastPassCnt, this.lastPassCnt);
+		jsonMap.put(FieldType.Lot_TotalFailCnt, this.totalFailCnt);
+		jsonMap.put(FieldType.Lot_TotalFailTestTime, this.valueOf2f(this.totalFailTestTime));
+		jsonMap.put(FieldType.Lot_TotalPassCnt, this.totalPassCnt);
+		jsonMap.put(FieldType.Lot_TotalPassTestTime, this.valueOf2f(this.totalPassTestTime));
+		jsonMap.put(FieldType.Lot_TotalTestedUnitCnt, this.totalTestedUnitCnt);
+		jsonMap.put(FieldType.Lot_TotalUniqueUnitCnt, this.totalUniqueUnitCnt);
+		jsonMap.put(FieldType.Lot_TotalUnitTestTime, this.valueOf2f(this.totalUnitTestTime));
+		jsonMap.put(FieldType.Lot_UPH, this.uph);
+		jsonMap.put(FieldType.Lot_UPHGood, this.uphGood);
+
+		return jsonMap;
+
 	}
 
 	public
@@ -520,4 +559,35 @@ public
 		return String.format("%.2f", in);
 	}
 
+	public
+		void setLotNumberName(String lotNumberName) {
+		this.lotNumberName = lotNumberName;
+	}
+
+	public
+		void setOperationName(String operationName) {
+		this.operationName = operationName;
+	}
+
+	public
+	void setDoc_Id(String doc_Id) {
+		this.doc_Id = doc_Id;
+	}
+
+	public
+	String getDoc_Id() {
+		return doc_Id;
+	}
+
+	public
+	String getLotNumber() {
+		return lotNumber;
+	}
+
+	public
+	String getOperation() {
+		return operation;
+	}
+
+	
 }
