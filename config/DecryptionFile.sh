@@ -43,6 +43,7 @@ TIME=$(date "+%Y%m%d%H%M%S")
 echo ""
 echo "$TIME: start task"
 DATE=`expr substr $TIME 1 8`
+DATE_PATH="$DATE/"
 AppPath=`pwd $0`
 
 cd $1
@@ -188,13 +189,18 @@ move_sort_kdf()
           do
             fullKDF="./$file/$kdfFile"
             # move kdf file to destination
-            mvCmd="$Move$fullKDF $DestPath$SORT_PATH$kdfFile.$TIME"
-            $mvCmd
+            mkdir -p $DestPath$SORT_PATH$DATE_PATH
             if [ $? = 0 ]; then
-              echo "successed to move kdf file $kdfFile to $DestPath$SORT_PATH"
+                mvCmd="$Move$fullKDF $DestPath$SORT_PATH$DATE_PATH$kdfFile.$TIME"
+                $mvCmd
+                if [ $? = 0 ]; then
+                  echo "successed to move kdf file $kdfFile to $DestPath$SORT_PATH"
+                else
+                  echo "failed to execute command $mvCmd"
+                  echo "failed to move $kdfFile to $DestPath$SORT_PATH"
+                fi
             else
-              echo "failed to execute command $mvCmd"
-              echo "failed to move $kdfFile to $DestPath$SORT_PATH"
+                echo "failed to mkdir $DestPath$SORT_PATH$DATE_PATH"
             fi
           done
       fi
@@ -209,15 +215,19 @@ move_eng_kdf()
         for kdfFile in `ls ./$file | grep .kdf`
           do
             fullKDF="./$file/$kdfFile"
-            mkdir -p $DestPath$ENG_PATH
-            # move kdf file to destination
-            mvCmd="$Move$fullKDF $DestPath$ENG_PATH$kdfFile.$TIME"
-            $mvCmd
+            mkdir -p $DestPath$ENG_PATH$DATE_PATH
             if [ $? = 0 ]; then
-              echo "successed to move kdf file $kdfFile to $DestPath$ENG_PATH"
+                # move kdf file to destination
+                mvCmd="$Move$fullKDF $DestPath$ENG_PATH$DATE_PATH$kdfFile.$TIME"
+                $mvCmd
+                if [ $? = 0 ]; then
+                  echo "successed to move kdf file $kdfFile to $DestPath$ENG_PATH"
+                else
+                  echo "failed to execute command $mvCmd"
+                  echo "failed to move $kdfFile to $DestPath$ENG_PATH"
+                fi
             else
-              echo "failed to execute command $mvCmd"
-              echo "failed to move $kdfFile to $DestPath$ENG_PATH"
+                echo "failed to mkdir $DestPath$ENG_PATH$DATE_PATH"
             fi
           done
       fi
@@ -234,7 +244,7 @@ move_dis()
             fullKDF="./$file/$kdfFile"
             # move kdf file to destination
             # check if the lot dir exist
-            lotPath="$DestPath$WAT_PATH$file/"
+            lotPath="$DestPath$WAT_PATH$DATE_PATH$file/"
             mkdir -p $lotPath
             if [ $? = 0 ]; then
                 mvCmd="$Move$fullKDF $lotPath$kdfFile.$TIME"
@@ -267,7 +277,7 @@ move_smap()
             #echo $fullKDF
             # move kdf file to destination
             # check if the lot dir exist
-            lotPath="$DestPath$SMAP_PATH$file/"
+            lotPath="$DestPath$SMAP_PATH$DATE_PATH$file/"
             mkdir -p $lotPath
             if [ $? = 0 ]; then
                 mvCmd="$Move$fullKDF $lotPath$kdfFile.$TIME"
