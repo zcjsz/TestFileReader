@@ -326,7 +326,7 @@ public
 
 		try {
 			BulkRequest bulkRequest = new BulkRequest();
-			bulkRequest.timeout(TimeValue.timeValueMinutes(5));
+			bulkRequest.timeout(TimeValue.timeValueSeconds(20));
 
 			for (DataSet dataSet : this.getLotInfo().getDataSets().values()) {
 
