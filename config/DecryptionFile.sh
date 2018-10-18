@@ -40,7 +40,8 @@ if [ ! $# -eq 2 ];then
 fi
 
 TIME=$(date "+%Y%m%d%H%M%S")
-echo "start task on $TIME"
+echo ""
+echo "$TIME: start task"
 DATE=`expr substr $TIME 1 8`
 AppPath=`pwd $0`
 
@@ -141,7 +142,7 @@ decrypt_extract()
         fi
 
         KeepGoing=0
-        gpg --passphrase QazWsx123 -o $fullFile -d "./$i"    # decryption
+        gpg --passphrase QazWsx123 --batch -o $fullFile -d "./$i"    # decryption
         if [ $? = 0 ]; then
           KeepGoing=1
           echo "successed to proceed the gpg file: $i"
@@ -195,14 +196,13 @@ move_sort_kdf()
               echo "failed to execute command $mvCmd"
               echo "failed to move $kdfFile to $DestPath$SORT_PATH"
             fi
-            echo ""
           done
       fi
     done
 }
 
 move_eng_kdf()
-{
+{   
     for file in `ls ./`
     do
       if [ -d $file ]; then
@@ -219,7 +219,6 @@ move_eng_kdf()
               echo "failed to execute command $mvCmd"
               echo "failed to move $kdfFile to $DestPath$ENG_PATH"
             fi
-            echo ""
           done
       fi
     done
@@ -246,7 +245,6 @@ move_dis()
                   echo "failed to execute command $mvCmd"
                   echo "failed to move $kdfFile to $lotPath"
                 fi
-                echo""
             else
                 echo "failed to mkdir for path: $lotPath"
             fi
@@ -257,7 +255,6 @@ move_dis()
 
 move_smap()
 {
-    
     
     for file in ./*
     do
@@ -281,7 +278,6 @@ move_smap()
                   echo "failed to execute command $mvCmd"
                   echo "failed to move $kdfFile to $lotPath"
                 fi
-                echo""
             else
                 echo "failed to mkdir for path: $lotPath"
             fi
@@ -306,7 +302,6 @@ remove_rmap()
           else
             echo "failed to remove rmap file: $rmapFile"
           fi
-          echo ""
         done
 
       fi
@@ -331,31 +326,47 @@ clean_up()
             echo "failed to execute this cmd: $RMDIR$fullPath"
             echo "failed to remove this empty dir: $file"
           fi
-          echo ""
         fi
       fi
     done
 }
 
+echo ""
+echo "sort task start"
 change_dir_to_sort
 decrypt_extract
 move_sort_kdf
 remove_rmap
 clean_up
+echo "sort task done"
 
+echo ""
+echo "eng sort task start"
 change_dir_to_eng
-decrypt_extract $ENG_PATH
+decrypt_extract
 move_eng_kdf
 remove_rmap
 clean_up
+echo "eng sort task done"
 
+echo ""
+echo "wat task start"
 change_dir_to_wat
-decrypt_extract $WAT_PATH
+decrypt_extract
 clean_up
 move_dis
 clean_up
+echo "wat task done"
 
+echo ""
+echo "smap task start"
 change_dir_to_smap
-decrypt_extract $SMAP_PATH
+decrypt_extract
 move_smap
 clean_up
+echo "smap task done"
+
+TIME=$(date "+%Y%m%d%H%M%S")
+echo "$TIME: all the taskd done"
+
+exit 0
