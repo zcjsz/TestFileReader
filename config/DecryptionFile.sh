@@ -33,6 +33,9 @@ WAT_PATH="/WAT/"
 SMAP_PATH="/SMAP/"
 ENG_PATH="/EngSORT/"
 
+FT_PATH="/FT/"
+SLT_PATH="/SLT/"
+
 if [ ! $# -eq 2 ];then
     echo $Usage
     echo "please set the source and destination file"
@@ -73,10 +76,12 @@ change_dir_to_sort()
     path=$SourcePath$SORT_PATH
     $ChDir$path
     if [ $? = 0 ]; then
+      echo ""
       echo `pwd`
     else
-      exit 1
+      return 1
     fi
+    return 0
 }
 
 change_dir_to_eng()
@@ -84,10 +89,12 @@ change_dir_to_eng()
     path=$SourcePath$ENG_PATH
     $ChDir$path
     if [ $? = 0 ]; then
-      echo `pwd`
+        echo ""
+        echo `pwd`
     else
-      exit 1
+      return 1
     fi
+    return 0
 }
 
 change_dir_to_wat()
@@ -96,10 +103,12 @@ change_dir_to_wat()
     path=$SourcePath$WAT_PATH
     $ChDir$path
     if [ $? = 0 ]; then
+      echo ""
       echo `pwd`
     else
-      exit 1
+      return 1
     fi
+    return 0
 }
 change_dir_to_smap()
 {
@@ -107,10 +116,41 @@ change_dir_to_smap()
     path=$SourcePath$SMAP_PATH
     $ChDir$path
     if [ $? = 0 ]; then
+      echo ""
       echo `pwd`
     else
-      exit 1
+      return 1
     fi
+    return 0
+}
+
+
+change_dir_to_slt()
+{
+    path='pwd'
+    path=$SourcePath$SLT_PATH
+    $ChDir$path
+    if [ $? = 0 ]; then
+      echo ""
+      echo `pwd`
+    else
+      return 1
+    fi
+    return 0
+}
+
+change_dir_to_ft()
+{
+    path='pwd'
+    path=$SourcePath$FT_PATH
+    $ChDir$path
+    if [ $? = 0 ]; then
+      echo ""
+      echo `pwd`
+    else
+      return 1
+    fi
+    return 0
 }
 
 
@@ -201,6 +241,61 @@ move_sort_kdf()
                 fi
             else
                 echo "failed to mkdir $DestPath$SORT_PATH$DATE_PATH"
+            fi
+          done
+      fi
+    done
+}
+
+move_ft_kdf()
+{
+    for file in `ls ./`
+    do
+      if [ -d $file ]; then
+        for kdfFile in `ls ./$file | grep .kdf`
+          do
+            fullKDF="./$file/$kdfFile"
+            # move kdf file to destination
+            mkdir -p $DestPath$FT_PATH$DATE_PATH
+            if [ $? = 0 ]; then
+                mvCmd="$Move$fullKDF $DestPath$FT_PATH$DATE_PATH$kdfFile.$TIME"
+                $mvCmd
+                if [ $? = 0 ]; then
+                  echo "successed to move kdf file $kdfFile to $DestPath$FT_PATH"
+                else
+                  echo "failed to execute command $mvCmd"
+                  echo "failed to move $kdfFile to $DestPath$FT_PATH"
+                fi
+            else
+                echo "failed to mkdir $DestPath$FT_PATH$DATE_PATH"
+            fi
+          done
+      fi
+    done
+}
+
+
+move_slt_kdf()
+{
+    for file in `ls ./`
+    do
+      if [ -d $file ]; then
+        for kdfFile in `ls ./$file | grep .kdf`
+          do
+            fullKDF="./$file/$kdfFile"
+            # move kdf file to destination
+            mkdir -p $DestPath$SLT_PATH$DATE_PATH
+            if [ $? = 0 ]; then
+                mvCmd="$Move$fullKDF $DestPath$SLT_PATH$DATE_PATH$kdfFile.$TIME"
+                $mvCmd
+                if [ $? = 0 ]; then
+                  echo "successed to move kdf file $kdfFile to $DestPath$SLT_PATH"
+                else
+                  echo "failed to execute command $mvCmd"
+                  echo "failed to move $kdfFile to $DestPath$SLT_PATH"
+                fi
+            else
+                echo "failed to mkdir $DestPath$SLT_PATH$DATE_PATH"
             fi
           done
       fi
@@ -341,40 +436,71 @@ clean_up()
     done
 }
 
-echo ""
-echo "sort task start"
+
 change_dir_to_sort
-decrypt_extract
-move_sort_kdf
-remove_rmap
-clean_up
-echo "sort task done"
+if [ $? = 0 ]; then
+    echo "sort task start"
+    decrypt_extract
+    move_sort_kdf
+    remove_rmap
+    clean_up
+    echo "sort task done"
+fi
 
-echo ""
-echo "eng sort task start"
+
+
 change_dir_to_eng
-decrypt_extract
-move_eng_kdf
-remove_rmap
-clean_up
-echo "eng sort task done"
+if [ $? = 0 ]; then
+    echo "eng sort task start"
+    decrypt_extract
+    move_eng_kdf
+    remove_rmap
+    clean_up
+    echo "eng sort task done"
+fi
 
-echo ""
-echo "wat task start"
+
+
+change_dir_to_ft
+if [ $? = 0 ]; then
+    echo "ft task start"
+    decrypt_extract
+    move_ft_kdf
+    clean_up
+    echo "ft task done"
+fi
+
+
+change_dir_to_slt
+if [ $? = 0 ]; then
+    echo "slt task start"
+    decrypt_extract
+    move_slt_kdf
+    clean_up
+    echo "slt task done"
+fi
+
+
 change_dir_to_wat
-decrypt_extract
-clean_up
-move_dis
-clean_up
-echo "wat task done"
+if [ $? = 0 ]; then
+    echo "wat task start"
+    decrypt_extract
+    clean_up
+    move_dis
+    clean_up
+    echo "wat task done"
+fi
 
-echo ""
-echo "smap task start"
+
+
 change_dir_to_smap
-decrypt_extract
-move_smap
-clean_up
-echo "smap task done"
+if [ $? = 0 ]; then
+    echo "smap task start"
+    decrypt_extract
+    move_smap
+    clean_up
+    echo "smap task done"
+fi
 
 TIME=$(date "+%Y%m%d%H%M%S")
 echo "$TIME: all the taskd done"
