@@ -16,7 +16,19 @@ import org.himalayas.filereader.kdf.Bin;
 
 public
 	class DataFormat {
-	
+
+	private
+		File doneArchivePath = null;
+
+	private
+		File badFormatArchivePath = null;
+	private
+		File openErrorArchivePath = null;
+	private
+		File exceptionArchivePath = null;
+	private
+		File repeatArchivePath = null;
+
 	private
 		String lotIndex = null;
 
@@ -203,7 +215,7 @@ public
 						break;
 					case "LotIndex":
 						this.lotIndex = fieldValue;
-						break;	
+						break;
 					case "Customer":
 						this.customer = fieldValue;
 						break;
@@ -418,9 +430,46 @@ public
 			if (this.isDebugMode()) {
 				this.printConfig();
 			}
+			this.badFormatArchivePath = new File(this.kdfArchivePath + "/bad_format");
+			if(this.mkArchivePath(this.badFormatArchivePath)) {
+				return false;
+			}
+			
+			this.openErrorArchivePath = new File(this.kdfArchivePath + "/open_error");
+			if(this.mkArchivePath(this.openErrorArchivePath)){
+				return false;
+			}
+			
+			this.doneArchivePath = new File(this.kdfArchivePath + "/file_done");
+			if(this.mkArchivePath(this.doneArchivePath)){
+				return false;
+			}
+			
+			this.exceptionArchivePath = new File(this.kdfArchivePath + "/exception");
+			if(this.mkArchivePath(this.exceptionArchivePath)){
+				return false;
+			}
+			
+			this.repeatArchivePath = new File(this.kdfArchivePath + "/repeat");
+			if(this.mkArchivePath(this.repeatArchivePath)){
+				return false;
+			}
 
 			return true;
 		}
+	}
+		
+	private boolean mkArchivePath(File file){
+		if((!file.exists()) || file.isFile()){
+			if(file.mkdir()){
+				return true;
+			}
+			else{
+				System.out.println("failed to mkdir for " + file.getAbsolutePath());
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private
@@ -1053,9 +1102,35 @@ public
 	}
 
 	public
-	String getLotIndex() {
+		String getLotIndex() {
 		return lotIndex;
 	}
+
+	public
+	File getBadFormatArchivePath() {
+		return badFormatArchivePath;
+	}
+
+	public
+	File getDoneArchivePath() {
+		return doneArchivePath;
+	}
+
+	public
+	File getExceptionArchivePath() {
+		return exceptionArchivePath;
+	}
+
+	public
+	File getOpenErrorArchivePath() {
+		return openErrorArchivePath;
+	}
+
+	public
+	File getRepeatArchivePath() {
+		return repeatArchivePath;
+	}
+		
 	
 
 }
