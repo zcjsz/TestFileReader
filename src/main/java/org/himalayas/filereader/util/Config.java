@@ -49,7 +49,7 @@ public
 
 	public static
 		enum EventType {
-		KDFDone, KDFRepeat, KDFBadFormat, KDFOpenFailure, IOError
+		KDFDone, KDFRepeat, KDFBadFormat, KDFOpenFailure, IOError,KDFException
 	}
 
 	public static

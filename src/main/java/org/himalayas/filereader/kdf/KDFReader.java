@@ -31,7 +31,6 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
-import java.util.ArrayList;
 import org.himalayas.filereader.util.Config;
 import org.himalayas.filereader.util.DataFormat;
 import org.himalayas.filereader.util.FieldType;
@@ -123,8 +122,8 @@ public
 		int unitLevelDocCnt = 0;
 	private
 		int fileLevelDocCnt = 0;
-	private
-		ArrayList<String> allFields = new ArrayList();
+//	private
+//		ArrayList<String> allFields = new ArrayList();
 	private
 		String baseClass = null;
 	private
@@ -1611,9 +1610,9 @@ public
 		for (String fieldName : node.keySet()) {
 			Byte fieldType = node.get(fieldName).getType();
 
-			if ((!this.allFields.contains(fieldName)) && (fieldType == 11 || fieldType == 22 || fieldType == 33)) {
-				this.allFields.add(fieldName);
-			}
+//			if ((!this.allFields.contains(fieldName)) && (fieldType == 11 || fieldType == 22 || fieldType == 33)) {
+//				this.allFields.add(fieldName);
+//			}
 			String fieldValue = node.get(fieldName).toString().trim();
 
 			if (fieldName.isEmpty()) {
@@ -2191,7 +2190,7 @@ public
 			}
 		}
 
-		System.out.println(loader.allFields.toString());
+		//System.out.println(loader.allFields.toString());
 		System.out.println("total time = " + (System.currentTimeMillis() - startTime));
 		startTime = System.currentTimeMillis();
 	}

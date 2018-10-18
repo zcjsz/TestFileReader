@@ -430,29 +430,31 @@ public
 			if (this.isDebugMode()) {
 				this.printConfig();
 			}
-			this.badFormatArchivePath = new File(this.kdfArchivePath + "/bad_format");
-			if(this.mkArchivePath(this.badFormatArchivePath)) {
-				return false;
-			}
-			
-			this.openErrorArchivePath = new File(this.kdfArchivePath + "/open_error");
-			if(this.mkArchivePath(this.openErrorArchivePath)){
-				return false;
-			}
-			
-			this.doneArchivePath = new File(this.kdfArchivePath + "/file_done");
-			if(this.mkArchivePath(this.doneArchivePath)){
-				return false;
-			}
-			
-			this.exceptionArchivePath = new File(this.kdfArchivePath + "/exception");
-			if(this.mkArchivePath(this.exceptionArchivePath)){
-				return false;
-			}
-			
-			this.repeatArchivePath = new File(this.kdfArchivePath + "/repeat");
-			if(this.mkArchivePath(this.repeatArchivePath)){
-				return false;
+			if(!Config.renameKDF){
+				this.badFormatArchivePath = new File(this.kdfArchivePath + "/" + Config.EventType.KDFBadFormat);
+				if(!this.mkArchivePath(this.badFormatArchivePath)) {
+					return false;
+				}
+
+				this.openErrorArchivePath = new File(this.kdfArchivePath + "/" + Config.EventType.KDFOpenFailure);
+				if(!this.mkArchivePath(this.openErrorArchivePath)){
+					return false;
+				}
+
+				this.doneArchivePath = new File(this.kdfArchivePath + "/" + Config.EventType.KDFDone);
+				if(!this.mkArchivePath(this.doneArchivePath)){
+					return false;
+				}
+
+				this.exceptionArchivePath = new File(this.kdfArchivePath + "/" + Config.EventType.KDFException);
+				if(!this.mkArchivePath(this.exceptionArchivePath)){
+					return false;
+				}
+
+				this.repeatArchivePath = new File(this.kdfArchivePath + "/" + Config.EventType.KDFRepeat);
+				if(!this.mkArchivePath(this.repeatArchivePath)){
+					return false;
+				}
 			}
 
 			return true;
