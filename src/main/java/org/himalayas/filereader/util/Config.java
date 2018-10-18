@@ -44,7 +44,7 @@ public
 
 	public static
 		enum KdfRename {
-		exception, done, skip, openErr
+		exception, done, skip, openErr, badFormat
 	}
 
 	public static
