@@ -5,7 +5,6 @@
  */
 package org.himalayas.filereader.kdf;
 
-
 import com.amd.kdf.KDFFieldData;
 import com.amd.kdf.collection.KDFCollectionFilter;
 import com.amd.kdf.collection.KDFInstanceTree;
@@ -43,7 +42,7 @@ import org.himalayas.filereader.util.XmlNode;
  * @author ghfan
  */
 public
-	class KDFReader extends KdfLoader{
+	class KDFReader extends KdfLoader {
 
 	private
 		KDFCollectionFilter kdfFilter = null;
@@ -97,7 +96,15 @@ public
 	private
 		File mappingFile = null;
 	private
-		File archiveFile = null;
+		File doneArchiveFile = null;
+	private
+		File repeatArchiveFile = null;
+	private
+		File openErrorArchiveFile = null;
+	private
+		File badFormatArchiveFile = null;
+	private
+		File exceptionArchiveFile = null;
 	private
 		String kdfMonth = null;
 	private
@@ -136,9 +143,9 @@ public
 		this.comHashRefs.clear();
 
 	}
-		
+
 	private
-		void init(){
+		void init() {
 		//reset all the variables
 		this.clearRefs();
 		this.testLogFile = null;
@@ -146,7 +153,11 @@ public
 		this.kdfMonth = null;
 		this.kdfDate = null;
 		this.lotNumber = null;
-		this.archiveFile = null;
+		this.doneArchiveFile = null;
+		this.badFormatArchiveFile = null;
+		this.exceptionArchiveFile = null;
+		this.openErrorArchiveFile = null;
+		this.repeatArchiveFile = null;
 		this.fileOpenTime = null;
 		this.transferTime = null;
 		this.kdfName = null;
@@ -160,20 +171,21 @@ public
 		boolean loadFile(File file) {
 		debugMode = this.getFormat().isDebugMode();
 		this.file = file;
-		
-		
+
 		jobStartTime = System.currentTimeMillis();
 		System.out.printf("\n%s: start proceed kdf %s\n", LocalDateTime.now(), file.getName());
 		this.init();
-		
+
 		if (!this.validateFile(file)) {
 			this.failType = Config.FailureCase.BadFormat;
 			this.logBadFormatFileToES();
+			this.renameOrArchiveKDF(this.badFormatArchiveFile, Config.KdfRename.badFormat);
 			return false;
 		}
 		if (this.isRepeatFile()) {
 			this.failType = Config.FailureCase.RepeatKDF;
 			this.logRepeatFileToES();
+			this.renameOrArchiveKDF(this.repeatArchiveFile, Config.KdfRename.skip);
 			return false;
 		}
 
@@ -184,6 +196,7 @@ public
 			Logger.getLogger(KDFReader.class.getName()).log(Level.SEVERE, null, ex);
 			this.failType = Config.FailureCase.OpenFailure;
 			this.logOpenFailureToES();
+			this.renameOrArchiveKDF(this.openErrorArchiveFile, Config.KdfRename.openErr);
 			return false;
 		}
 
@@ -256,13 +269,36 @@ public
 			System.out.println("Skip since bad Format of KDF date");
 			return false;
 		}
+		if (names.length <= format.getLotNumberIndex()
+			|| names.length <= format.getMfgStepIndex()) {
+			return false;
+		}
 
 		this.lotNumber = names[format.getLotNumberIndex()];
 ////		this.unitId = names[format.getUnitIdIndex()];
 		this.mfgStp = names[format.getMfgStepIndex()];
 
 		// archive file
-		this.archiveFile = new File(this.getFormat().getKdfArchivePath()
+		this.doneArchiveFile = new File(this.getFormat().getDoneArchivePath()
+			+ "/" + this.kdfDate
+			+ "/" + lotNumber
+			+ "/" + this.file.getName());
+
+		this.badFormatArchiveFile = new File(this.getFormat().getBadFormatArchivePath()
+			+ "/" + this.kdfDate
+			+ "/" + lotNumber
+			+ "/" + this.file.getName());
+
+		this.openErrorArchiveFile = new File(this.getFormat().getOpenErrorArchivePath()
+			+ "/" + this.kdfDate
+			+ "/" + lotNumber
+			+ "/" + this.file.getName());
+
+		this.repeatArchiveFile = new File(this.getFormat().getRepeatArchivePath()
+			+ "/" + this.kdfDate
+			+ "/" + lotNumber
+			+ "/" + this.file.getName());
+		this.exceptionArchiveFile = new File(this.getFormat().getExceptionArchivePath()
 			+ "/" + this.kdfDate
 			+ "/" + lotNumber
 			+ "/" + this.file.getName());
@@ -316,15 +352,15 @@ public
 	private
 		void logIoErrorToES(String func) {
 		System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
-			FieldType.EventType,Config.EventType.IOError,
-			FieldType.Failure,func,
-			this.getFormat().getLotNumberNode().getName(),this.lotNumber,
-			FieldType.KdfMonth,this.kdfMonth,
-			FieldType.KdfDate,this.kdfDate,
-			FieldType.TransferTime,this.transferTime,
-			FieldType.KdfName,this.kdfName,
-			FieldType.DataType,this.getFormat().getDataType(),
-			this.getFormat().getOperationNode().getName(),this.mfgStp
+			FieldType.EventType, Config.EventType.IOError,
+			FieldType.Failure, func,
+			this.getFormat().getLotNumberNode().getName(), this.lotNumber,
+			FieldType.KdfMonth, this.kdfMonth,
+			FieldType.KdfDate, this.kdfDate,
+			FieldType.TransferTime, this.transferTime,
+			FieldType.KdfName, this.kdfName,
+			FieldType.DataType, this.getFormat().getDataType(),
+			this.getFormat().getOperationNode().getName(), this.mfgStp
 		);
 	}
 
@@ -332,33 +368,33 @@ public
 		void logKDFDoneToES() {
 		if (!this.getFormat().getDataType().equals(Config.DataTypes.SLT)) {
 			System.out.printf("%s=%s,%s=%s,%s=%s,%s=%d,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%d\n",
-				FieldType.EventType,Config.EventType.KDFDone,
-				FieldType.DoneTime,ZonedDateTime.now().toOffsetDateTime(),
-				FieldType.KdfName,this.kdfName,
-				FieldType.UnitCnt,this.unitCnt,
-				this.getFormat().getLotNumberNode().getName(),this.lotNumber,
-				this.getFormat().getOperationNode().getName(),this.mfgStp,
-				FieldType.KdfMonth,this.kdfMonth,
-				FieldType.KdfDate,this.kdfDate,
-				FieldType.TransferTime,this.transferTime,
-				FieldType.DataType,this.getFormat().getDataType(),
-				FieldType.DocCnt,this.fileLevelDocCnt
+				FieldType.EventType, Config.EventType.KDFDone,
+				FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
+				FieldType.KdfName, this.kdfName,
+				FieldType.UnitCnt, this.unitCnt,
+				this.getFormat().getLotNumberNode().getName(), this.lotNumber,
+				this.getFormat().getOperationNode().getName(), this.mfgStp,
+				FieldType.KdfMonth, this.kdfMonth,
+				FieldType.KdfDate, this.kdfDate,
+				FieldType.TransferTime, this.transferTime,
+				FieldType.DataType, this.getFormat().getDataType(),
+				FieldType.DocCnt, this.fileLevelDocCnt
 			);
 		}
 		else {
 			System.out.printf("%s=%s,%s=%s,%s=%s,%s=%d,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%d,%s=%s\n",
-				FieldType.EventType,Config.EventType.KDFDone,
-				FieldType.DoneTime,ZonedDateTime.now().toOffsetDateTime(),
-				this.getFormat().getUnit().getUnitIdNode().getName(),this.getFormat().getUnit().getUnitIdNode().getXmlValue(),
-				FieldType.UnitCnt,this.unitCnt,
-				this.getFormat().getLotNumberNode().getName(),this.lotNumber,
-				this.getFormat().getOperationNode().getName(),this.mfgStp,
-				FieldType.KdfMonth,kdfMonth,
-				FieldType.KdfDate,this.kdfDate,
-				FieldType.TransferTime,this.transferTime,
-				FieldType.DataType,this.getFormat().getDataType(),
-				FieldType.DocCnt,this.fileLevelDocCnt,
-				FieldType.KdfName,this.kdfName
+				FieldType.EventType, Config.EventType.KDFDone,
+				FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
+				this.getFormat().getUnit().getUnitIdNode().getName(), this.getFormat().getUnit().getUnitIdNode().getXmlValue(),
+				FieldType.UnitCnt, this.unitCnt,
+				this.getFormat().getLotNumberNode().getName(), this.lotNumber,
+				this.getFormat().getOperationNode().getName(), this.mfgStp,
+				FieldType.KdfMonth, kdfMonth,
+				FieldType.KdfDate, this.kdfDate,
+				FieldType.TransferTime, this.transferTime,
+				FieldType.DataType, this.getFormat().getDataType(),
+				FieldType.DocCnt, this.fileLevelDocCnt,
+				FieldType.KdfName, this.kdfName
 			);
 		}
 
@@ -376,12 +412,11 @@ public
 			+ "," + FieldType.KdfMonth + "=" + this.kdfMonth
 			+ "," + FieldType.KdfDate + "=" + this.kdfDate
 			+ "," + FieldType.TransferTime + "=" + this.transferTime
-//			+ "," + FieldType.DataType + "=" + this.getFormat().getDataType()
+			//			+ "," + FieldType.DataType + "=" + this.getFormat().getDataType()
 			+ "," + FieldType.DocCnt + "=" + this.fileLevelDocCnt
-			+ "," + FieldType.FileTime + "=" + this.formatTimeStr(this.fileOpenTime)
-			;
+			+ "," + FieldType.FileTime + "=" + this.formatTimeStr(this.fileOpenTime);
 		value += this.getFormat().getFileDocTimeKVStr() + "\n";
-		if(this.isDebugMode()) {
+		if (this.isDebugMode()) {
 			System.out.println(value);
 		}
 		return value;
@@ -390,9 +425,6 @@ public
 	private
 		boolean isRepeatFile() {
 		if (this.mappingFile.exists()) {
-			if (!this.moveFileToArchive()) {
-				this.logIoErrorToES("FailArchiveKDF");
-			}
 			System.out.println("Skip since this is a repeat file");
 			return true;
 		}
@@ -511,16 +543,16 @@ public
 				String subClass = null;
 				for (String fieldName : des.keySet()) {
 					String fieldValue = des.get(fieldName).toString().trim();
-					
-					if (fieldValue.isEmpty() || fieldName.isEmpty() ) {
+
+					if (fieldValue.isEmpty() || fieldName.isEmpty()) {
 						continue;
 					}
 					if (fieldName.endsWith(Config.subClass)) {
 						subClass = fieldValue;
 						// base class and sub class filters need to apply them here since it needs the base and sub class
 						// to generate the generated test name
-						if(this.getFormat().getDataType().equals(Config.DataTypes.SLT)
-							&& this.getFormat().getSubClassFilters().contains(fieldValue)){
+						if (this.getFormat().getDataType().equals(Config.DataTypes.SLT)
+							&& this.getFormat().getSubClassFilters().contains(fieldValue)) {
 							continue;
 						}
 					}
@@ -528,8 +560,8 @@ public
 						baseClass = fieldValue;
 						// base class and sub class filters need to apply them here since it needs the base and sub class
 						// to generate the generated test name
-						if(this.getFormat().getDataType().equals(Config.DataTypes.SLT)
-							&& this.getFormat().getBaseClassFilters().contains(fieldValue)){
+						if (this.getFormat().getDataType().equals(Config.DataTypes.SLT)
+							&& this.getFormat().getBaseClassFilters().contains(fieldValue)) {
 							continue;
 						}
 					}
@@ -541,13 +573,13 @@ public
 					if (this.getFormat().getTestDescFieldFilters().contains(fieldName)) {
 						continue;
 					}
-					if((!this.getFormat().getTestDescFieldSelectors().isEmpty())
+					if ((!this.getFormat().getTestDescFieldSelectors().isEmpty())
 						&& (!this.getFormat().getTestDescFieldSelectors().contains(fieldName))) {
 						continue;
 					}
-					
+
 					value += "," + fieldName.replace('.', '_') + "=" + fieldValue.replace(',', ' ').replace('=', ' ');
-					
+
 				}
 				if (testDescId != null && (!value.isEmpty())) {
 					this.testDescRefs.put(testDescId, new TestDesc(baseClass, subClass, value));
@@ -629,7 +661,7 @@ public
 				}
 				if (key != null && (!key.isEmpty()) && value != null && (!value.isEmpty())) {
 					data.put(key, value.trim().replace(',', ' ').replace('=', ' '));
-					
+
 				}
 			}
 			if (this.isDebugMode()) {
@@ -649,7 +681,7 @@ public
 				if (comNameField != null) {
 					String comName = comNameField.getValue().toString().replace('.', '_');
 					String comClass = comHashNode.get("componentClass").getValue().toString().replace('.', '_');
-					
+
 					String comHash = comHashNode.get("componentHash").getValue().toString();
 					String comInst = comHashNode.get("componentInst").getValue().toString();
 					this.comHashRefs.put(comHash, new ComponentHash(comClass, comName));
@@ -783,7 +815,7 @@ public
 
 			if (validateFullForamtString(unitKVStr)) {
 				dataContent.append(slaveKVStr + unitKVStr).append("\n");
-				
+
 			}
 			else {
 				System.err.println("Error Unit Doc: \n" + slaveKVStr + unitKVStr);
@@ -800,7 +832,7 @@ public
 			 * whole part
 			 */
 			String testItemHeadStr = lotHeadStr + format.getUnitHeadTestKVStr();
-			if(this.getFormat().isAppendSlaveUnitId2Test()) {
+			if (this.getFormat().isAppendSlaveUnitId2Test()) {
 				testItemHeadStr += getSlaveNodeKVString();
 			}
 
@@ -836,7 +868,7 @@ public
 
 			}
 			this.fileLevelDocCnt += this.unitLevelDocCnt;
-			
+
 			// IO error and exit for this file
 			if (!this.writeKVString(dataContent)) {
 				this.failType = Config.FailureCase.IOError;
@@ -880,34 +912,7 @@ public
 		this.logKDFDoneToES();
 
 		// only rename or archive the kdf in production mode
-		if (this.getFormat().isProductionMode()) {
-			if ((!Config.renameKDF) && (!this.moveFileToArchive())) {
-				this.failType = Config.FailureCase.IOError;
-				this.logIoErrorToES("FailArchiveKDF");
-
-				if (!this.removeTempLogFile()) {
-					this.logIoErrorToES("FailDeleteLogFile");
-				}
-
-				if (!this.removeMapFile()) {
-					this.logIoErrorToES("FailDeleteMapFile");
-				}
-				return false;
-			}
-
-			if (!this.renameKDFFile()) {
-				this.failType = Config.FailureCase.IOError;
-				this.logIoErrorToES("FailRenameKDF");
-				if (!this.removeTempLogFile()) {
-					this.logIoErrorToES("FailDeleteLogFile");
-				}
-
-				if (!this.removeMapFile()) {
-					this.logIoErrorToES("FailDeleteMapFile");
-				}
-				return false;
-			}
-		}
+		this.renameOrArchiveKDF(this.doneArchiveFile, Config.KdfRename.done);
 
 		System.out.printf("%s: successed to proceed kdf %s\n", LocalDateTime.now(), file.getName());
 		System.out.printf("%s: total kdf reading time is : %d\n", LocalDateTime.now(), (System.currentTimeMillis() - jobStartTime));
@@ -915,9 +920,40 @@ public
 		return true;
 	}
 
+	private
+		boolean renameOrArchiveKDF(File destinationFile, Config.KdfRename rename) {
+		if (this.getFormat().isProductionMode()) {
+			if ((!Config.renameKDF) && (!this.moveFileToArchive(destinationFile))) {
+				this.failType = Config.FailureCase.IOError;
+				this.logIoErrorToES("FailArchiveKDF");
+
+				/**
+				 * here we can rename the kdf if failed archive to avoid ....
+				 */
+				if (!this.renameKDFFile(rename)) {
+					this.failType = Config.FailureCase.IOError;
+					this.logIoErrorToES("FailRenameKDF");
+					return false;
+				}
+				else {
+					return true;
+				}
+			}
+
+			if (!this.renameKDFFile(rename)) {
+				this.failType = Config.FailureCase.IOError;
+				this.logIoErrorToES("FailRenameKDF");
+				return false;
+			}
+			return true;
+		}
+		return true;
+	}
+
 	/**
-	 * append the file level doc to es stream
-	 * only for no-slt since slt unit/file is the same
+	 * append the file level doc to es stream only for no-slt since slt
+	 * unit/file is the same
+	 *
 	 * @return
 	 */
 	private
@@ -969,9 +1005,9 @@ public
 	}
 
 	private
-		boolean renameKDFFile() {
+		boolean renameKDFFile(Config.KdfRename rename) {
 		if (Config.renameKDF) {
-			File kdfedFile = new File(this.file.getAbsolutePath() + "." + Config.KdfRename.done);
+			File kdfedFile = new File(this.file.getAbsolutePath() + "." + rename);
 			return this.file.renameTo(kdfedFile);
 		}
 		return true;
@@ -1198,20 +1234,20 @@ public
 		}
 	}
 
-	private String formatBinDesc(String binDesc) {
+	private
+		String formatBinDesc(String binDesc) {
 		int size = binDesc.length();
 		String value = "";
 		int i = 0;
-		while(i < size && i < 128 ) {
+		while (i < size && i < 128) {
 			char chr = binDesc.charAt(i);
 //			if(chr == ',' || chr == '=' || chr == 13 || chr == 10) {
 //				
 //			}
-			if((chr >= 48 && chr <= 57 )
+			if ((chr >= 48 && chr <= 57)
 				|| (chr >= 65 && chr <= 90)
-				|| (chr >= 97 && chr <= 122)
-			) {
-			
+				|| (chr >= 97 && chr <= 122)) {
+
 			}
 			else {
 				chr = 32;
@@ -1224,7 +1260,7 @@ public
 
 	private
 		String printNodeInfo(Node node, int level) {
-		
+
 		String formatString = "";
 		String space = "";
 		switch (level) {
@@ -1294,7 +1330,7 @@ public
 			/**
 			 * handle the current node here
 			 */
-			
+
 			String formatNodeString = formateNode(node) + "\n";
 			if (validatePartForamtString(formatNodeString)) {
 				formatString += space + this.nodeHead + formatNodeString;
@@ -1306,13 +1342,13 @@ public
 				System.out.println("FATAL Error: es can not read this node string");
 				System.out.println("Node=" + node);
 				System.out.printf("formatString is:%s", formatNodeString);
-				
+
 				//System.exit(1);
 			}
 
 		}
-		if(isFlow && this.getFormat().getFlowContextFilters().contains(node.get("context"))) {
-				return formatString;
+		if (isFlow && this.getFormat().getFlowContextFilters().contains(node.get("context"))) {
+			return formatString;
 		}
 
 		// return immediately after slt test
@@ -1330,9 +1366,8 @@ public
 	}
 
 	/**
-	 * method to check if the logging is disabled to this node
-	 * validate the node name filter
-	 * validate the log fail filter
+	 * method to check if the logging is disabled to this node validate the node
+	 * name filter validate the log fail filter
 	 *
 	 * @return
 	 */
@@ -1344,25 +1379,23 @@ public
 		if ((!this.getFormat().getNodeTypeSelectors().isEmpty()) && (!this.getFormat().getNodeTypeSelectors().contains(nodeType))) {
 			return false;
 		}
-		
+
 		/**
-		 * log fail filters
-		 * A: fail node type selector
-		 * B: base calss selector
+		 * log fail filters A: fail node type selector B: base calss selector
 		 */
-		if(this.getFormat().getLogOnlyFailNodes().contains(nodeType)
+		if (this.getFormat().getLogOnlyFailNodes().contains(nodeType)
 			&& this.getFormat().getLogFailOnlyBaseClasses().contains(this.baseClass)) {
 			KDFFieldData fieldData = node.get("result");
 			if (fieldData == null) {
 				return true;
 			}
 			String fieldValue = fieldData.toString().trim();
-			if(this.isDebugMode()) {
+			if (this.isDebugMode()) {
 				System.out.println();
 			}
 			return fieldValue.equals("0");
 		}
-		
+
 		return true;
 	}
 
@@ -1374,13 +1407,13 @@ public
 	 */
 	private
 		boolean validateBaseSubClass(String idClass) {
-			
+
 		// slt class filters is in the readTestDesc method, slt TestDesc is different from ate	
-		if(this.getFormat().getDataType().equals(Config.DataTypes.SLT)) {
+		if (this.getFormat().getDataType().equals(Config.DataTypes.SLT)) {
 			return true;
-		}	
+		}
 		//selector and filters 
-		
+
 		String subClassName = this.testDescRefs.get(idClass).getSubClass();
 		String baseClassName = this.testDescRefs.get(idClass).getBaseClass();
 		this.baseClass = baseClassName;
@@ -1445,6 +1478,7 @@ public
 		return (commaCnt == equalityCnt);
 
 	}
+
 	/**
 	 * validate a string return false if this string contains char ',' or '='
 	 * else return true
@@ -1481,7 +1515,7 @@ public
 		String startTimeField = this.getFieldKVStr(node, "startTimestamp", "startTimestamp");
 		String endTimeField = this.getFieldKVStr(node, "endTimestamp", "endTimestamp");
 		String alarmField = this.getFieldKVStr(node, "alarm", "alarm");
-		
+
 		if (!testResultField.isEmpty()) {
 			value += "," + testResultField;
 			this.testResultFieldValue = testResultField;
@@ -1501,26 +1535,27 @@ public
 				value += "," + alarmField;
 			}
 		}
-		
+
 		// here add the test type node test time
 		value += this.getTestTimeValue(node);
-		
+
 		return value;
 
 	}
-	
-	private String getTestTimeValue(Node node) {
+
+	private
+		String getTestTimeValue(Node node) {
 		String value = "";
-		if(this.getFormat().getFieldFiters().contains("TestTime")) {
+		if (this.getFormat().getFieldFiters().contains("TestTime")) {
 			return value;
 		}
 		// here add the test type node test time
-		if(node.containsKey("startTimestamp")) {
+		if (node.containsKey("startTimestamp")) {
 			String startTimeValue = node.get("startTimestamp").toString().trim();
-			if(node.containsKey("endTimestamp")) {
+			if (node.containsKey("endTimestamp")) {
 				String endTimeValue = node.get("endTimestamp").toString().trim();
-				if(startTimeValue.length() == 13 && endTimeValue.length() == 13) {
-					value = ",TestTime=" + (Long.valueOf(endTimeValue) - Long.valueOf(startTimeValue))/1000.0;
+				if (startTimeValue.length() == 13 && endTimeValue.length() == 13) {
+					value = ",TestTime=" + (Long.valueOf(endTimeValue) - Long.valueOf(startTimeValue)) / 1000.0;
 				}
 			}
 		}
@@ -1541,92 +1576,91 @@ public
 		String formateNode(Node node) {
 		String value = "";
 		String nodeType = node.getName().trim();
-		
-			if (!this.flowContextField.isEmpty()) {
-				value += "," + this.flowContextField;
-			}
 
-			if (nodeType.equals(KdfTypes.KDF_RT_EVALUATION)) {
-				value += "," + this.testResultFieldValue;
-			}
-			if (!this.subBaseClassField.isEmpty()) {
-				value += this.subBaseClassField;
-			}
-			value += this.comHashValue;
+		if (!this.flowContextField.isEmpty()) {
+			value += "," + this.flowContextField;
+		}
 
-			// add the node type
-			if (!nodeType.isEmpty()) {
-				value += "," + FieldType.Type + "=" + node.getName().trim();
-			}
+		if (nodeType.equals(KdfTypes.KDF_RT_EVALUATION)) {
+			value += "," + this.testResultFieldValue;
+		}
+		if (!this.subBaseClassField.isEmpty()) {
+			value += this.subBaseClassField;
+		}
+		value += this.comHashValue;
 
-			if (nodeType.equals("Test")) {
-				value += this.formatTestNode(node);
-				return value;
-			}
-			
-			
+		// add the node type
+		if (!nodeType.isEmpty()) {
+			value += "," + FieldType.Type + "=" + node.getName().trim();
+		}
+
+		if (nodeType.equals("Test")) {
+			value += this.formatTestNode(node);
+			return value;
+		}
+
 //			if (nodeType.equals(RecordTypes.KDF_RT_ULSD)) {
 //				value += this.formatULSDNode(node);
 //				return value;
 //			}
-			boolean isLog = true;
-			if (nodeType.equals(RecordTypes.KDF_RT_ULSD)) {
-				isLog = false;
+		boolean isLog = true;
+		if (nodeType.equals(RecordTypes.KDF_RT_ULSD)) {
+			isLog = false;
+		}
+
+		for (String fieldName : node.keySet()) {
+			Byte fieldType = node.get(fieldName).getType();
+
+			if ((!this.allFields.contains(fieldName)) && (fieldType == 11 || fieldType == 22 || fieldType == 33)) {
+				this.allFields.add(fieldName);
+			}
+			String fieldValue = node.get(fieldName).toString().trim();
+
+			if (fieldName.isEmpty()) {
+				continue;
+			}
+			if (this.getFormat().getFieldFiters().contains(fieldName)) {
+				continue;
 			}
 
-			for (String fieldName : node.keySet()) {
-				Byte fieldType = node.get(fieldName).getType();
-				
-				if((!this.allFields.contains(fieldName)) && (fieldType == 11 || fieldType == 22 || fieldType == 33   )) {
-					this.allFields.add(fieldName);
-				}
-				String fieldValue = node.get(fieldName).toString().trim();
-
-				if (fieldName.isEmpty()) {
+			if (!fieldValue.isEmpty()) {
+				if (!this.isFormatField(fieldValue, fieldName, isLog)) {
 					continue;
-				}
-				if (this.getFormat().getFieldFiters().contains(fieldName)) {
-					continue;
-				}
 
-				if (!fieldValue.isEmpty()) {
-					if (!this.isFormatField(fieldValue, fieldName, isLog)) {
-						continue;
+				}
+				if (fieldName.equals(FieldType.PinRefPtr)) {
+					String pinName = this.pinRefs.get(fieldValue);
+					if (fieldValue.contains(",")) {
+						System.out.println("Multip Pin found: " + fieldValue);
+					}
+					if (pinName != null) {
+						value += "," + FieldType.Pin + "=" + pinName;
+					}
+				}
+				else if (fieldName.equals(FieldType.PatternId)) {
+					String pattern = this.patternRefs.get(fieldValue);
+					if (fieldValue.contains(",")) {
+						System.out.println("Multip Patterns found: " + fieldValue);
+					}
+					if (pattern != null) {
+						value += "," + FieldType.Pattern + "=" + pattern;
+					}
+				}
+				else {
+					value += "," + fieldName.replace('.', '_') + "=" + fieldValue;
 
-					}
-					if (fieldName.equals(FieldType.PinRefPtr)) {
-						String pinName = this.pinRefs.get(fieldValue);
-						if (fieldValue.contains(",")) {
-							System.out.println("Multip Pin found: " + fieldValue);
-						}
-						if (pinName != null) {
-							value += "," + FieldType.Pin + "=" + pinName;
-						}
-					}
-					else if (fieldName.equals(FieldType.PatternId)) {
-						String pattern = this.patternRefs.get(fieldValue);
-						if (fieldValue.contains(",")) {
-							System.out.println("Multip Patterns found: " + fieldValue);
-						}
-						if (pattern != null) {
-							value += "," + FieldType.Pattern + "=" + pattern;
-						}
-					}
-					else {
-						value += "," + fieldName.replace('.', '_') + "=" + fieldValue;
-						
-					}
 				}
 			}
-			if (node.getName().equals(KdfTypes.KDF_RT_FLOW)) {
-				// all the child nodes whose parent node is flow, add flow context and flow result into sub nodes
-				this.flowContextField = this.getFieldKVStr(node, "context", "context");
+		}
+		if (node.getName().equals(KdfTypes.KDF_RT_FLOW)) {
+			// all the child nodes whose parent node is flow, add flow context and flow result into sub nodes
+			this.flowContextField = this.getFieldKVStr(node, "context", "context");
 //				this.testResultField += this.getFieldKVStr(node, "result", "flowResult");
-				testCntInFlow = 0;
-				value += this.getTestTimeValue(node);
-			}
-			return value;
-		
+			testCntInFlow = 0;
+			value += this.getTestTimeValue(node);
+		}
+		return value;
+
 	}
 
 	/**
@@ -1682,8 +1716,8 @@ public
 
 		while (length-- > 0) {
 			char chr = fieldValue.charAt(length);
-			if (chr == ',' || chr == '=' || chr == 13 || chr == 10 ) {
-				if(isLog){
+			if (chr == ',' || chr == '=' || chr == 13 || chr == 10) {
+				if (isLog) {
 					System.out.printf("Bad Format Field: fieldName=%s, fieldValue=%s\n", fieldName, fieldValue);
 				}
 				return false;
@@ -1759,6 +1793,7 @@ public
 		}
 		return value;
 	}
+
 	private
 		String getSlaveUnitKVString(String lotHeadStr) {
 		String value = "";
@@ -1783,9 +1818,9 @@ public
 					if (!masterDieId.isEmpty()) {
 						tempStr += "," + FieldType.MasterDieId + "=" + this.getFormat().getUnit().getUnitIdNode().getValue();
 					}
-						
+
 					if (slaveUnit.getUnitId().length() > this.getFormat().getUnit().getyCoordNode().getEndIndex()) {
-						tempStr += "," + waferNumberNode.getName() + "=" 
+						tempStr += "," + waferNumberNode.getName() + "="
 							+ (Integer.valueOf(slaveUnit.getUnitId().substring(waferNumberNode.getStartIndex(), waferNumberNode.getEndIndex())).toString());
 						tempStr += "," + xNode.getName() + "="
 							+ (Integer.valueOf(slaveUnit.getUnitId().substring(xNode.getStartIndex(), xNode.getEndIndex())).toString());
@@ -1798,10 +1833,10 @@ public
 					}
 					tempStr += "\n";
 ////					if(validatePartForamtString(tempStr)) {
-						value += lotHeadStr + tempStr;
-						slaveUnitCnt ++;
+					value += lotHeadStr + tempStr;
+					slaveUnitCnt++;
 //					}
-					
+
 				}
 			}
 		}
@@ -2018,7 +2053,7 @@ public
 		this.root.clearContent();
 
 	}
-		
+
 	private
 		String formatTimeStr(String timeStr) {
 		return timeStr.substring(0, 4) + "-" + timeStr.substring(4, 6) + "-" + timeStr.substring(6, 8)
@@ -2081,15 +2116,15 @@ public
 	}
 
 	private
-		boolean moveFileToArchive() {
+		boolean moveFileToArchive(File destinationFile) {
 		try {
-			if (this.archiveFile.exists()) {
+			if (destinationFile.exists()) {
 				Files.delete(this.file.toPath());
 			}
 			else {
-				if (!this.archiveFile.getParentFile().exists()) {
-					if (this.archiveFile.getParentFile().mkdirs()) {
-						Files.move(this.file.toPath(), this.archiveFile.toPath(), ATOMIC_MOVE);
+				if (!destinationFile.getParentFile().exists()) {
+					if (destinationFile.getParentFile().mkdirs()) {
+						Files.move(this.file.toPath(), destinationFile.toPath(), ATOMIC_MOVE);
 					}
 					else {
 						this.logIoErrorToES("FailMkDIR");
@@ -2112,8 +2147,8 @@ public
 			if (!format.isEnabled()) {
 				continue;
 			}
-			if(format.getDataType().equals(Config.DataTypes.SMAP)
-				||format.getDataType().equals(Config.DataTypes.WAT)){
+			if (format.getDataType().equals(Config.DataTypes.SMAP)
+				|| format.getDataType().equals(Config.DataTypes.WAT)) {
 				continue;
 			}
 			String sourceType = file.getName().split("_")[format.getSourceTypeIndex()];
@@ -2135,14 +2170,14 @@ public
 		long startTime = System.currentTimeMillis();
 		new Config("config/dataformat.xml");
 		KDFReader loader = new KDFReader();
-		
+
 		File stageFile = new File("./testdata/KDF/SORT");
 		for (File file : stageFile.listFiles()) {
 			if (loader.chooseFormat(file)) {
 				loader.loadFile(file);
 			}
 		}
-		
+
 		stageFile = new File("./testdata/KDF/SLT");
 		for (File file : stageFile.listFiles()) {
 			if (loader.chooseFormat(file)) {
@@ -2155,9 +2190,7 @@ public
 				loader.loadFile(file);
 			}
 		}
-		
-		
-		
+
 		System.out.println(loader.allFields.toString());
 		System.out.println("total time = " + (System.currentTimeMillis() - startTime));
 		startTime = System.currentTimeMillis();
