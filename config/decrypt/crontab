@@ -1,0 +1,2 @@
+*/1 * * * * /home/tdni/hygon_apps/decrypt/DecryptionTask.sh >> /home/tdni/hygon_apps/decrypt/log/cronlog.log 2>&1
+
