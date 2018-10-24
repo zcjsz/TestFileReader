@@ -13,6 +13,8 @@ TaskApp="$APP_PATH/$APP_NAME"
 
 SourcePath="/data/Hygon_incoming"
 DestinationPath="/extend/hygon_source_data"
+GPGBackPath="/data/gpg_backup"
+
 
 # please use the full path here to avoid any path mistakes
 LOG_PATH="$APP_PATH/log"
@@ -30,7 +32,7 @@ else
     exit 0
 fi
 
-$TaskApp $SourcePath $DestinationPath >> $LogFile 2>&1
+$TaskApp $SourcePath $DestinationPath $GPGBackPath >> $LogFile 2>&1
 
 TIME=$(date "+%Y%m%d%H%M%S")
 echo "$TIME: end task"
