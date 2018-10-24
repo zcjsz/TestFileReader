@@ -164,6 +164,8 @@ decrypt_extract()
     #for i in `ls ./ | sed "s:^:$1/:" | grep .gpg`
     for i in `ls ./ | grep .gpg`
     do
+        
+
         KeepGoing=0
         fullFile=`echo $i | sed 's/.gpg$//'`    # generate fileName without ".gpg"
         fullFile="./$fullFile"
