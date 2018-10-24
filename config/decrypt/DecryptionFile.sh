@@ -26,9 +26,10 @@ Usage: $0 [SourceFile] [DestinationFile] [GPGBackupFile]"
 enableSort=1
 enableEngSort=1
 enableFt=1
-enableSlt=0
+enableSlt=1
 enableWat=1
 enableSmap=1
+enableYms=1
 
 Move="mv "
 RMDIR="rmdir --ignore-fail-on-non-empty "
@@ -41,6 +42,8 @@ ENG_PATH="EngSORT"
 
 FT_PATH="FT"
 SLT_PATH="SLT"
+YMS_PATH_shift="TransYieldRep/shift"
+YMS_PATH_week="TransYieldRep/weekly"
 
 if [ ! $# -eq 3 ];then
     echo -e "$Usage"
@@ -98,9 +101,12 @@ slt_gpg_path="$GPGBackupPath/$SLT_PATH"
 eng_sort_gpg_path="$GPGBackupPath/$ENG_PATH"
 smap_gpg_path="$GPGBackupPath/$SMAP_PATH"
 wat_gpg_path="$GPGBackupPath/$WAT_PATH"
+yms_gpg_path_shift="$GPGBackupPath/$YMS_PATH_shift"
+yms_gpg_path_week="$GPGBackupPath/$YMS_PATH_week"
 
 tempFile="$DestPath/temp"
 
+fileLimit=300
 
 
 # $1 is the full path to make
@@ -125,6 +131,50 @@ make_path()
         echo "$(date): failed to mkdir for $1"
         return 1
     fi
+}
+change_dir_to_yms_shift()
+{
+    if [ $enableYms = 0 ]; then
+        echo "$(date): yms is disabled"
+	return 1
+    fi
+	
+    path=$SourcePath/$YMS_PATH_shift
+    $ChDir$path
+    if [ $? = 0 ]; then
+      echo ""
+      echo `pwd`
+    else
+      make_path $path
+      if [ $? = 0 ]; then
+        return 0
+      else
+        return 1
+      fi
+    fi
+    return 0
+}
+change_dir_to_yms_week()
+{
+    if [ $enableYms = 0 ]; then
+        echo "$(date): yms is disabled"
+	return 1
+    fi
+	
+    path=$SourcePath/$YMS_PATH_week
+    $ChDir$path
+    if [ $? = 0 ]; then
+      echo ""
+      echo `pwd`
+    else
+      make_path $path
+      if [ $? = 0 ]; then
+        return 0
+      else
+        return 1
+      fi
+    fi
+    return 0
 }
 
 
@@ -463,6 +513,31 @@ move_smap_file()
     done
 }
 
+# move all the kdf file to destination hour files
+# $1 is the destination hourFile
+# $2 is the second timestamp
+move_yms_file()
+{
+    if [ ! $# -eq 2 ];then
+        echo "$(date): $0 has 2 args"
+        echo "usage: $0 [destination yms hour file] [timsestamp in second]"
+        exit 1
+    fi
+
+    for kdfFile in `ls $tempFile | grep '.xls$'`; do
+        move_file "$tempFile/$kdfFile" "$1/$kdfFile.$2"
+    done
+    
+    
+    for lotFile in `ls $tempFile`; do
+        if [ -d $tempFile/$lotFile ]; then
+            for kdfFile in `ls "$tempFile/$lotFile" | grep '.kdf$'`; do
+                move_file "$tempFile/$lotFile/$kdfFile" "$1/$kdfFile.$2"
+            done
+        fi
+    done    
+}
+
 
 #Decrypt and extract
 # add the arg for path to store the raw data
@@ -485,9 +560,11 @@ decrypt_extract()
     for gpgFile in `ls ./ | grep '.gpg$'`; do
         echo ""
         fileCnt=$(($fileCnt + 1))
-        if [ $fileCnt -eq 101 ]; then
+        if [ $fileCnt = $fileLimit ]; then
             echo "$(date): have a break since $fileCnt, byebye"
+            break
         fi
+
         # get the hourDir
         second=$(date "+%Y%m%d%H%M%S")
         hour=`expr substr $second 1 10`
@@ -546,13 +623,12 @@ decrypt_extract()
         # 
         if [ $3 -eq 1 ]; then
             move_kdf_file "$kdfHourFile" "$second"
-            exit 0
         elif [ $3 -eq 2 ]; then
             move_smap_file "$kdfHourFile" "$second"
-            exit 0
         elif [ $3 -eq 3 ]; then
             move_wat_file "$kdfHourFile" "$second"
-            exit 0
+        elif [ $3 -eq 4 ]; then
+            move_yms_file "$kdfHourFile" "$second"
         else
             echo "$(date): unknow source type number $3 found"
         fi
@@ -611,6 +687,19 @@ if [ $? = 1 ]; then
     exit 1
 fi
 
+# make yms week gpg backup path
+make_path $yms_gpg_path_week
+if [ $? = 1 ]; then
+    echo "$(date): byebye"
+    exit 1
+fi
+
+# make yms shift gpg backup path
+make_path $yms_gpg_path_shift
+if [ $? = 1 ]; then
+    echo "$(date): byebye"
+    exit 1
+fi
 
 # $1 is the gpg destination file
 # $2 the kdf source file
@@ -661,6 +750,21 @@ if [ $? = 0 ]; then
     echo "$(date): smap task start"
     decrypt_extract "$smap_gpg_path" "$DestPath/$SMAP_PATH" "2"
     echo "$(date): smap task done"
+fi
+
+
+change_dir_to_yms_shift
+if [ $? = 0 ]; then
+    echo "$(date): yms shift task start"
+    decrypt_extract "$yms_gpg_path_shift" "$DestPath/$YMS_PATH_shift" "4"
+    echo "$(date): yms shift task done"
+fi
+
+change_dir_to_yms_week
+if [ $? = 0 ]; then
+    echo "$(date): yms week task start"
+    decrypt_extract "$yms_gpg_path_week" "$DestPath/$YMS_PATH_week" "4"
+    echo "$(date): yms week task done"
 fi
 
 
