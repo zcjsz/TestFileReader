@@ -360,9 +360,17 @@ public
 		}
 
 	}
-
+		
+	/**
+	 * insert or update mother lot info
+	 * doc_id: lotNumber + operation
+	 * TODO: need to set the mother lot index here
+	 * 
+	 * @return 
+	 */
 	private
 		boolean updateLotData() {
+		
 		try {
 			Map<String, Object> jsonMap = this.getLotInfo().getJsonMap();
 			UpdateRequest request = new UpdateRequest(this.dataFormat.getLotIndex(),"doc", this.getLotInfo().getDoc_Id())
@@ -524,7 +532,7 @@ public
 	}
 
 	public static
-		void main(String[] args) throws IOException {
+		void main(String[] args) throws IOException {	
 		new Config("config/dataformat.xml");
 		ESConnection es = new ESConnection();
 		es.init();
@@ -532,7 +540,7 @@ public
 	
 		es.proceesLot("HG50099B", "FT-FUSE");
 		es.close();
-
+		
 	}
 
 	
