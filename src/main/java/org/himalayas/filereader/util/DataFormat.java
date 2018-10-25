@@ -18,6 +18,11 @@ public
 	class DataFormat {
 
 	private
+		String kdfStartDate = null;
+	private
+		String kdfEndData = null;
+
+	private
 		File doneArchivePath = null;
 
 	private
@@ -209,6 +214,9 @@ public
 							this.logFailOnlyBaseClasses.add(name.trim());
 						}
 						break;
+					case "KDFDate":
+
+						break;
 
 					case "Factory":
 						this.factory = fieldValue;
@@ -378,95 +386,242 @@ public
 		}
 	}
 
+	private
+		void readKDFDate(Element element) {
+		@SuppressWarnings("unused")
+		List<Element> nodes = element.elements();
+		if (!nodes.isEmpty()) {
+			String startDate = null;
+			String endDate = null;
+			for (Element node : nodes) {
+				String nodeName = node.getName().trim().toLowerCase();
+				String value = node.getText().trim();
+				if (nodeName.equals("Start")) {
+					startDate = value;
+				}
+				else if (nodeName.equals("End")) {
+					endDate = value;
+				}
+				else {
+					System.out.println("Error: unsupportted KDFDate type found: " + nodeName);
+					System.exit(1);
+				}
+			}
+			if (startDate.length() == 8 && startDate.startsWith("20")) {
+				this.kdfStartDate = startDate;
+			}
+			if (endDate.length() == 8 && endDate.startsWith("20")) {
+				if (this.kdfStartDate != null && endDate.compareTo(startDate) > 0) {
+					this.kdfEndData = endDate;
+				}
+				else {
+					System.out.printf("Error: stat data %s must be less than end date %s\n", startDate, endDate);
+					System.exit(1);
+				}
+			}
+		}
+
+	}
+
 	public
 		boolean validate() {
 		if (this.getSourceType().equalsIgnoreCase(Config.DataTypes.SMAP.name())
 			|| this.getSourceType().equalsIgnoreCase(Config.DataTypes.WAT.name())) {
 			return true;
 		}
-		if (this.getCustomer() == null
-			|| this.getLotEndTimeNode() == null
-			|| this.getLotOpenTimeNode() == null
-			|| this.getLotStartTimeNode() == null
-			|| this.getFactory() == null
-			|| this.getDataType() == null
-			|| this.getFileOpenTimeIndex().isEmpty()
-			|| this.getKdfMonthIndex() == -1
-			|| (this.getKdfPath() == null || (!new File(this.getKdfPath()).exists()))
-			|| this.getLotNumberIndex() == -1
-			|| (this.getMfgStepIndex() == -1)
-			|| this.getSourceTypeIndex() == -1
-			|| (this.getTestCodeIndex() == -1 && this.dataType.equals(Config.DataTypes.SLT))
-			|| (this.getWaferNumberIndex() == -1 && this.dataType.equals(Config.DataTypes.WaferSort))
-			|| this.getTesterNumberIndex() == -1
-			|| this.getTesterTypes().isEmpty()
-			|| this.getUnderLineCnt() == -1
-			|| this.getTesterTypeIndex() == -1
-			|| ((this.generateMappingFile && this.mappingPath == null)
-			|| (this.generateMappingFile && (!new File(this.mappingPath).exists()) && (!new File(this.mappingPath).mkdirs())))
-			|| (this.xmlPath == null
-			|| ((!new File(this.xmlPath).exists()) && (!new File(this.xmlPath).mkdirs())))
-			|| (this.kdfArchivePath == null
-			|| ((!new File(this.kdfArchivePath).exists()) && (!new File(this.kdfArchivePath).mkdirs())))
-			|| this.getXmlPath() == null
-			|| this.getUnit().getEndTimeNode() == null
-			|| this.getUnit().getHardBinNode() == null
-			|| this.getUnit().getSoftBinNode() == null
-			|| this.getUnit().getStartTimeNode() == null
-			|| this.getUnit().getTestTimeNode() == null
-			|| this.getUnit().getUnitIdNode() == null
-			|| this.getUnit().getWaferNumberNode() == null
-			|| this.getUnit().getxCoordNode() == null
-			|| this.getUnit().getyCoordNode() == null
-			|| this.getLotNumberNode() == null
-			|| this.getOperationNode() == null
-			|| (this.dataType.equals(Config.DataTypes.SLT) && this.unitIdIndex == -1)
-			|| ((!this.dataType.equals(Config.DataTypes.WaferSort)) && this.getUnit().getWaferLotNode() == null)) {
-			this.printConfig();
-			System.out.printf("SourceData %s validation result: failed\n", this.sourceType);
+		if (this.getCustomer() == null) {
+			System.out.println("customer can not be null");
 			return false;
 		}
-		else {
-			if (this.isDebugMode()) {
-				this.printConfig();
+		if (this.getLotEndTimeNode() == null) {
+			System.out.println("lotEndTimeNode can not be null");
+			return false;
+		}
+		if (this.getLotOpenTimeNode() == null) {
+			System.out.println("lotOpenTimeNode can not be null");
+			return false;
+
+		}
+		if (this.getLotStartTimeNode() == null) {
+			System.out.println("lotStartTimeNode can not be null");
+			return false;
+		}
+		if (this.getFactory() == null) {
+			System.out.println("factory can not be null");
+			return false;
+		}
+		if (this.getDataType() == null) {
+			System.out.println("DateType can not be null");
+			return false;
+
+		}
+		if (this.getFileOpenTimeIndex().isEmpty()) {
+			System.out.println("FileOpenTimeIndex can not be null");
+			return false;
+
+		}
+		if (this.getKdfMonthIndex() == -1) {
+			System.out.println("KdfMonthIndex can not be null");
+			return false;
+
+		}
+		if (this.getKdfPath() == null || (!new File(this.getKdfPath()).exists())) {
+			System.out.println("KdfPath can not be " + this.getKdfPath());
+			return false;
+		}
+		if (this.getLotNumberIndex() == -1) {
+			System.out.println("LotNumberIndex can not be null");
+			return false;
+
+		}
+		if (this.getMfgStepIndex() == -1) {
+			System.out.println("MfgStepIndex can not be null");
+			return false;
+
+		}
+		if (this.getSourceTypeIndex() == -1) {
+			System.out.println("SourceTypeIndex can not be null");
+			return false;
+		}
+		if (this.getTestCodeIndex() == -1 && this.dataType.equals(Config.DataTypes.SLT)) {
+			System.out.println("TestCodeIndex can not be null for SLT");
+			return false;
+
+		}
+		if (this.getWaferNumberIndex() == -1 && this.dataType.equals(Config.DataTypes.WaferSort)) {
+			System.out.println("WaferNumberIndex can not be null for wafer sort");
+			return false;
+
+		}
+		if (this.getTesterNumberIndex() == -1) {
+			System.out.println("TesterNumberIndex can not be null");
+			return false;
+
+		}
+		if (this.getTesterTypes().isEmpty()){
+			System.out.println("TesterType can not be null");
+			return false;
+		}
+		if (this.getUnderLineCnt() == -1) {
+			System.out.println("UnderLineCnt can not be null");
+			return false;
+		}
+		if (this.getTesterTypeIndex() == -1) {
+			System.out.println("TesterTypeIndex can not be null");
+			return false;
+
+		}
+		if ((this.generateMappingFile && this.mappingPath == null)
+			|| (this.generateMappingFile && (!new File(this.mappingPath).exists()) && (!new File(this.mappingPath).mkdirs()))) {
+			System.out.println("mappingPath can not be " + this.mappingPath);
+			return false;
+
+		}
+		if (this.xmlPath == null
+			|| ((!new File(this.xmlPath).exists()) && (!new File(this.xmlPath).mkdirs()))) {
+			System.out.println("xmlPath can not be " + this.xmlPath);
+			return false;
+
+		}
+		if (this.kdfArchivePath == null
+			|| ((!new File(this.kdfArchivePath).exists()) && (!new File(this.kdfArchivePath).mkdirs()))) {
+			System.out.println("kdfArchivePath can not be " + this.kdfArchivePath);
+			return false;
+
+		}
+		if (this.getUnit().getEndTimeNode() == null) {
+			System.out.println("Unit EndTimeNode can not be null");
+			return false;
+		}
+		if (this.getUnit().getHardBinNode() == null) {
+			System.out.println("Unit HardBinNode can not be null");
+			return false;
+		}
+		if (this.getUnit().getSoftBinNode() == null) {
+			System.out.println("Unit SoftBinNode can not be null");
+			return false;
+
+		}
+		if (this.getUnit().getStartTimeNode() == null) {
+			System.out.println("Unit StartTimeNode can not be null");
+			return false;
+
+		}
+		if (this.getUnit().getTestTimeNode() == null) {
+			System.out.println("Unit TestTimeNode can not be null");
+			return false;
+
+		}
+		if (this.getUnit().getUnitIdNode() == null) {
+			System.out.println("Unit UnitIDNode can not be null");
+			return false;
+		}
+		if (this.getUnit().getWaferNumberNode() == null) {
+			System.out.println("Unit WaferNumberNode can not be null");
+			return false;
+		}
+		if (this.getUnit().getxCoordNode() == null) {
+			System.out.println("Unit XcoordNode can not be null");
+			return false;
+		}
+		if (this.getUnit().getyCoordNode() == null) {
+			System.out.println("Unit YCoordNode can not be null");
+			return false;
+		}
+		if (this.getLotNumberNode() == null) {
+			System.out.println("LotNumberNode can not be null");
+			return false;
+		}
+		if (this.getOperationNode() == null) {
+			System.out.println("OperationNode can not be null");
+			return false;
+		}
+		if (this.dataType.equals(Config.DataTypes.SLT) && this.unitIdIndex == -1) {
+			System.out.println("UniIdIndex of SLT can not be null");
+			return false;
+		}
+		if ((!this.dataType.equals(Config.DataTypes.WaferSort)) && this.getUnit().getWaferLotNode() == null) {
+			System.out.println("WaferLotNode of wafer sort can not be null");
+			return false;
+		}
+		if (!Config.renameKDF) {
+			this.badFormatArchivePath = new File(this.kdfArchivePath + "/" + Config.EventType.KDFBadFormat);
+			if (!this.mkArchivePath(this.badFormatArchivePath)) {
+				return false;
 			}
-			if(!Config.renameKDF){
-				this.badFormatArchivePath = new File(this.kdfArchivePath + "/" + Config.EventType.KDFBadFormat);
-				if(!this.mkArchivePath(this.badFormatArchivePath)) {
-					return false;
-				}
 
-				this.openErrorArchivePath = new File(this.kdfArchivePath + "/" + Config.EventType.KDFOpenFailure);
-				if(!this.mkArchivePath(this.openErrorArchivePath)){
-					return false;
-				}
+			this.openErrorArchivePath = new File(this.kdfArchivePath + "/" + Config.EventType.KDFOpenFailure);
+			if (!this.mkArchivePath(this.openErrorArchivePath)) {
+				return false;
+			}
 
-				this.doneArchivePath = new File(this.kdfArchivePath + "/" + Config.EventType.KDFDone);
-				if(!this.mkArchivePath(this.doneArchivePath)){
-					return false;
-				}
+			this.doneArchivePath = new File(this.kdfArchivePath + "/" + Config.EventType.KDFDone);
+			if (!this.mkArchivePath(this.doneArchivePath)) {
+				return false;
+			}
 
-				this.exceptionArchivePath = new File(this.kdfArchivePath + "/" + Config.EventType.KDFException);
-				if(!this.mkArchivePath(this.exceptionArchivePath)){
-					return false;
-				}
+			this.exceptionArchivePath = new File(this.kdfArchivePath + "/" + Config.EventType.KDFException);
+			if (!this.mkArchivePath(this.exceptionArchivePath)) {
+				return false;
+			}
 
-				this.repeatArchivePath = new File(this.kdfArchivePath + "/" + Config.EventType.KDFRepeat);
-				if(!this.mkArchivePath(this.repeatArchivePath)){
-					return false;
-				}
+			this.repeatArchivePath = new File(this.kdfArchivePath + "/" + Config.EventType.KDFRepeat);
+			if (!this.mkArchivePath(this.repeatArchivePath)) {
+				return false;
 			}
 
 			return true;
 		}
+		return true;
 	}
-		
-	private boolean mkArchivePath(File file){
-		if((!file.exists()) || file.isFile()){
-			if(file.mkdir()){
+
+	private
+		boolean mkArchivePath(File file) {
+		if ((!file.exists()) || file.isFile()) {
+			if (file.mkdir()) {
 				return true;
 			}
-			else{
+			else {
 				System.out.println("failed to mkdir for " + file.getAbsolutePath());
 				return false;
 			}
@@ -1109,30 +1264,38 @@ public
 	}
 
 	public
-	File getBadFormatArchivePath() {
+		File getBadFormatArchivePath() {
 		return badFormatArchivePath;
 	}
 
 	public
-	File getDoneArchivePath() {
+		File getDoneArchivePath() {
 		return doneArchivePath;
 	}
 
 	public
-	File getExceptionArchivePath() {
+		File getExceptionArchivePath() {
 		return exceptionArchivePath;
 	}
 
 	public
-	File getOpenErrorArchivePath() {
+		File getOpenErrorArchivePath() {
 		return openErrorArchivePath;
 	}
 
 	public
-	File getRepeatArchivePath() {
+		File getRepeatArchivePath() {
 		return repeatArchivePath;
 	}
-		
-	
+
+	public
+		String getKdfEndData() {
+		return kdfEndData;
+	}
+
+	public
+		String getKdfStartDate() {
+		return kdfStartDate;
+	}
 
 }

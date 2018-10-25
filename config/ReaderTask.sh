@@ -3,28 +3,39 @@
 
 TIME=$(date "+%Y%m%d%H%M%S")
 DATE=`expr substr $TIME 1 8`
-
 echo "$TIME: start the task"
-TaskApp="FileReader.java"
 
-JAVA='which java'
-TARAPP="./TarTask.sh ./log"
+JAVA="/usr/bin/jdk1.8.0_151/bin/jar"
+APP_PATH="/home/tdni/hygon_apps/fileReader"
 
-ConfigFile="./config/dataformat.xml"
-LogFile="./log/log_$DATE.log"
+ConfigFile="$APP_PATH/config/dataformat.xml"
+APP_NAME="FileReader.java"
 
-pid=`ps -ef | grep $TaskApp |grep -v grep | grep -v $0 | awk '{print $2}'`
+TaskApp="$APP_PATH/target/$APP_NAME"
+
+
+# please use the full path here to avoid any path mistakes
+LOG_PATH="$APP_PATH/log"
+LogFile="$LOG_PATH/log_$DATE.log"
+
+TAR_TOOL="$APP_PATH/TarTask.sh"
+
+pid=`ps -ef | grep $APP_NAME |grep -v grep | grep -v $0 | awk '{print $2}'`
 if [ -z "$pid" ]; then
-    echo "$TaskApp is not running"
-    $TARAPP
+    echo "$TaskApp is not running, and now start it"
+    $TAR_TOOL $LOG_PATH
+
 else
     echo "$TaskApp is already running, bye"
     exit 0
 fi
-echo "Now start run $TaskApp"
+
 
 $JAVA -jar $TaskApp -Xms6G -Xmx6G $ConfigFile >> $LogFile 2>&1
 
 TIME=$(date "+%Y%m%d%H%M%S")
-echo "$TIME: all the taskd done"
+echo "$TIME: end task"
+
+
+
 

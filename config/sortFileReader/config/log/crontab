@@ -1,0 +1,2 @@
+*/1 * * * * /home/ghfan/Documents/NetBeansProjects/FileReader/config/DecryptionTask.sh >> /home/ghfan/Documents/NetBeansProjects/FileReader/config/cronlog.log 2>&1
+

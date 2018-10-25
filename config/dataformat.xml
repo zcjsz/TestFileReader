@@ -18,6 +18,7 @@ and open the template in the editor.
     <ConvertTime>1</ConvertTime>
     
     <!--rename kdf, append .done to kdf file-->
+    <!-- if rename is disabled in prod mode, then file will be archived-->
     <RenameKDF>1</RenameKDF>
     <TestDescId>testDescId</TestDescId>
     
@@ -28,7 +29,7 @@ and open the template in the editor.
     
     <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
-    <SourceType name= "HTEST1" enabled = "1" >
+    <SourceType name= "HTEST1" enabled = "0" >
         <LotIndex>ft-lot-*</LotIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>1</ProductionMode>
@@ -37,17 +38,25 @@ and open the template in the editor.
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
         <GenerateMappingFile>0</GenerateMappingFile>
         
+        <KDFDate>
+            <Start></Start>
+            <End></End>
+        </KDFDate>
+        
         <Customer>AMD</Customer>
         <Factory>Suzhou</Factory>
-        <KDFPath>/home/ghfan/kdf/</KDFPath>
+        
+        <KDFPath>/extend/hygon_source_data/FT/</KDFPath>
         <!--xml path is to store the generated test item log file-->
-        <XmlPath>/data/ft_log/</XmlPath>
+        <XmlPath>/extend/data_log/FT/</XmlPath>
         <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
-        <MappingPath>/data/ft_mapping</MappingPath>
+        <MappingPath>/extend/data_mapping/FT/</MappingPath>
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
-        <KDFArchivePath>/data/ft_archive</KDFArchivePath>
+        <KDFArchivePath>/data/data_archive/FT/</KDFArchivePath>
         <DataType>ATE</DataType>
         <DebugMode>0</DebugMode>
+        
+        
         
         <!--comma separated filters, case sensitive-->
         <FilterOut>sbo</FilterOut><!--filter out kdf whose name contains sbo-->
@@ -130,23 +139,27 @@ and open the template in the editor.
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
         <GenerateMappingFile>0</GenerateMappingFile>
+        <KDFDate>
+            <Start></Start>
+            <End></End>
+        </KDFDate>
         
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
-        <KDFPath>/home/ghfan/kdf/</KDFPath>
+        <KDFPath>/extend/hygon_source_data/SORT/</KDFPath>
         <!--xml path is to store the generated test item log file-->
-        <XmlPath>/data/wafer_sort_log/</XmlPath>
+        <XmlPath>/extend/data_log/SORT/</XmlPath>
         <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
-        <MappingPath>/data/wafer_sort_mapping</MappingPath>
+        <MappingPath>/extend/data_mapping/SORT/</MappingPath>
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
-        <KDFArchivePath>/data/wafer_sort_archive</KDFArchivePath>
+        <KDFArchivePath>/data/data_archive/SORT/</KDFArchivePath>
         <DataType>WaferSort</DataType>
         
         <!--never trun on debug mode in production mode, default 0-->
         <DebugMode>0</DebugMode>
         
         <!--comma separated filters, case sensitive-->
-        <FilterOut>sbo</FilterOut><!--filter out kdf whose name contains sbo-->
+        <FilterOut></FilterOut><!--filter out kdf whose name contains sbo-->
         <!--comma separated selectors, case sensitive-->
         <Selector>GFDRS</Selector> <!--select kdf whose name contains GFDRS-->
         
@@ -226,16 +239,20 @@ and open the template in the editor.
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
         <GenerateMappingFile>0</GenerateMappingFile>
+        <KDFDate>
+            <Start></Start>
+            <End></End>
+        </KDFDate>
         
         <Customer>Hygon</Customer>
         <Factory>Suzhou</Factory>
-        <KDFPath>/home/ghfan/kdf/</KDFPath>
+        <KDFPath>/extend/hygon_source_data/SLT/</KDFPath>
         <!--xml path is to store the generated test item log file-->
-        <XmlPath>/data/slt_log/</XmlPath>
+        <XmlPath>/extend/data_log/SLT/</XmlPath>
         <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
-        <MappingPath>/data/slt_mapping</MappingPath>
+        <MappingPath>/extend/data_mapping/SLT/</MappingPath>
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
-        <KDFArchivePath>/data/slt_archive</KDFArchivePath>
+        <KDFArchivePath>/data/data_archive/SLT/</KDFArchivePath>
         <DataType>SLT</DataType>
         <DebugMode>0</DebugMode>
         
@@ -309,6 +326,10 @@ and open the template in the editor.
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
         <GenerateMappingFile>0</GenerateMappingFile>
+        <KDFDate>
+            <Start></Start>
+            <End></End>
+        </KDFDate>
         
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
@@ -358,6 +379,10 @@ and open the template in the editor.
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
         <GenerateMappingFile>0</GenerateMappingFile>
+        <KDFDate>
+            <Start></Start>
+            <End></End>
+        </KDFDate>
         
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
