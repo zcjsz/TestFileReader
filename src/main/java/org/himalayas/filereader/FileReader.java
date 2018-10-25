@@ -33,7 +33,8 @@ public
 				|| format.getDataType().equals(Config.DataTypes.SLT))) {
 				loader.setFormat(format);
 				for(File dateFile: new File(format.getKdfPath()).listFiles()) {
-					if(dateFile.isDirectory() && dateFile.getName().length() == 8){
+					if(dateFile.isDirectory()
+						&& (dateFile.getName().length() == 8 || dateFile.getName().length()==10)){
 					
 					}
 					else{
@@ -55,7 +56,7 @@ public
 								System.out.println("Error: tdni has no permission to read this file");
 								continue;
 							}
-							if(kdfFile.length() < 1000){
+							if(kdfFile.length() < 100){
 								System.out.printf("Error: file size = %d error, less than 1k\n", kdfFile.length());
 								continue;
 							}
