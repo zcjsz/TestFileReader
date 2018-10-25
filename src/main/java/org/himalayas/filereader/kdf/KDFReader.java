@@ -1098,6 +1098,14 @@ public
 	private
 		boolean generateMapFile() {
 		try {
+			File parentFile = this.mappingFile.getParentFile();
+			if(parentFile.exists() && parentFile.isDirectory()){
+			}
+			else{
+				if(!parentFile.mkdirs()){
+					return false;
+				}
+			}
 			if (this.mappingFile.createNewFile()) {
 				return true;
 			}
