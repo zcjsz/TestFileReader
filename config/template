@@ -142,9 +142,9 @@ PUT _template/all-test
     ],
     "settings": {
       "index": {
-        "number_of_shards": "3",
+        "number_of_shards": "5",
         "number_of_replicas": "2",
-        "refresh_interval": "30s"
+        "refresh_interval": "300s"
       }
     },
     "mappings": {
@@ -298,7 +298,12 @@ PUT _template/all-test
           "key_word_10": {
             "match": "HBin",
             "mapping": {
-              "type": "keyword"
+              "type": "keyword",
+              "fields": {
+                "num": { 
+                  "type":  "integer"
+                }
+              }
             }
           }
          },
@@ -378,7 +383,12 @@ PUT _template/all-test
           "key_word_20": {
             "match": "SBin",
             "mapping": {
-              "type": "keyword"
+              "type": "keyword",
+              "fields": {
+                "num": { 
+                  "type":  "integer"
+                }
+              }
             }
           }
          },
@@ -608,6 +618,47 @@ PUT _template/all-test
           }
          },
          
+         {
+          "key_word_49": {
+            "match": "KDFDate",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         
+         {
+          "key_word_50": {
+            "match": "KDFMonth",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         
+         {
+          "key_word_51": {
+            "match": "WaferNumber",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         
+         {
+          "key_word_52": {
+            "match": "result",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         
+         
+        
+         
+         
+         
          
          
          {
@@ -657,14 +708,7 @@ PUT _template/all-test
             }
           }
          },
-         {
-          "byte_2": {
-            "match": "WaferNumber",
-            "mapping": {
-              "type": "byte"
-            }
-          }
-         },
+         
          {
           "byte_3": {
             "match": "X",
@@ -692,14 +736,6 @@ PUT _template/all-test
           {
           "byte_6": {
             "match": "timeout",
-            "mapping": {
-              "type": "byte"
-            }
-          }
-         },
-         {
-          "byte_7": {
-            "match": "result",
             "mapping": {
               "type": "byte"
             }
@@ -815,22 +851,7 @@ PUT _template/all-test
           }
          },
          
-         {
-          "integer_2": {
-            "match": "KDFDate",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "integer_3": {
-            "match": "KDFMonth",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
+         
          {
           "integer_4": {
             "match": "GrossTime",
@@ -929,6 +950,39 @@ PUT _template/all-test
     },
     "aliases": {}
   }
+
+PUT _ingest/pipeline/ft-test
+{
+ "description": "to parse the filebeat message",
+    "processors": [
+      {
+        "kv": {
+          "field": "message",
+          "field_split": ",",
+          "value_split": "="
+        }
+      },
+      {
+        "remove": {
+          "field": [
+            "message",
+            "source",
+            "offset",
+            "prospector",
+            "beat"
+          ]
+        }
+      },
+      {
+        "date_index_name": {
+          "field": "FileTime",
+          "index_name_prefix": "ft-test-",
+          "date_rounding": "M"
+        }
+      }
+    ]
+  
+}
 
 PUT _ingest/pipeline/ft-test
 {
