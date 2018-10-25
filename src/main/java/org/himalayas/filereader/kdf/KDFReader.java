@@ -187,7 +187,10 @@ public
 			this.renameOrArchiveKDF(this.repeatArchiveFile, Config.KdfRename.skip);
 			return false;
 		}
-
+		if(!validateKDFDate()){
+			return false;
+		}
+		
 		try {
 			this.addFile("", "");
 		}
@@ -198,7 +201,7 @@ public
 			this.renameOrArchiveKDF(this.openErrorArchiveFile, Config.KdfRename.openErr);
 			return false;
 		}
-
+		
 		return this.readKDF();
 	}
 
@@ -215,6 +218,20 @@ public
 			}
 		}
 
+		return true;
+	}
+		
+	private boolean validateKDFDate(){
+		if(this.getFormat().getKdfStartDate() != null
+			&& this.kdfDate.compareTo(this.getFormat().getKdfStartDate()) < 0){
+			System.out.printf("Warnning: this kdf file is skipped, KDFDate = %s since KDFDate Start Date filter = %s\n", this.kdfDate, this.getFormat().getKdfStartDate());
+				return false;
+		}
+		if(this.getFormat().getKdfEndData() != null
+			&& this.getFormat().getKdfEndData().compareTo(this.kdfDate) < 0){
+			System.out.printf("Warnning: this kdf file is skipped, KDFDate = %s since KDFDate End Date filter = %s\n", this.kdfDate, this.getFormat().getKdfEndData());
+				return false;
+		}
 		return true;
 	}
 
@@ -353,6 +370,20 @@ public
 		System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
 			FieldType.EventType, Config.EventType.IOError,
 			FieldType.Failure, func,
+			this.getFormat().getLotNumberNode().getName(), this.lotNumber,
+			FieldType.KdfMonth, this.kdfMonth,
+			FieldType.KdfDate, this.kdfDate,
+			FieldType.TransferTime, this.transferTime,
+			FieldType.KdfName, this.kdfName,
+			FieldType.DataType, this.getFormat().getDataType(),
+			this.getFormat().getOperationNode().getName(), this.mfgStp
+		);
+	}
+		
+	public
+		void logExceptionToES() {
+		System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+			FieldType.EventType, Config.EventType.KDFException,
 			this.getFormat().getLotNumberNode().getName(), this.lotNumber,
 			FieldType.KdfMonth, this.kdfMonth,
 			FieldType.KdfDate, this.kdfDate,
@@ -703,6 +734,16 @@ public
 		Node[] units = tree.getNodes(KdfTypes.KDF_RT_UNIT);
 		if (units == null || units.length == 0) {
 			System.out.println("Empty Uni Record: no unit record found in this kdf...");
+			// generate the kdf mapping file and for repeat kdf file check
+			if (this.getFormat().isGenerateMappingFile() && (!this.generateMapFile())) {
+				this.failType = Config.FailureCase.IOError;
+				this.logIoErrorToES("FailCreateMapFile");
+			}
+			else{
+				this.logKDFDoneToES();
+				// only rename or archive the kdf in production mode
+				this.renameOrArchiveKDF(this.doneArchiveFile, Config.KdfRename.done);
+			}
 			return true;
 		}
 		else {
@@ -909,7 +950,7 @@ public
 			return false;
 		}
 		this.logKDFDoneToES();
-
+		
 		// only rename or archive the kdf in production mode
 		this.renameOrArchiveKDF(this.doneArchiveFile, Config.KdfRename.done);
 
@@ -1812,6 +1853,7 @@ public
 					XmlNode yNode = this.getFormat().getUnit().getyCoordNode();
 //					tempStr += "," + FieldType.Type + "=" + FieldType.Unit;
 					tempStr += "," + this.getFormat().getUnit().getUnitIdNode().getName() + "=" + slaveUnit.getUnitId();
+					tempStr += "," + FieldType.FileName + "=" + this.file.getName();
 					tempStr += "," + FieldType.DieType + "=" + componentHash.getComName();
 					String masterDieId = this.getFormat().getUnit().getUnitIdNode().getValue();
 					if (!masterDieId.isEmpty()) {
