@@ -29,7 +29,7 @@ and open the template in the editor.
     
     <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
-    <SourceType name= "HTEST1" enabled = "1" >
+    <SourceType name= "HTEST1" enabled = "0" >
         <LotIndex>ft-lot-*</LotIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>1</ProductionMode>
@@ -131,7 +131,7 @@ and open the template in the editor.
     
     <!--GFDRS_S6310A1AB0PG_P_ATC607_H800S.00_WS1_BBIYG148MVB1_1_-5_180905_051627.kdf.20190909090909-->
     <!--NEVER try to change the SourceType name here-->
-    <SourceType name= "GFDRS" enabled = "1" >
+    <SourceType name= "GFDRS" enabled = "0" >
         <LotIndex>sort-lot-*</LotIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>1</ProductionMode>
@@ -238,7 +238,7 @@ and open the template in the editor.
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
-        <GenerateMappingFile>0</GenerateMappingFile>
+        <GenerateMappingFile>1</GenerateMappingFile>
         <KDFDate>
             <Start></Start>
             <End></End>

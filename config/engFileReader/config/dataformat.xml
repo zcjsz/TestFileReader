@@ -25,11 +25,111 @@ and open the template in the editor.
     <SubClass>subClass</SubClass>
     <BaseClass>baseClass</BaseClass>
     
+    <!--GFDRS_S6310A1AB0PG_P_ATC607_H800S.00_WS1_BBIYG148MVB1_1_-5_180905_051627.kdf.20190909090909-->
+    <!--NEVER try to change the SourceType name here-->
+    <SourceType name= "EngSORT" enabled = "1" >
+        <LotIndex>eng-sort-lot-*</LotIndex>
+        <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
+        <ProductionMode>1</ProductionMode>
+        <!--LogToFile means save the kdf raw data in the log file, default 1-->
+        <LogToFile>1</LogToFile>
+        <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
+        <GenerateMappingFile>1</GenerateMappingFile>
+        <KDFDate>
+            <Start></Start>
+            <End></End>
+        </KDFDate>
+        
+        <Customer>Hygon</Customer>
+        <Factory>GFDRS</Factory>
+        <KDFPath>/extend/hygon_source_data/EngSORT/</KDFPath>
+        <!--xml path is to store the generated test item log file-->
+        <XmlPath>/extend/data_log/EngSORT/</XmlPath>
+        <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
+        <MappingPath>/extend/data_mapping/EngSORT/</MappingPath>
+        <!--kdf archive file is to store the kdf file which has been parsed successfully-->
+        <KDFArchivePath>/data/data_archive/EngSORT/</KDFArchivePath>
+        <DataType>WaferSort</DataType>
+        
+        <!--never trun on debug mode in production mode, default 0-->
+        <DebugMode>0</DebugMode>
+        
+        <!--comma separated filters, case sensitive-->
+        <FilterOut></FilterOut><!--filter out kdf whose name contains sbo-->
+        <!--comma separated selectors, case sensitive-->
+        <Selector>GFDRS</Selector> <!--select kdf whose name contains GFDRS-->
+        
+        <!--tester type field-->
+        <TesterTypeIndex>2</TesterTypeIndex>
+        <TesterType>P:93k_data,S:sapphire_data</TesterType>
+        
+        
+        <!--list length while kdf name is split by underline-->
+        <UnderLineCnt>11</UnderLineCnt>
+        <!--below params are filed name index in the kdf name-->
+        <LotNumberIndex>4</LotNumberIndex>
+        <TesterNumberIndex>3</TesterNumberIndex>
+        <MfgStepIndex>5</MfgStepIndex>
+        <TestCodeIndex></TestCodeIndex>
+        <WaferNumberIndex>7</WaferNumberIndex>
+        <SiteIndex></SiteIndex>
+        <KDFMonthIndex>9</KDFMonthIndex>
+        <SourceTypeIndex>0</SourceTypeIndex>
+        <!--comma separated file open time indices -->
+        <FileOpenTimeIndex>9,10</FileOpenTimeIndex>
+        
+        <!--falg to enable/diable ulsd test, case sensitive-->
+        <ULSDNodeEnabled></ULSDNodeEnabled>
+        <!-- comma separated ulsd fields, case sensitive-->
+        <ULSDNodeFilter></ULSDNodeFilter>
+        
+        <!--comma separated filters and selectors for sub and main class, case sensitive-->
+        <!--RINGOSC,CONTINUITY,HSIO,IOSPEC,PWRDOMAIN,PLL,TCC,SCAN,SETUPINFO,PSSHORTS,PSCURRENT,FUSE,DIODE,MISCIO,CREST,DATARIVER,JTAG,MBIST,EVV,DIECRACKMON,COMPONENT-->
+        <BaseClasFilter></BaseClasFilter>
+        <BaseClasSelector></BaseClasSelector>
+        
+        <!--PERF,LEAKAGE,FUNCTIONAL,PINOPENSHORTSGNDDIODE,PINOPENSHORTSPWRDIODE,PARAMETRIC,MONITOR,FREQMEAS,READ,DELAY,SOFTWARE,HARDWARE-->
+        <!--LOWPOWER,STUCK,CHAIN,REGULATOR,SIDD,IDEALITY,FUNC,VERSION,DIDD,LOCK,DCVOLTAGE,HIGHPOWER,HR,ENCODE,RESISTANCE,CHAINCHECK,ANALOG_CAL,PRECONDITION-->
+        <SubClasFilter></SubClasFilter>
+        <SubClasSelector></SubClasSelector>
+        <!--comma separated Node Type filters, case sensitive-->
+        <!--PinMeasure,StructureMeasure,Flow,Test,Evaluation,BitString,PatternFailInfo,PatternPinFail,PatternResult,BistFailArray-->
+        <!--NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter-->
+        <!--comma separated Node Type selectors, case sensitive-->
+        <NodeTypeSelector></NodeTypeSelector>
+        
+        <!--the field whose value length beyonds this limit will be skipped-->
+        <FieldValueLength>8192</FieldValueLength>
+        <EnabledComponentHash>1</EnabledComponentHash>
+        <!--comma separated KDFFieldData filters, case sensitive-->
+        <!--startTimestamp,endTimestamp-->
+        <!--FieldFilter>lowSpecLimit,highSpecLimit,sequence,units,startTimestamp,endTimestamp,connectTimeout,portNumber,queryTimeout,queryType,networkError,hostName</FieldFilter-->
+        <!--if enabled, the file name will be added in the unit level doc, default 0-->
+        <AddFileNameInUnit>1</AddFileNameInUnit>
+        
+        <!--filter and selector for test desc field, case sensitive-->
+        <TestDescFieldFilter></TestDescFieldFilter>
+        <TestDescFieldSelector>baseClass,subClass</TestDescFieldSelector>
+        
+        <!--flow type node, flow context filters, full name in case any mistakes-->
+        <FlowContextFilter></FlowContextFilter>
+        
+        <!--this filter only apply to below kdf Node Types which extend the Test Type node-->
+        <!--comma separated node types, PinMeasure , StructureMeasure,Evaluation-->
+        <!--Evaluation has not result, and it inherit the test level result-->
+        <!--if skil a Node, it means all the child nodes will be ignored too-->
+        <LogFailOnlyNodeSelector>PinMeasure,StructureMeasure,Evaluation</LogFailOnlyNodeSelector>
+        
+        <!--only log fail for those base class in the filter, it only works on Test Type child node-->
+        <!--RINGOSC , CONTINUITY , HSIO ,IOSPEC ,PWRDOMAIN,PLL,TCC,SCAN,SETUPINFO,PSSHORTS,PSCURRENT,FUSE,DIODE,MISCIO,CREST,DATARIVER,JTAG,MBIST,EVV,DIECRACKMON,COMPONENT-->
+        <LogFailOnlyBaseClassSelector>RINGOSC,CONTINUITY,IOSPEC</LogFailOnlyBaseClassSelector>
+    </SourceType>
+    
     
     
     <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
-    <SourceType name= "HTEST1" enabled = "1" >
+    <SourceType name= "HTEST1" enabled = "0" >
         <LotIndex>ft-lot-*</LotIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>1</ProductionMode>
@@ -131,7 +231,7 @@ and open the template in the editor.
     
     <!--GFDRS_S6310A1AB0PG_P_ATC607_H800S.00_WS1_BBIYG148MVB1_1_-5_180905_051627.kdf.20190909090909-->
     <!--NEVER try to change the SourceType name here-->
-    <SourceType name= "GFDRS" enabled = "1" >
+    <SourceType name= "GFDRS" enabled = "0" >
         <LotIndex>sort-lot-*</LotIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>1</ProductionMode>
@@ -231,7 +331,7 @@ and open the template in the editor.
         
     <!--HG00058.1.1_6310_H800D0007101504_SLT_AXFNCP_DS2000DBABC01_20180823_052611_suzamdaslt086_006_MAIN.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
-    <SourceType name= "SLT" enabled = "1" >
+    <SourceType name= "SLT" enabled = "0" >
         <LotIndex>slt-lot-*</LotIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>1</ProductionMode>
@@ -444,6 +544,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -466,6 +569,9 @@ and open the template in the editor.
                 <EnabledLog>0</EnabledLog>
             </SourceType>
             <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
             <SourceType name= "SLT" enabled = "1" >
@@ -491,6 +597,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -510,6 +619,9 @@ and open the template in the editor.
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "SLT" enabled = "0" >
@@ -536,6 +648,10 @@ and open the template in the editor.
                 <EnabledLog>1</EnabledLog>
                 <AliasName>WaferLot</AliasName>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <AliasName>WaferLot</AliasName>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -556,6 +672,9 @@ and open the template in the editor.
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "SLT" enabled = "0" >
@@ -581,6 +700,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -599,6 +721,9 @@ and open the template in the editor.
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "SLT" enabled = "0" >
@@ -623,6 +748,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -641,6 +769,9 @@ and open the template in the editor.
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "SLT" enabled = "1" >
@@ -664,6 +795,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -682,6 +816,9 @@ and open the template in the editor.
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "SLT" enabled = "0" >
@@ -705,6 +842,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -723,6 +863,9 @@ and open the template in the editor.
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "SLT" enabled = "0" >
@@ -745,6 +888,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -763,6 +909,9 @@ and open the template in the editor.
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "SLT" enabled = "1" >
@@ -788,6 +937,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -807,6 +959,9 @@ and open the template in the editor.
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "SLT" enabled = "0" >
@@ -831,6 +986,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -851,6 +1009,9 @@ and open the template in the editor.
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "SLT" enabled = "1" >
@@ -876,6 +1037,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -897,6 +1061,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -915,6 +1082,9 @@ and open the template in the editor.
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "SLT" enabled = "0" >
@@ -939,6 +1109,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -958,6 +1131,9 @@ and open the template in the editor.
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "SLT" enabled = "0" >
@@ -984,6 +1160,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -1002,6 +1181,9 @@ and open the template in the editor.
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "SLT" enabled = "1" >
@@ -1028,6 +1210,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -1049,6 +1234,9 @@ and open the template in the editor.
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "SLT" enabled = "1" >
@@ -1074,6 +1262,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -1096,6 +1287,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -1115,6 +1309,9 @@ and open the template in the editor.
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "SLT" enabled = "1" >
@@ -1140,6 +1337,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -1163,6 +1363,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -1182,6 +1385,9 @@ and open the template in the editor.
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "SLT" enabled = "1" >
@@ -1207,6 +1413,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -1226,6 +1435,9 @@ and open the template in the editor.
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "GFDRS" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "SLT" enabled = "1" >

@@ -29,7 +29,7 @@ and open the template in the editor.
     
     <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
-    <SourceType name= "HTEST1" enabled = "1" >
+    <SourceType name= "HTEST1" enabled = "0" >
         <LotIndex>ft-lot-*</LotIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>1</ProductionMode>
@@ -138,7 +138,7 @@ and open the template in the editor.
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
-        <GenerateMappingFile>0</GenerateMappingFile>
+        <GenerateMappingFile>1</GenerateMappingFile>
         <KDFDate>
             <Start></Start>
             <End></End>
@@ -222,16 +222,16 @@ and open the template in the editor.
         <!--comma separated node types, PinMeasure , StructureMeasure,Evaluation-->
         <!--Evaluation has not result, and it inherit the test level result-->
         <!--if skil a Node, it means all the child nodes will be ignored too-->
-        <LogFailOnlyNodeSelector></LogFailOnlyNodeSelector>
+        <LogFailOnlyNodeSelector>PinMeasure,StructureMeasure,Evaluation</LogFailOnlyNodeSelector>
         
         <!--only log fail for those base class in the filter, it only works on Test Type child node-->
         <!--RINGOSC , CONTINUITY , HSIO ,IOSPEC ,PWRDOMAIN,PLL,TCC,SCAN,SETUPINFO,PSSHORTS,PSCURRENT,FUSE,DIODE,MISCIO,CREST,DATARIVER,JTAG,MBIST,EVV,DIECRACKMON,COMPONENT-->
-        <LogFailOnlyBaseClassSelector></LogFailOnlyBaseClassSelector>
+        <LogFailOnlyBaseClassSelector>RINGOSC,CONTINUITY,IOSPEC</LogFailOnlyBaseClassSelector>
     </SourceType>
-        
+    
     <!--HG00058.1.1_6310_H800D0007101504_SLT_AXFNCP_DS2000DBABC01_20180823_052611_suzamdaslt086_006_MAIN.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
-    <SourceType name= "SLT" enabled = "1" >
+    <SourceType name= "SLT" enabled = "0" >
         <LotIndex>slt-lot-*</LotIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>1</ProductionMode>
