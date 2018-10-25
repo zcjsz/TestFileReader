@@ -31,6 +31,9 @@ public
 				&& (format.getDataType().equals(Config.DataTypes.WaferSort)
 				|| format.getDataType().equals(Config.DataTypes.ATE)
 				|| format.getDataType().equals(Config.DataTypes.SLT))) {
+				if(format.getDataType().equals(Config.DataTypes.SLT)){
+					fileLimit = 1000;
+				}
 				loader.setFormat(format);
 				for(File dateFile: new File(format.getKdfPath()).listFiles()) {
 					if(dateFile.isDirectory()
