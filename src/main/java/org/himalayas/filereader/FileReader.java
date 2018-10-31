@@ -74,8 +74,9 @@ public
 								}
 							}
 							catch (Exception e) {
-								e.printStackTrace();
 								loader.logExceptionToES();
+								System.out.println();
+								e.printStackTrace();
 							}
 						}
 
