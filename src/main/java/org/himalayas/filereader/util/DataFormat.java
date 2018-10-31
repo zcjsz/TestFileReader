@@ -922,9 +922,13 @@ public
 			if (node.getValue() != null && (!node.getValue().isEmpty())) {
 				// never log the unit start time and end time into test level data
 				// never log the unit tets time to test level doc
-				if (node.isTimeNode() || node.isUnitTestTimeNode()) {
-					continue;
-				}
+				// readd startTestTime to all test level doc
+					if (node.isTimeNode() || node.isUnitTestTimeNode()) {
+						if(!node.isStartTime()){
+							continue;
+						}
+					}
+				
 				value += "," + node.toKVString();
 			}
 		}
