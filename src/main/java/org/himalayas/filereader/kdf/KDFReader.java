@@ -382,7 +382,7 @@ public
 		
 	public
 		void logExceptionToES() {
-		System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+		System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
 			FieldType.EventType, Config.EventType.KDFException,
 			this.getFormat().getLotNumberNode().getName(), this.lotNumber,
 			FieldType.KdfMonth, this.kdfMonth,
