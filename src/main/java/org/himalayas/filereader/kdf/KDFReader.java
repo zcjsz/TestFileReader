@@ -960,8 +960,11 @@ public
 		return true;
 	}
 
-	private
+	public
 		boolean renameOrArchiveKDF(File destinationFile, Config.KdfRename rename) {
+		if(destinationFile == null){
+			return false;
+		}
 		if (this.getFormat().isProductionMode()) {
 			if ((!Config.renameKDF) && (!this.moveFileToArchive(destinationFile))) {
 				this.failType = Config.FailureCase.IOError;
@@ -2212,6 +2215,12 @@ public
 	public
 		boolean isDebugMode() {
 		return debugMode;
+	}
+	
+
+	public
+	File getExceptionArchiveFile() {
+		return exceptionArchiveFile;
 	}
 
 	public static

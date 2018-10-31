@@ -75,6 +75,8 @@ public
 							}
 							catch (Exception e) {
 								loader.logExceptionToES();
+								loader.renameOrArchiveKDF(loader.getExceptionArchiveFile(), Config.KdfRename.exception);
+								//TODO how to handler the exception  kdf file?
 								System.out.println();
 								e.printStackTrace();
 							}
