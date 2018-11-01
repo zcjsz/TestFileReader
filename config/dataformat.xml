@@ -40,7 +40,7 @@ and open the template in the editor.
         <GenerateMappingFile>0</GenerateMappingFile>
         
         <KDFDate>
-            <Start>20180901</Start>
+            <Start>20180401</Start>
             <End>20181001</End>
         </KDFDate>
         <FileLimit>100</FileLimit>
@@ -144,7 +144,7 @@ and open the template in the editor.
         <GenerateMappingFile>0</GenerateMappingFile>
         <KDFDate>
             <Start></Start>
-            <End></End>
+            <End>201805</End>
         </KDFDate>
         <FileLimit>100</FileLimit>
         
@@ -235,7 +235,7 @@ and open the template in the editor.
         
     <!--HG00058.1.1_6310_H800D0007101504_SLT_AXFNCP_DS2000DBABC01_20180823_052611_suzamdaslt086_006_MAIN.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
-    <SourceType name= "SLT" enabled = "1" >
+    <SourceType name= "SLT" enabled = "0" >
         <LotIndex>slt-lot-*</LotIndex>
         <TestIndex>slt-test-*</TestIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
