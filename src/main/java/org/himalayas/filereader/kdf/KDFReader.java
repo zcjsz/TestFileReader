@@ -1314,8 +1314,11 @@ public
 
 	private
 		String printNodeInfo(Node node, int level) {
-
+		
 		String formatString = "";
+		if(node == null) {
+			return formatString;
+		}
 		String space = "";
 		switch (level) {
 			case 0:
@@ -1340,6 +1343,10 @@ public
 
 		space = "";
 		String nodeName = node.getName();
+		if(nodeName == null){
+			System.out.println("Warnning: empty node name node found: " + node.toString());
+			return formatString;
+		}
 		boolean isFlow = false;
 		if (nodeName.equals(KdfTypes.KDF_RT_FLOW)) {
 			this.flowContextField = "";
@@ -1354,8 +1361,12 @@ public
 			this.subBaseClassField = "";
 			this.comHashValue = "";
 			this.testResultFieldValue = "";
-
-			String idClass = node.get("testDescId").toString();
+			
+			String idClass = null;
+			if(node.get("testDescId") != null){
+				idClass = node.get("testDescId").toString();
+			}
+			
 			if (idClass != null && this.testDescRefs.containsKey(idClass)) {
 				this.subBaseClassField = this.testDescRefs.get(idClass).getValue();
 
@@ -1365,7 +1376,10 @@ public
 				}
 			}
 			if (this.getFormat().isEnabledComponentHash()) {
-				String comHash = node.get("componentHash").toString();
+				String comHash = null;
+				if(node.get("componentHash") != null){
+					comHash = node.get("componentHash").toString();
+				}
 				if (comHash != null && this.comHashRefs.containsKey(comHash)) {
 					this.comHashValue = this.comHashRefs.get(comHash).getKVString();
 				}
@@ -1414,7 +1428,9 @@ public
 		 * handle the child node here
 		 */
 		for (Node item : node.getChildren()) {
-			formatString += printNodeInfo(item, level + 1);
+			if(item != null){
+				formatString += printNodeInfo(item, level + 1);
+			}
 		}
 		return formatString;
 	}
