@@ -31,6 +31,7 @@ and open the template in the editor.
     <!--NEVER try to change the SourceType name here-->
     <SourceType name= "HTEST1" enabled = "0" >
         <LotIndex>ft-lot-*</LotIndex>
+        <TestIndex>ft-test-*</TestIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>1</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
@@ -133,6 +134,7 @@ and open the template in the editor.
     <!--NEVER try to change the SourceType name here-->
     <SourceType name= "GFDRS" enabled = "1" >
         <LotIndex>sort-lot-*</LotIndex>
+        <TestIndex>sort-test-*</TestIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>1</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
@@ -233,6 +235,7 @@ and open the template in the editor.
     <!--NEVER try to change the SourceType name here-->
     <SourceType name= "SLT" enabled = "1" >
         <LotIndex>slt-lot-*</LotIndex>
+        <TestIndex>slt-test-*</TestIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>1</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
@@ -319,6 +322,7 @@ and open the template in the editor.
         <AppendSlaveUnitId2Test>1</AppendSlaveUnitId2Test>
     </SourceType>
     <SourceType name= "WAT" enabled = "1" >
+        <TestIndex>wat-test-*</TestIndex>
         <DataType>WAT</DataType>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>0</ProductionMode>
@@ -373,6 +377,7 @@ and open the template in the editor.
     </SourceType>
     <SourceType name= "SMAP" enabled = "1" >
         <DataType>SMAP</DataType>
+        <TestIndex>smap-test-*</TestIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>0</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->

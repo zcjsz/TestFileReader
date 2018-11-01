@@ -373,7 +373,7 @@ public
 		
 		try {
 			Map<String, Object> jsonMap = this.getLotInfo().getJsonMap();
-			UpdateRequest request = new UpdateRequest(this.dataFormat.getLotIndex(),"doc", this.getLotInfo().getDoc_Id())
+			UpdateRequest request = new UpdateRequest(this.dataFormat.getLotIndexName(),"doc", this.getLotInfo().getDoc_Id())
 				.doc(jsonMap);
 			request.timeout(TimeValue.timeValueSeconds(2));
 			request.docAsUpsert(true);

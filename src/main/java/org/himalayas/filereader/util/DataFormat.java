@@ -35,7 +35,9 @@ public
 		File repeatArchivePath = null;
 
 	private
-		String lotIndex = null;
+		String testIndexName = null;
+	private
+		String lotIndexName = null;
 
 	private
 		boolean appendSlaveUnitId2Test = false;
@@ -222,8 +224,11 @@ public
 						this.factory = fieldValue;
 						break;
 					case "LotIndex":
-						this.lotIndex = fieldValue;
+						this.lotIndexName = fieldValue;
 						break;
+					case "TestIndex":
+						this.testIndexName = fieldValue;
+						break;	
 					case "Customer":
 						this.customer = fieldValue;
 						break;
@@ -1263,8 +1268,8 @@ public
 	}
 
 	public
-		String getLotIndex() {
-		return lotIndex;
+		String getLotIndexName() {
+		return lotIndexName;
 	}
 
 	public
