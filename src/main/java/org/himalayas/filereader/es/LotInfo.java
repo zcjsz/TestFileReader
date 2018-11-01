@@ -294,7 +294,7 @@ public
 			}
 
 			// unique unit cnt
-			this.totalUniqueUnitCntInc(dataSet.getUnitData().size());
+			this.totalUniqueUnitCntInc(1);
 
 			// 
 			for (Doc doc : dataSet.getUnitData()) {
