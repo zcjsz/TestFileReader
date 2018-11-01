@@ -60,15 +60,13 @@ public
 								continue;
 							}
 							if(kdfFile.length() < 100){
-								System.out.printf("Error: file size = %d error, less than 1k\n", kdfFile.length());
+								System.out.printf("Error: file size = %d error, less than 100 byte\n", kdfFile.length());
 								continue;
 							}
 							try {
-								if(loader.loadFile(kdfFile)){
-									fileCnt ++;
-								}
-								if(fileCnt > fileLimit){
-									System.out.println("kdf done file cnt is " + (fileLimit + 1));
+								loader.loadFile(kdfFile);
+								if(loader.getKdfDoneCnt() >= loader.getFormat().getFileLimit()){
+									System.out.println("kdf done file cnt is " + (loader.getKdfDoneCnt()));
 									System.out.println("Have break now, bye");
 									System.exit(0);
 								}

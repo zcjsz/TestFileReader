@@ -16,7 +16,9 @@ import org.himalayas.filereader.kdf.Bin;
 
 public
 	class DataFormat {
-
+	
+	private
+		int fileLimit = 30;
 	private
 		String kdfStartDate = null;
 	private
@@ -180,7 +182,7 @@ public
 			for (Element node : nodes) {
 				fieldName = node.getName().trim();
 				fieldValue = node.getTextTrim();
-				if (fieldValue.isEmpty()) {
+				if (fieldValue.isEmpty() && (! fieldName.equals("KDFDate"))) {
 					continue;
 				}
 
@@ -217,7 +219,7 @@ public
 						}
 						break;
 					case "KDFDate":
-
+						readKDFDate(node);
 						break;
 
 					case "Factory":
@@ -275,6 +277,9 @@ public
 						break;
 					case "TesterTypeIndex":
 						this.testerTypeIndex = Integer.valueOf(fieldValue);
+						break;
+					case "FileLimit":
+						this.fileLimit = Integer.valueOf(fieldValue);
 						break;
 					case "UnitIdIndex":
 						this.unitIdIndex = Integer.valueOf(fieldValue);
@@ -401,10 +406,10 @@ public
 			for (Element node : nodes) {
 				String nodeName = node.getName().trim().toLowerCase();
 				String value = node.getText().trim();
-				if (nodeName.equals("Start")) {
+				if (nodeName.equals("start")) {
 					startDate = value;
 				}
-				else if (nodeName.equals("End")) {
+				else if (nodeName.equals("end")) {
 					endDate = value;
 				}
 				else {
@@ -1306,5 +1311,16 @@ public
 		String getKdfStartDate() {
 		return kdfStartDate;
 	}
+
+	public
+	int getFileLimit() {
+		return fileLimit;
+	}
+
+	public
+	String getTestIndexName() {
+		return testIndexName;
+	}
+	
 
 }

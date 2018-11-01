@@ -40,9 +40,10 @@ and open the template in the editor.
         <GenerateMappingFile>0</GenerateMappingFile>
         
         <KDFDate>
-            <Start></Start>
-            <End></End>
+            <Start>20180901</Start>
+            <End>20181001</End>
         </KDFDate>
+        <FileLimit>100</FileLimit>
         
         <Customer>AMD</Customer>
         <Factory>Suzhou</Factory>
@@ -145,6 +146,7 @@ and open the template in the editor.
             <Start></Start>
             <End></End>
         </KDFDate>
+        <FileLimit>100</FileLimit>
         
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
@@ -246,6 +248,7 @@ and open the template in the editor.
             <Start></Start>
             <End></End>
         </KDFDate>
+        <FileLimit>500</FileLimit>
         
         <Customer>Hygon</Customer>
         <Factory>Suzhou</Factory>
@@ -334,6 +337,7 @@ and open the template in the editor.
             <Start></Start>
             <End></End>
         </KDFDate>
+        <FileLimit>100</FileLimit>
         
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
@@ -388,6 +392,7 @@ and open the template in the editor.
             <Start></Start>
             <End></End>
         </KDFDate>
+        <FileLimit>100</FileLimit>
         
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>

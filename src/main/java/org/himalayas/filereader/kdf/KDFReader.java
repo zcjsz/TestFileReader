@@ -128,6 +128,8 @@ public
 		String baseClass = null;
 	private
 		int slaveUnitCnt = 0;
+	private
+		int kdfDoneCnt = 0;
 
 	public
 		KDFReader() {
@@ -957,6 +959,7 @@ public
 		System.out.printf("%s: successed to proceed kdf %s\n", LocalDateTime.now(), file.getName());
 		System.out.printf("%s: total kdf reading time is : %d\n", LocalDateTime.now(), (System.currentTimeMillis() - jobStartTime));
 		this.tree = null;
+		kdfDoneCnt ++;
 		return true;
 	}
 
@@ -2221,6 +2224,12 @@ public
 	public
 	File getExceptionArchiveFile() {
 		return exceptionArchiveFile;
+	}
+	
+
+	public
+	int getKdfDoneCnt() {
+		return kdfDoneCnt;
 	}
 
 	public static
