@@ -16,6 +16,8 @@ import org.himalayas.filereader.kdf.Bin;
 
 public
 	class DataFormat {
+        private
+                String fileType = null;
 	
 	private
 		int fileLimit = 30;
@@ -221,9 +223,11 @@ public
 					case "KDFDate":
 						readKDFDate(node);
 						break;
-
-					case "Factory":
+                                        case "Factory":
 						this.factory = fieldValue;
+						break;
+					case "FileType":
+						this.fileType = fieldValue;
 						break;
 					case "LotIndex":
 						this.lotIndexName = fieldValue;
@@ -435,9 +439,76 @@ public
 
 	public
 		boolean validate() {
+                System.out.println("\n" + this.getSourceType() + " validation....");
 		if (this.getSourceType().equalsIgnoreCase(Config.DataTypes.SMAP.name())
 			|| this.getSourceType().equalsIgnoreCase(Config.DataTypes.WAT.name())) {
-			return true;
+                    if (this.getLotNumberIndex() == -1) {
+			System.out.println("LotNumberIndex can not be null");
+			return false;
+
+                    }
+                    if (this.getDataType() == null) {
+			System.out.println("DateType can not be null");
+			return false;
+
+                    }
+                    if (this.getKdfMonthIndex() == -1) {
+			System.out.println("KdfMonthIndex can not be null");
+			return false;
+
+                    }
+                    if (this.getKdfPath() == null || (!new File(this.getKdfPath()).exists())) {
+                            System.out.println("KdfPath can not be " + this.getKdfPath());
+                            return false;
+                    }
+                    if (this.getUnderLineCnt() == -1) {
+			System.out.println("UnderLineCnt can not be null");
+			return false;
+                    }
+                        if ((this.generateMappingFile && this.mappingPath == null)
+                            || (this.generateMappingFile && (!new File(this.mappingPath).exists()) && (!new File(this.mappingPath).mkdirs()))) {
+                            System.out.println("mappingPath can not be " + this.mappingPath);
+                            return false;
+
+                    }
+                    if (this.xmlPath == null
+                            || ((!new File(this.xmlPath).exists()) && (!new File(this.xmlPath).mkdirs()))) {
+                            System.out.println("xmlPath can not be " + this.xmlPath);
+                            return false;
+
+                    }
+                    if (this.kdfArchivePath == null
+                            || ((!new File(this.kdfArchivePath).exists()) && (!new File(this.kdfArchivePath).mkdirs()))) {
+                            System.out.println("kdfArchivePath can not be " + this.kdfArchivePath);
+                            return false;
+
+                    }
+                    if (this.getUnit().getxCoordNode() == null) {
+			System.out.println("Unit XcoordNode can not be null");
+			return false;
+                    }
+                    if (this.getUnit().getyCoordNode() == null) {
+                            System.out.println("Unit YCoordNode can not be null");
+                            return false;
+                    }
+                    if (this.getWaferNumberIndex() == -1 ) {
+			System.out.println("WaferNumberIndex can not be null for ");
+			return false;
+
+                    }
+                    if (this.getUnit().getWaferNumberNode() == null) {
+			System.out.println("Unit WaferNumberNode can not be null");
+			return false;
+                    }
+                    for(XmlNode xmlNode: this.lotHead.values()){
+                        if(xmlNode.isEnabled() && xmlNode.isEnabledLog() && (xmlNode.getIndex() == -1 || xmlNode.getIndex() >= this.getUnderLineCnt())){
+                            System.out.printf("please setup a correct index for head node %s in %s\n", xmlNode.getName(), this.getSourceType() );
+                            return false;
+                        }
+                        
+                    }
+                    
+                    return checkArchive();
 		}
 		if (this.getCustomer() == null) {
 			System.out.println("customer can not be null");
@@ -594,7 +665,13 @@ public
 			System.out.println("WaferLotNode of wafer sort can not be null");
 			return false;
 		}
-		if (!Config.renameKDF) {
+		
+		return checkArchive();
+	}
+               
+        private
+                boolean checkArchive(){
+                if (!Config.renameKDF) {
 			this.badFormatArchivePath = new File(this.kdfArchivePath + "/" + Config.EventType.KDFBadFormat);
 			if (!this.mkArchivePath(this.badFormatArchivePath)) {
 				return false;
@@ -622,8 +699,8 @@ public
 
 			return true;
 		}
-		return true;
-	}
+                return true;
+        }
 
 	private
 		boolean mkArchivePath(File file) {
@@ -1321,6 +1398,11 @@ public
 	String getTestIndexName() {
 		return testIndexName;
 	}
+
+    public String getFileType() {
+        return fileType;
+    }
+        
 	
 
 }

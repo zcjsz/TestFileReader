@@ -307,17 +307,6 @@ public
 							fieldNames.add(value);
 						}
 						break;
-					case "index":
-						if (value.isEmpty()) {
-							System.out.printf("Fatal Error: please set the index for this head xml node %s\n", xmlNodeName);
-							System.exit(1);
-						}
-						index = Integer.valueOf(value);
-						if (index < 0) {
-							System.out.printf("Fatal Error: the index must be grate or equals 0 for this head xml node %s\n", xmlNodeName);
-							System.exit(1);
-						}
-						break;
 					case "sourcetype":
 						//source type must be initialized before head content
 						String sourceType = node.attributeValue("name").trim();
@@ -337,6 +326,20 @@ public
 							String aliasName = node.elementTextTrim("AliasName").trim();
 							xmlNode.setName(aliasName);
 						}
+                                                if (node.elements("Index").size() > 0) {
+							String indexValue = node.elementTextTrim("Index").trim();
+                                                        if (indexValue.isEmpty()) {
+                                                                System.out.printf("Fatal Error: please set the index for this head xml node %s\n", xmlNodeName);
+                                                                System.exit(1);
+                                                        }
+                                                        index = Integer.valueOf(indexValue);
+                                                        if (index < 0) {
+                                                                System.out.printf("Fatal Error: the index must be grate or equals 0 for this head xml node %s\n", xmlNodeName);
+                                                                System.exit(1);
+                                                        }
+							xmlNode.setIndex(index);
+						}
+                                                
 						if (dataFormat.getLotHead().containsKey(xmlNodeName)) {
 							System.out.printf("Fatal Error: duplicate head xml node found %s\n", xmlNodeName);
 							System.exit(1);
@@ -370,7 +373,6 @@ public
 					xmlNode.setLotOpenTime(isLotOpenTime);
 					xmlNode.setLotStartTime(isLotStartTime);
 					xmlNode.setLotEndTime(isLotEndTime);
-					xmlNode.setIndex(index);
 					if(isLotNumber) {
 						dataFormat.setLotNumberNode(xmlNode);
 					}

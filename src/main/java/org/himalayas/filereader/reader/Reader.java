@@ -9,11 +9,15 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.himalayas.filereader.util.Config;
 import org.himalayas.filereader.util.DataFormat;
+import org.himalayas.filereader.util.FieldType;
+import org.himalayas.filereader.util.XmlNode;
 
 /**
  *
@@ -30,7 +34,7 @@ public abstract class Reader {
     private File openErrorArchiveFile = null;
     private File badFormatArchiveFile = null;
     private File exceptionArchiveFile = null;
-    private String fileMonth = null;
+    private String kdfMonth = null;
     private String kdfDate = null;
     private String transferTime = null;
     private String fileName = null;
@@ -41,19 +45,41 @@ public abstract class Reader {
     private long jobStartTime = 0;
     private Config.FailureCase failType = null;
     private DataFormat format = null;
+    private int unitCnt = 0;
+
+    public void resetAll() {
+        this.testLogFile = null;
+        this.mappingFile = null;
+        this.doneArchiveFile = null;
+        this.repeatArchiveFile = null;
+        this.openErrorArchiveFile = null;
+        this.badFormatArchiveFile = null;
+        this.exceptionArchiveFile = null;
+        this.kdfMonth = null;
+        this.kdfDate = null;
+        this.transferTime = null;
+        this.fileName = null;
+        this.lotNumber = null;
+        this.mfgStp = null;
+        this.fileLevelDocCnt = 0;
+        this.fileOpenTime = null;
+        this.failType = null;
+        this.unitCnt = 0;
+
+    }
 
     public Reader(DataFormat format) {
         this.format = format;
+        this.debugMode = this.format.isDebugMode();
     }
 
     public final boolean loadFile(File file) {
         jobStartTime = System.currentTimeMillis();
-        System.out.printf("\n%s: start proceed kdf %s\n", LocalDateTime.now(), file.getName());
-
-        this.file = file;
-        this.debugMode = this.format.isDebugMode();
+        System.out.printf("\n%s: start proceed %s\n", LocalDateTime.now(), file.getName());
+        this.resetAll();
         this.init();
 
+        this.file = file;
         if (!this.validateFile()) {
             this.failType = Config.FailureCase.BadFormat;
             this.logBadFormatFileToES();
@@ -75,6 +101,12 @@ public abstract class Reader {
                 return false;
             }
             if (!this.writeLogFile()) {
+                this.failType = Config.FailureCase.IOError;
+                this.logIoErrorToES("FailWriteLogFile");
+
+                if (!this.removeTempLogFile()) {
+                    this.logIoErrorToES("FailDeleteLogFile");
+                }
                 return false;
             }
             if (!this.generateMapFile()) {
@@ -105,15 +137,22 @@ public abstract class Reader {
      */
     public boolean validateFile() {
         this.failType = null;
-
-        String fileName = this.file.getName();
-        // here please add the split word in the config file....
-        String names[] = fileName.split("dis.|wat.");
-
-        if (names.length != 2) {
+        if (!this.file.isFile()) {
             return false;
         }
-        if (!this.file.isFile()) {
+        String names[] = null;
+        String fileName = this.file.getName();
+        // here please add the split word in the config file....
+        if (this.getFormat().getDataType().equals(Config.DataTypes.SMAP)) {
+            names = fileName.split("smap.");
+        } else if (this.getFormat().getDataType().equals(Config.DataTypes.WAT)) {
+            names = fileName.split("dis.");
+        } else {
+            System.err.println("Fatal Error: bad Data Type found: " + this.getFormat().getDataType().toString());
+            System.exit(1);
+        }
+
+        if (names.length != 2) {
             return false;
         }
         // the timestamp when the kdf is moved to this place
@@ -121,7 +160,8 @@ public abstract class Reader {
             return false;
         }
         this.transferTime = this.formatTimeStr(names[1]);
-        this.fileName = names[0] + "dis.|wat";
+
+        this.fileName = fileName.substring(0, fileName.length() - 15);
 
         boolean skip = false;
         for (String filter : this.getFormat().getFilters()) {
@@ -156,8 +196,6 @@ public abstract class Reader {
         }
 
         this.lotNumber = names[format.getLotNumberIndex()];
-////		this.unitId = names[format.getUnitIdIndex()];
-        this.mfgStp = names[format.getMfgStepIndex()];
 
         // archive file
         this.doneArchiveFile = new File(this.getFormat().getDoneArchivePath()
@@ -188,7 +226,7 @@ public abstract class Reader {
         this.mappingFile = new File(this.getFormat().getMappingPath()
                 + "/" + this.kdfDate
                 + "/" + lotNumber
-                + "/" + this.file.getName().split(".kdf")[0] + ".kdf");
+                + "/" + this.fileName);
 
         return true;
     }
@@ -209,15 +247,15 @@ public abstract class Reader {
 
     private boolean setFileDate() {
         String[] names = this.file.getName().split("_");
-        this.fileMonth = names[format.getKdfMonthIndex()];
-        if (this.fileMonth.length() == 4) {
+        this.kdfMonth = names[format.getKdfMonthIndex()];
+        if (this.kdfMonth.length() == 4) {
             //0604
-            this.fileMonth = "20" + fileMonth;
-        } else if (this.fileMonth.length() == 6) {
+            this.kdfMonth = "20" + kdfMonth;
+        } else if (this.kdfMonth.length() == 6) {
             //180604
-            this.fileMonth = "20" + fileMonth.substring(0, 4);
-        } else if (this.fileMonth.length() == 8) {
-            this.fileMonth = this.fileMonth.substring(0, 6);
+            this.kdfMonth = "20" + kdfMonth.substring(0, 4);
+        } else if (this.kdfMonth.length() == 8) {
+            this.kdfMonth = this.kdfMonth.substring(0, 6);
         } else {
             return false;
         }
@@ -306,7 +344,7 @@ public abstract class Reader {
      *
      * @return
      */
-    private boolean removeTempLogFile() {
+    public boolean removeTempLogFile() {
         if (this.testLogFile.exists()) {
             try {
                 Files.delete(this.testLogFile.toPath());
@@ -416,27 +454,114 @@ public abstract class Reader {
     }
 
     public void logBadFormatFileToES() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.printf("%s=%s,%s=%s,%s=%s\n",
+                FieldType.EventType, Config.EventType.KDFBadFormat,
+                FieldType.FileName, this.file.getName(),
+                FieldType.DataType, this.getFormat().getDataType()
+        );
     }
 
     public boolean isRepeatFile() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (this.mappingFile.exists()) {
+            System.out.println("Skip since this is a repeat file");
+            return true;
+        }
+        return false;
     }
 
     public void logRepeatFileToES() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+                FieldType.EventType, Config.EventType.KDFRepeat,
+                this.getFormat().getLotNumberNode().getName(), this.lotNumber,
+                FieldType.KdfMonth, this.kdfMonth,
+                FieldType.KdfDate, this.kdfDate,
+                FieldType.TransferTime, this.transferTime,
+                FieldType.KdfName, this.fileName,
+                FieldType.DataType, this.getFormat().getDataType(),
+                this.getFormat().getOperationNode().getName(), this.mfgStp
+        );
     }
 
-    public void logOpenFailureToES() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+//    public void logOpenFailureToES() {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
     public void logIoErrorToES(String error) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+                FieldType.EventType, Config.EventType.IOError,
+                FieldType.Failure, error,
+                this.getFormat().getLotNumberNode().getName(), this.lotNumber,
+                FieldType.KdfMonth, this.kdfMonth,
+                FieldType.KdfDate, this.kdfDate,
+                FieldType.TransferTime, this.transferTime,
+                FieldType.KdfName, this.fileName,
+                FieldType.DataType, this.getFormat().getDataType(),
+                this.getFormat().getOperationNode().getName(), this.mfgStp
+        );
     }
 
     public void logFileDoneToES() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%d,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+                FieldType.EventType, Config.EventType.KDFDone,
+                FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
+                FieldType.KdfName, this.fileName,
+                FieldType.UnitCnt, this.unitCnt,
+                this.getFormat().getLotNumberNode().getName(), this.lotNumber,
+                FieldType.KdfMonth, this.kdfMonth,
+                FieldType.KdfDate, this.kdfDate,
+                FieldType.TransferTime, this.transferTime,
+                FieldType.DataType, this.getFormat().getDataType()
+        );
+    }
+
+    public void logExceptionToES() {
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+                FieldType.EventType, Config.EventType.KDFException,
+                this.getFormat().getLotNumberNode().getName(), this.lotNumber,
+                FieldType.KdfMonth, this.kdfMonth,
+                FieldType.KdfDate, this.kdfDate,
+                FieldType.TransferTime, this.transferTime,
+                FieldType.KdfName, this.fileName,
+                FieldType.DataType, this.getFormat().getDataType(),
+                this.getFormat().getOperationNode().getName(), this.mfgStp
+        );
+    }
+
+    public String generateLotHeadKVStr() {
+        String value = "";
+        String[] names = this.file.getName().split("_");
+        int i = 0;
+        for (XmlNode node : this.getFormat().getLotHead().values()) {
+            if (node.isEnabled() && node.isEnabledLog()) {
+                if (i != 0) {
+                    value += ",";
+                }
+                value += node.getName() + "=" + names[node.getIndex()];
+                i++;
+            }
+        }
+        value += "," + this.getFormat().getUnit().getWaferNumberNode().getName() + "=" + names[this.getFormat().getWaferNumberIndex()];
+        value += "," + FieldType.FileTime + "=" + this.formatTimeStr(this.fileOpenTime);
+        value += "," + FieldType.FileName + "=" + this.fileName;
+        return value;
+    }
+
+    /**
+     * write the kv string in to log file
+     *
+     * @return
+     */
+    public boolean writeKVString(String dataContent) {
+        if (this.getFormat().isLogToFile()) {
+            try {
+                Files.write(testLogFile.toPath(), dataContent.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+
+            } catch (IOException ex) {
+                Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
+            }
+            return true;
+        }
+        return true;
     }
 
     public File getFile() {
@@ -456,7 +581,7 @@ public abstract class Reader {
     }
 
     public String getFileMonth() {
-        return fileMonth;
+        return kdfMonth;
     }
 
     public String getFileDate() {
@@ -493,6 +618,10 @@ public abstract class Reader {
 
     public DataFormat getFormat() {
         return format;
+    }
+
+    public void setUnitCnt(int unitCnt) {
+        this.unitCnt = unitCnt;
     }
 
     public abstract boolean writeLogFile();
