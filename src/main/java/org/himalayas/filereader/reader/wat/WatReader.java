@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.himalayas.filereader.wat;
+package org.himalayas.filereader.reader.wat;
 
 import java.io.File;
 import org.himalayas.filereader.reader.Reader;
@@ -15,7 +15,7 @@ import org.himalayas.filereader.util.DataFormat;
  * @author ghfan
  */
 final
-	class WatReader extends Reader {
+	public class WatReader extends Reader {
 
 	public
 		WatReader(DataFormat format) {

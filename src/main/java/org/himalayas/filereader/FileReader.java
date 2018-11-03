@@ -6,8 +6,12 @@
 package org.himalayas.filereader;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import org.himalayas.filereader.kdf.KDFReader;
+import org.himalayas.filereader.reader.Reader;
+import org.himalayas.filereader.reader.smap.SmapReader;
+import org.himalayas.filereader.reader.wat.WatReader;
 import org.himalayas.filereader.util.Config;
 import org.himalayas.filereader.util.DataFormat;
 
@@ -15,133 +19,207 @@ import org.himalayas.filereader.util.DataFormat;
  *
  * @author ghfan
  */
-public
-	class FileReader {
+public class FileReader {
 
-	public
-		FileReader(File configFile) {
-		long startTime = System.currentTimeMillis();
-		new Config(configFile.getAbsolutePath());
-		KDFReader loader = new KDFReader();
+    private KDFReader kdfReader = null;
+    private Reader smapReader = null;
+    private Reader watReader = null;
 
-		for (DataFormat format : Config.dataFormats.values()) {
-			int fileCnt = 0;
-			int fileLimit = 30;
-			if (format.isEnabled() 
-				&& (format.getDataType().equals(Config.DataTypes.WaferSort)
-				|| format.getDataType().equals(Config.DataTypes.ATE)
-				|| format.getDataType().equals(Config.DataTypes.SLT))) {
-				if(format.getDataType().equals(Config.DataTypes.SLT)){
-					fileLimit = 1000;
-				}
-				loader.setFormat(format);
-				for(File dateFile: new File(format.getKdfPath()).listFiles()) {
-					if(dateFile.isDirectory()
-						&& (dateFile.getName().length() == 8 || dateFile.getName().length()==10)){
-					
-					}
-					else{
-						continue;
-					}
-				
-					for (File kdfFile : dateFile.listFiles()) {
-						if (kdfFile.isFile()) {
-							String fileName = kdfFile.getName();
-							if (fileName.endsWith(Config.KdfRename.badFormat.name())
-								|| fileName.endsWith(Config.KdfRename.done.name())
-								|| fileName.endsWith(Config.KdfRename.exception.name())
-								|| fileName.endsWith(Config.KdfRename.openErr.name())
-								|| fileName.endsWith(Config.KdfRename.skip.name())) {
-								continue;
+    private void init() {
+        for (DataFormat format : Config.dataFormats.values()) {
+            if (!format.isEnabled()) {
+                continue;
+            }
 
-							}
-							if(!kdfFile.canRead()) {
-								System.out.println("Error: tdni has no permission to read this file");
-								continue;
-							}
-							if(kdfFile.length() < 100){
-								System.out.printf("Error: file size = %d error, less than 100 byte\n", kdfFile.length());
-								continue;
-							}
-							try {
-								loader.loadFile(kdfFile);
-								if(loader.getKdfDoneCnt() >= loader.getFormat().getFileLimit()){
-									System.out.println("kdf done file cnt is " + (loader.getKdfDoneCnt()));
-									System.out.println("Have break now, bye");
-									System.exit(0);
-								}
-							}
-							catch (Exception e) {
-								loader.logExceptionToES();
-								loader.renameOrArchiveKDF(loader.getExceptionArchiveFile(), Config.KdfRename.exception);
-								//TODO how to handler the exception  kdf file?
-								System.out.println();
-								e.printStackTrace();
-							}
-						}
+            Config.DataTypes dataType = format.getDataType();
+            if (kdfReader == null
+                    && (dataType.equals(Config.DataTypes.ATE)
+                    || dataType.equals(Config.DataTypes.SLT)
+                    || dataType.equals(Config.DataTypes.WaferSort))) {
+                kdfReader = new KDFReader();
+            }
+            if (smapReader == null && dataType.equals(Config.DataTypes.SMAP)) {
+                smapReader = new SmapReader(format);
+            }
+            if (watReader == null && dataType.equals(Config.DataTypes.WAT)) {
+                smapReader = new WatReader(format);
+            }
+        }
+    }
 
-					}
-				}
-			}
-		}
+    private void readKDF(DataFormat format) {
+        if (kdfReader != null && format.isEnabled()
+                && (format.getDataType().equals(Config.DataTypes.WaferSort)
+                || format.getDataType().equals(Config.DataTypes.ATE)
+                || format.getDataType().equals(Config.DataTypes.SLT))) {
+            System.out.println("*****************************************************************");
+            System.out.println("**********                                     ******************");
+            System.out.printf("**********           start to proceed %s\n", format.getSourceType());
+            System.out.println("**********                                     ******************");
+            System.out.println("*****************************************************************");
 
-//		File stageFile = new File("./testdata/KDF/SORT");
-//		for (File file : stageFile.listFiles()) {
-//			if (loader.chooseFormat(file)) {
-//				loader.loadFile(file);
-//			}
-//		}
-//		stageFile = new File("./testdata/KDF/SLT");
-//		for (File file : stageFile.listFiles()) {
-//			if (loader.chooseFormat(file)) {
-//				loader.loadFile(file);
-//			}
-//		}
-//		stageFile = new File("./testdata/KDF/FT");
-//		for (File file : stageFile.listFiles()) {
-//			if (loader.chooseFormat(file)) {
-//				loader.loadFile(file);
-//			}
-//		}
-		//System.out.println(loader.allFields.toString());
-		System.out.println("total time = " + (System.currentTimeMillis() - startTime));
+            kdfReader.setFormat(format);
+            for (File dateFile : new File(format.getKdfPath()).listFiles()) {
+                if (dateFile.isDirectory()
+                        && (dateFile.getName().length() == 8 || dateFile.getName().length() == 10)) {
 
-	}
+                } else {
+                    continue;
+                }
 
-	public static
-		void main(String[] args) {
-		boolean debug = true;
-		if (args.length == 0) {
-			System.out.println("please set the config file path");
+                for (File kdfFile : dateFile.listFiles()) {
+                    if (kdfFile.isFile()) {
+                        String fileName = kdfFile.getName();
+                        if (fileName.endsWith(Config.KdfRename.badFormat.name())
+                                || fileName.endsWith(Config.KdfRename.done.name())
+                                || fileName.endsWith(Config.KdfRename.exception.name())
+                                || fileName.endsWith(Config.KdfRename.openErr.name())
+                                || fileName.endsWith(Config.KdfRename.skip.name())) {
+                            continue;
 
-			if (debug) {
-				File configFile = new File("config/dataformat.xml");
-				new FileReader(configFile);
-			}
-			else {
-				System.exit(1);
-			}
-		}
-		else{
-			System.out.println("args: " + Arrays.toString(args));
-		}
-		if (args.length == 1) {
-			if (args[0].toLowerCase().contains("help")
-				|| args[0].toLowerCase().contains("-h")) {
+                        }
+                        if (!kdfFile.canRead()) {
+                            System.out.println("Error: tdni has no permission to read this file");
+                            continue;
+                        }
+                        if (kdfFile.length() < 100) {
+                            System.out.printf("Error: file size = %d error, less than 100 byte\n", kdfFile.length());
+                            continue;
+                        }
+                        try {
+                            kdfReader.loadFile(kdfFile);
+                            if (kdfReader.getKdfDoneCnt() >= kdfReader.getFormat().getFileLimit()) {
+                                System.out.println("kdf done file cnt is " + (kdfReader.getKdfDoneCnt()));
+                                System.out.println("Have break now, bye");
+                                return;
+                            }
+                        } catch (Exception e) {
+                            kdfReader.logExceptionToES();
+                            kdfReader.renameOrArchiveKDF(kdfReader.getExceptionArchiveFile(), Config.KdfRename.exception);
+                            System.out.println();
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+            System.out.println("*****************************************************************");
+            System.out.println("**********                                     ******************");
+            System.out.printf("**********           complete to proceed %s\n", format.getSourceType());
+            System.out.println("**********                                     ******************");
+            System.out.println("*****************************************************************");
+        }
+    }
 
-				System.out.println("usage: java -jar FileReader [configfile]");
-				System.exit(1);
-			}
-			File configFile = new File(args[0]);
-			if (configFile.exists() && configFile.isFile()) {
-				new FileReader(configFile);
-			}
-		}
-		else {
-			System.out.println("please set the config file path");
-			System.exit(1);
-		}
+    private void readSmap() {
+        if (smapReader != null) {
+            System.out.println("*****************************************************************");
+            System.out.println("**********                                     ******************");
+            System.out.println("**********        start to proceed smap        ******************");
+            System.out.println("**********                                     ******************");
+            System.out.println("*****************************************************************");
 
-	}
+            for (File dateFile : new File(Config.smapFormat.getKdfPath()).listFiles()) {
+                if (dateFile.isDirectory()
+                        && (dateFile.getName().length() == 8 || dateFile.getName().length() == 10)) {
+
+                } else {
+                    continue;
+                }
+                for (File lotFile : dateFile.listFiles()) {
+                    if (lotFile.isDirectory()) {
+                        for (File kdfFile : dateFile.listFiles()) {
+                            if (kdfFile.isFile()) {
+                                String fileName = kdfFile.getName();
+                                if (fileName.endsWith(Config.KdfRename.badFormat.name())
+                                        || fileName.endsWith(Config.KdfRename.done.name())
+                                        || fileName.endsWith(Config.KdfRename.exception.name())
+                                        || fileName.endsWith(Config.KdfRename.openErr.name())
+                                        || fileName.endsWith(Config.KdfRename.skip.name())) {
+                                    continue;
+                                }
+                                if (!kdfFile.canRead()) {
+                                    System.out.println("Error: tdni has no permission to read this file");
+                                    continue;
+                                }
+                                if (kdfFile.length() < 100) {
+                                    System.out.printf("Error: file size = %d error, less than 100 byte\n", kdfFile.length());
+                                    continue;
+                                }
+                                try {
+                                    smapReader.loadFile(kdfFile);
+                                    if (smapReader.getKdfDoneCnt() >= smapReader.getFormat().getFileLimit()) {
+                                        System.out.println("kdf done file cnt is " + (smapReader.getKdfDoneCnt()));
+                                        System.out.println("Have break now, bye");
+                                        return;
+                                    }
+                                } catch (Exception e) {
+                                    smapReader.logExceptionToES();
+                                    smapReader.renameOrArchiveKDF(smapReader.getExceptionArchiveFile(), Config.KdfRename.exception);
+                                    System.out.println();
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            System.out.println("*****************************************************************");
+            System.out.println("**********                                     ******************");
+            System.out.println("**********      complete to proceed smap       ******************");
+            System.out.println("**********                                     ******************");
+            System.out.println("*****************************************************************");
+        }
+
+    }
+
+    public FileReader(File configFile) {
+        long startTime = System.currentTimeMillis();
+        new Config(configFile.getAbsolutePath());
+        this.init();
+        
+        System.out.println(LocalDateTime.now().toString() + ": Task start..." );
+        this.readSmap();
+        this.readKDF(Config.getSLTFormat());
+        for(DataFormat format: Config.dataFormats.values()){
+            if(format.getDataType().equals(Config.DataTypes.ATE)
+                    || format.getDataType().equals(Config.DataTypes.WaferSort)){
+                this.readKDF(format);
+            }
+        }
+        System.out.println();
+        System.out.println(LocalDateTime.now().toString() + ": All task completed,total time = " + (System.currentTimeMillis() - startTime));
+    }
+
+    public static void main(String[] args) {
+        boolean debug = true;
+        if (args.length == 0) {
+            System.out.println("please set the config file path");
+
+            if (debug) {
+                File configFile = new File("config/dataformat.xml");
+                new FileReader(configFile);
+            } else {
+                System.exit(1);
+            }
+        } else {
+            System.out.println("args: " + Arrays.toString(args));
+        }
+        if (args.length == 1) {
+            if (args[0].toLowerCase().contains("help")
+                    || args[0].toLowerCase().contains("-h")) {
+
+                System.out.println("usage: java -jar FileReader [configfile]");
+                System.exit(1);
+            }
+            File configFile = new File(args[0]);
+            if (configFile.exists() && configFile.isFile()) {
+                new FileReader(configFile);
+            }
+        } else {
+            System.out.println("please set the config file path");
+            System.exit(1);
+        }
+
+    }
 
 }

@@ -439,7 +439,7 @@ public
 
 	public
 		boolean validate() {
-                System.out.println("\n" + this.getSourceType() + " validation....");
+                System.out.printf("%s=%s, validation....\n",this.getSourceType(), this.isEnabled());
 		if (this.getSourceType().equalsIgnoreCase(Config.DataTypes.SMAP.name())
 			|| this.getSourceType().equalsIgnoreCase(Config.DataTypes.WAT.name())) {
                     if (this.getLotNumberIndex() == -1) {

@@ -39,13 +39,13 @@ public abstract class Reader {
     private String transferTime = null;
     private String fileName = null;
     private String lotNumber = null;
-    private String mfgStp = null;
     private int fileLevelDocCnt = 0;
     private String fileOpenTime = null;
     private long jobStartTime = 0;
     private Config.FailureCase failType = null;
     private DataFormat format = null;
     private int unitCnt = 0;
+    private int kdfDoneCnt = 0;
 
     public void resetAll() {
         this.testLogFile = null;
@@ -60,7 +60,6 @@ public abstract class Reader {
         this.transferTime = null;
         this.fileName = null;
         this.lotNumber = null;
-        this.mfgStp = null;
         this.fileLevelDocCnt = 0;
         this.fileOpenTime = null;
         this.failType = null;
@@ -96,29 +95,34 @@ public abstract class Reader {
             this.renameOrArchiveKDF(this.repeatArchiveFile, Config.KdfRename.skip);
             return false;
         }
-        if (this.readFile()) {
-            if (!this.setupLogFile()) {
-                return false;
-            }
-            if (!this.writeLogFile()) {
-                this.failType = Config.FailureCase.IOError;
-                this.logIoErrorToES("FailWriteLogFile");
-
-                if (!this.removeTempLogFile()) {
-                    this.logIoErrorToES("FailDeleteLogFile");
-                }
-                return false;
-            }
-            if (!this.generateMapFile()) {
-                return false;
-            }
-            if (!this.closeLogFile()) {
-                return false;
-            }
-            this.logFileDoneToES();
-            this.renameOrArchiveKDF(this.doneArchiveFile, Config.KdfRename.done);
-
+        if (!this.readFile()) {
+            this.failType = Config.FailureCase.OpenFailure;
+            this.logOpenFailureToES();
+            this.renameOrArchiveKDF(this.openErrorArchiveFile, Config.KdfRename.openErr);
+            return false;
         }
+        if (!this.setupLogFile()) {
+            return false;
+        }
+        if (!this.writeLogFile()) {
+            this.failType = Config.FailureCase.IOError;
+            this.logIoErrorToES("FailWriteLogFile");
+
+            if (!this.removeTempLogFile()) {
+                this.logIoErrorToES("FailDeleteLogFile");
+            }
+            return false;
+        }
+        if (!this.generateMapFile()) {
+            return false;
+        }
+        if (!this.closeLogFile()) {
+            return false;
+        }
+        this.logFileDoneToES();
+        this.renameOrArchiveKDF(this.doneArchiveFile, Config.KdfRename.done);
+        kdfDoneCnt++;
+
         System.out.printf("%s: successed to proceed %s\n", LocalDateTime.now(), file.getName());
         System.out.printf("%s: total reading time is : %d\n", LocalDateTime.now(), (System.currentTimeMillis() - jobStartTime));
         return true;
@@ -135,7 +139,7 @@ public abstract class Reader {
      *
      * @return
      */
-    public boolean validateFile() {
+    protected boolean validateFile() {
         this.failType = null;
         if (!this.file.isFile()) {
             return false;
@@ -285,7 +289,7 @@ public abstract class Reader {
                 + timeStr.substring(12, 14) + ".00+08:00";
     }
 
-    public boolean setupLogFile() {
+    private boolean setupLogFile() {
         testLogFile = new File(this.getFormat().getXmlPath() + "/" + this.file.getName());
         if (!this.removeTempLogFile()) {
             this.logIoErrorToES("FailDeleteLogFile");
@@ -344,7 +348,7 @@ public abstract class Reader {
      *
      * @return
      */
-    public boolean removeTempLogFile() {
+    private boolean removeTempLogFile() {
         if (this.testLogFile.exists()) {
             try {
                 Files.delete(this.testLogFile.toPath());
@@ -453,7 +457,7 @@ public abstract class Reader {
         return true;
     }
 
-    public void logBadFormatFileToES() {
+    private void logBadFormatFileToES() {
         System.out.printf("%s=%s,%s=%s,%s=%s\n",
                 FieldType.EventType, Config.EventType.KDFBadFormat,
                 FieldType.FileName, this.file.getName(),
@@ -461,7 +465,7 @@ public abstract class Reader {
         );
     }
 
-    public boolean isRepeatFile() {
+    private boolean isRepeatFile() {
         if (this.mappingFile.exists()) {
             System.out.println("Skip since this is a repeat file");
             return true;
@@ -469,24 +473,32 @@ public abstract class Reader {
         return false;
     }
 
-    public void logRepeatFileToES() {
-        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+    private void logRepeatFileToES() {
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
                 FieldType.EventType, Config.EventType.KDFRepeat,
                 this.getFormat().getLotNumberNode().getName(), this.lotNumber,
                 FieldType.KdfMonth, this.kdfMonth,
                 FieldType.KdfDate, this.kdfDate,
                 FieldType.TransferTime, this.transferTime,
                 FieldType.KdfName, this.fileName,
-                FieldType.DataType, this.getFormat().getDataType(),
-                this.getFormat().getOperationNode().getName(), this.mfgStp
+                FieldType.DataType, this.getFormat().getDataType()
         );
     }
 
-//    public void logOpenFailureToES() {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-    public void logIoErrorToES(String error) {
-        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+    public void logOpenFailureToES() {
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+                FieldType.EventType, Config.EventType.KDFOpenFailure,
+                this.getFormat().getLotNumberNode().getName(), this.lotNumber,
+                FieldType.KdfMonth, this.kdfMonth,
+                FieldType.KdfDate, this.kdfDate,
+                FieldType.TransferTime, this.transferTime,
+                FieldType.KdfName, this.fileName,
+                FieldType.DataType, this.getFormat().getDataType()
+        );
+    }
+
+    private void logIoErrorToES(String error) {
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
                 FieldType.EventType, Config.EventType.IOError,
                 FieldType.Failure, error,
                 this.getFormat().getLotNumberNode().getName(), this.lotNumber,
@@ -494,12 +506,11 @@ public abstract class Reader {
                 FieldType.KdfDate, this.kdfDate,
                 FieldType.TransferTime, this.transferTime,
                 FieldType.KdfName, this.fileName,
-                FieldType.DataType, this.getFormat().getDataType(),
-                this.getFormat().getOperationNode().getName(), this.mfgStp
+                FieldType.DataType, this.getFormat().getDataType()
         );
     }
 
-    public void logFileDoneToES() {
+    private void logFileDoneToES() {
         System.out.printf("%s=%s,%s=%s,%s=%s,%s=%d,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
                 FieldType.EventType, Config.EventType.KDFDone,
                 FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
@@ -514,19 +525,18 @@ public abstract class Reader {
     }
 
     public void logExceptionToES() {
-        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
                 FieldType.EventType, Config.EventType.KDFException,
                 this.getFormat().getLotNumberNode().getName(), this.lotNumber,
                 FieldType.KdfMonth, this.kdfMonth,
                 FieldType.KdfDate, this.kdfDate,
                 FieldType.TransferTime, this.transferTime,
                 FieldType.KdfName, this.fileName,
-                FieldType.DataType, this.getFormat().getDataType(),
-                this.getFormat().getOperationNode().getName(), this.mfgStp
+                FieldType.DataType, this.getFormat().getDataType()
         );
     }
 
-    public String generateLotHeadKVStr() {
+    protected String generateLotHeadKVStr() {
         String value = "";
         String[] names = this.file.getName().split("_");
         int i = 0;
@@ -550,7 +560,7 @@ public abstract class Reader {
      *
      * @return
      */
-    public boolean writeKVString(String dataContent) {
+    protected boolean writeKVString(String dataContent) {
         if (this.getFormat().isLogToFile()) {
             try {
                 Files.write(testLogFile.toPath(), dataContent.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
@@ -600,9 +610,6 @@ public abstract class Reader {
         return lotNumber;
     }
 
-    public String getMfgStp() {
-        return mfgStp;
-    }
 
     public int getFileLevelDocCnt() {
         return fileLevelDocCnt;
@@ -624,6 +631,14 @@ public abstract class Reader {
         this.unitCnt = unitCnt;
     }
 
-    public abstract boolean writeLogFile();
+    public int getKdfDoneCnt() {
+        return kdfDoneCnt;
+    }
+
+    public File getExceptionArchiveFile() {
+        return exceptionArchiveFile;
+    }
+
+    protected abstract boolean writeLogFile();
 
 }

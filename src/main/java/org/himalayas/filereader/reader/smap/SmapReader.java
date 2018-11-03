@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.himalayas.filereader.smap;
+package org.himalayas.filereader.reader.smap;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,12 +21,12 @@ import org.himalayas.filereader.util.XmlNode;
  *
  * @author ghfan
  */
-final class SampReader extends Reader {
+final public class SmapReader extends Reader {
 
     private ArrayList<String> pickBins = new ArrayList();
     private ArrayList<Die> dies = new ArrayList();
 
-    public SampReader(DataFormat format) {
+    public SmapReader(DataFormat format) {
         super(format);
     }
 
@@ -72,7 +72,7 @@ final class SampReader extends Reader {
             System.out.println();
 
         } catch (IOException ex) {
-            Logger.getLogger(SampReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SmapReader.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
         return true;
@@ -215,7 +215,7 @@ final class SampReader extends Reader {
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
         new Config("config/dataformat.xml");
-        Reader reader = new SampReader(Config.smapFormat);
+        Reader reader = new SmapReader(Config.smapFormat);
 
         File testDataFile = new File("./testdata/KDF/SMAP");
         for (File lotFile : testDataFile.listFiles()) {
