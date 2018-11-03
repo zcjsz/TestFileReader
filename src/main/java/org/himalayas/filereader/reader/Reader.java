@@ -114,6 +114,11 @@ public abstract class Reader {
             return false;
         }
         if (!this.generateMapFile()) {
+            this.failType = Config.FailureCase.IOError;
+            this.logIoErrorToES("FailCreateMapFile");
+            if (!this.removeTempLogFile()) {
+                this.logIoErrorToES("FailDeleteLogFile");
+            }
             return false;
         }
         if (!this.closeLogFile()) {
@@ -308,22 +313,23 @@ public abstract class Reader {
         if (!this.getFormat().isGenerateMappingFile()) {
             return true;
         }
-
         try {
+            File parentFile = this.mappingFile.getParentFile();
+            if (parentFile.exists() && parentFile.isDirectory()) {
+            } else {
+                if (!parentFile.mkdirs()) {
+                    return false;
+                }
+            }
             if (this.mappingFile.createNewFile()) {
                 return true;
+            } else {
+                return false;
             }
         } catch (IOException ex) {
             Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
-
-        this.failType = Config.FailureCase.IOError;
-        this.logIoErrorToES("FailCreateMapFile");
-        if (!this.removeTempLogFile()) {
-            this.logIoErrorToES("FailDeleteLogFile");
-        }
-
-        return false;
     }
 
     private boolean closeLogFile() {
@@ -352,8 +358,10 @@ public abstract class Reader {
         if (this.testLogFile.exists()) {
             try {
                 Files.delete(this.testLogFile.toPath());
+
             } catch (IOException ex) {
-                Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Reader.class
+                        .getName()).log(Level.SEVERE, null, ex);
                 return false;
             }
         }
@@ -370,8 +378,10 @@ public abstract class Reader {
         if (this.mappingFile.exists()) {
             try {
                 Files.delete(this.mappingFile.toPath());
+
             } catch (IOException ex) {
-                Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Reader.class
+                        .getName()).log(Level.SEVERE, null, ex);
                 return false;
             }
         }
@@ -451,7 +461,9 @@ public abstract class Reader {
             }
         } catch (IOException ex) {
             System.out.println("EventType:ArchieveFailure");
-            Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger
+                    .getLogger(Reader.class
+                            .getName()).log(Level.SEVERE, null, ex);
             return false;
         }
         return true;
@@ -551,7 +563,9 @@ public abstract class Reader {
         }
         value += "," + this.getFormat().getUnit().getWaferNumberNode().getName() + "=" + names[this.getFormat().getWaferNumberIndex()];
         value += "," + FieldType.FileTime + "=" + this.formatTimeStr(this.fileOpenTime);
-        value += "," + FieldType.FileName + "=" + this.fileName;
+        if (this.getFormat().isAddFileName()) {
+            value += "," + FieldType.FileName + "=" + this.fileName;
+        }
         return value;
     }
 
@@ -566,7 +580,8 @@ public abstract class Reader {
                 Files.write(testLogFile.toPath(), dataContent.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 
             } catch (IOException ex) {
-                Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Reader.class
+                        .getName()).log(Level.SEVERE, null, ex);
                 return false;
             }
             return true;
@@ -609,7 +624,6 @@ public abstract class Reader {
     public String getLotNumber() {
         return lotNumber;
     }
-
 
     public int getFileLevelDocCnt() {
         return fileLevelDocCnt;

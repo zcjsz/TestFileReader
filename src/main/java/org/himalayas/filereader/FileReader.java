@@ -117,8 +117,8 @@ public class FileReader {
             System.out.println("**********        start to proceed smap        ******************");
             System.out.println("**********                                     ******************");
             System.out.println("*****************************************************************");
-
-            for (File dateFile : new File(Config.smapFormat.getKdfPath()).listFiles()) {
+            File rootFile = new File(Config.smapFormat.getKdfPath());
+            for (File dateFile : rootFile.listFiles()) {
                 if (dateFile.isDirectory()
                         && (dateFile.getName().length() == 8 || dateFile.getName().length() == 10)) {
 
@@ -127,7 +127,7 @@ public class FileReader {
                 }
                 for (File lotFile : dateFile.listFiles()) {
                     if (lotFile.isDirectory()) {
-                        for (File kdfFile : dateFile.listFiles()) {
+                        for (File kdfFile : lotFile.listFiles()) {
                             if (kdfFile.isFile()) {
                                 String fileName = kdfFile.getName();
                                 if (fileName.endsWith(Config.KdfRename.badFormat.name())
@@ -193,8 +193,9 @@ public class FileReader {
     public static void main(String[] args) {
         boolean debug = true;
         if (args.length == 0) {
-            System.out.println("please set the config file path");
-
+            if(!debug){
+                System.out.println("please set the config file path");
+            }
             if (debug) {
                 File configFile = new File("config/dataformat.xml");
                 new FileReader(configFile);
@@ -216,8 +217,11 @@ public class FileReader {
                 new FileReader(configFile);
             }
         } else {
-            System.out.println("please set the config file path");
-            System.exit(1);
+            if(!debug){
+                System.out.println("please set the config file path");
+                System.exit(1);
+            }
+            
         }
 
     }
