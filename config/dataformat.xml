@@ -407,12 +407,12 @@ and open the template in the editor.
         <KDFArchivePath>data/data_archive/SMAP/</KDFArchivePath>
         
         <!--never trun on debug mode in production mode, default 0-->
-        <DebugMode>1</DebugMode>
+        <DebugMode>0</DebugMode>
         
         <!--comma separated filters, case sensitive-->
         <FilterOut></FilterOut><!--filter out kdf whose name contains sbo-->
         <!--comma separated selectors, case sensitive-->
-        <Selector>GF</Selector> <!--select kdf whose name contains GFDRS-->
+        <Selector></Selector> <!--select kdf whose name contains GFDRS-->
         
         <!--list length while kdf name is split by underline-->
         <UnderLineCnt>8</UnderLineCnt>
