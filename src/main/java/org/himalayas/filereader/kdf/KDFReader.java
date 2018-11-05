@@ -1793,6 +1793,20 @@ public
 				return false;
 			}
 		}
+		
+		if(fieldName.equals("value")){
+			try{
+				float value = Float.valueOf(fieldValue);
+				if(Float.isInfinite(value)){
+					System.out.printf("Bad Format Field: fieldName=%s, fieldValue=%s\n", fieldName, fieldValue);
+					return false;
+				}
+			}
+			catch(Exception e){
+				System.out.printf("Bad Format Field: fieldName=%s, fieldValue=%s\n", fieldName, fieldValue);
+				return false;
+			}
+		}
 		return true;
 
 	}

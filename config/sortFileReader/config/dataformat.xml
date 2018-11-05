@@ -97,7 +97,7 @@ and open the template in the editor.
         
         <!--comma separated Node Type filters, , case sensitive-->
         <!--ULSD,PinMeasure,Evaluation,StructureMeasure,Flow,Test,BitString,PatternFailInfo,PatternPinFail,PatternResult,Unit,File-->
-        <!--NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter-->
+        <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
         <!--comma separated Node Type selectors-->
         <NodeTypeSelector></NodeTypeSelector>
         
@@ -140,10 +140,11 @@ and open the template in the editor.
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
         <GenerateMappingFile>1</GenerateMappingFile>
         <KDFDate>
-            <Start></Start>
+            <Start>20180800</Start>
             <End></End>
         </KDFDate>
-        
+	<FileLimit>30</FileLimit>       
+ 
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
         <KDFPath>/extend/hygon_source_data/SORT/</KDFPath>
@@ -198,7 +199,7 @@ and open the template in the editor.
         <SubClasSelector></SubClasSelector>
         <!--comma separated Node Type filters, case sensitive-->
         <!--PinMeasure,StructureMeasure,Flow,Test,Evaluation,BitString,PatternFailInfo,PatternPinFail,PatternResult,BistFailArray-->
-        <!--NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter-->
+        <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
         <!--comma separated Node Type selectors, case sensitive-->
         <NodeTypeSelector></NodeTypeSelector>
         
@@ -207,7 +208,7 @@ and open the template in the editor.
         <EnabledComponentHash>1</EnabledComponentHash>
         <!--comma separated KDFFieldData filters, case sensitive-->
         <!--startTimestamp,endTimestamp-->
-        <!--FieldFilter>lowSpecLimit,highSpecLimit,sequence,units,startTimestamp,endTimestamp,connectTimeout,portNumber,queryTimeout,queryType,networkError,hostName</FieldFilter-->
+        <FieldFilter>message</FieldFilter>
         <!--if enabled, the file name will be added in the unit level doc, default 0-->
         <AddFileNameInUnit>1</AddFileNameInUnit>
         
@@ -318,7 +319,10 @@ and open the template in the editor.
         <!--slave unit id will append to test level doc if enabled, default false-->
         <AppendSlaveUnitId2Test>1</AppendSlaveUnitId2Test>
     </SourceType>
-    <SourceType name= "WAT" enabled = "1" >
+    
+    <SourceType name= "WAT" enabled = "0" >
+        <TestIndex>wat-test-*</TestIndex>
+        <FileType>.dis</FileType>
         <DataType>WAT</DataType>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>0</ProductionMode>
@@ -330,28 +334,29 @@ and open the template in the editor.
             <Start></Start>
             <End></End>
         </KDFDate>
+        <FileLimit>100</FileLimit>
         
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
-        <KDFPath>/home/ghfan/kdf/WAT</KDFPath>
+        <KDFPath>/extend/hygon_source_data/WAT</KDFPath>
         <!--xml path is to store the generated test item log file-->
-        <XmlPath>/data/wat_log/</XmlPath>
+        <XmlPath>/extend/data_log/WAT/</XmlPath>
         <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
-        <MappingPath>/data/wat_mapping</MappingPath>
+        <MappingPath>/extend/data_mapping/WAT</MappingPath>
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
-        <KDFArchivePath>/data/wat_archive</KDFArchivePath>
+        <KDFArchivePath>/data/data_archive/wAT/</KDFArchivePath>
         
         <!--never trun on debug mode in production mode, default 0-->
         <DebugMode>0</DebugMode>
         
         <!--comma separated filters, case sensitive-->
-        <FilterOut>sbo</FilterOut><!--filter out kdf whose name contains sbo-->
+        <FilterOut></FilterOut><!--filter out kdf whose name contains sbo-->
         <!--comma separated selectors, case sensitive-->
-        <Selector>GFDRS</Selector> <!--select kdf whose name contains GFDRS-->
+        <Selector>GF</Selector> <!--select kdf whose name contains GFDRS-->
         
         
         <!--list length while kdf name is split by underline-->
-        <UnderLineCnt>11</UnderLineCnt>
+        <UnderLineCnt>8</UnderLineCnt>
         <!--below params are filed name index in the kdf name-->
         <LotNumberIndex>4</LotNumberIndex>
         <TesterNumberIndex>3</TesterNumberIndex>
@@ -371,61 +376,52 @@ and open the template in the editor.
         <LogFailOnlyNodeSelector></LogFailOnlyNodeSelector>
         
     </SourceType>
-    <SourceType name= "SMAP" enabled = "1" >
+    <SourceType name= "SMAP" enabled = "0" >
         <DataType>SMAP</DataType>
+        <FileType>smap.</FileType>
+        <TestIndex>smap-test-*</TestIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
-        <ProductionMode>0</ProductionMode>
+        <ProductionMode>1</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
-        <GenerateMappingFile>0</GenerateMappingFile>
+        <GenerateMappingFile>1</GenerateMappingFile>
         <KDFDate>
             <Start></Start>
             <End></End>
         </KDFDate>
+        <FileLimit>5000</FileLimit>
         
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
-        <KDFPath>/home/ghfan/kdf/SMAP</KDFPath>
+        <KDFPath>/extend/hygon_source_data/SMAP</KDFPath>
         <!--xml path is to store the generated test item log file-->
-        <XmlPath>/data/smap_log/</XmlPath>
+        <XmlPath>/extend/data_log/SMAP/</XmlPath>
         <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
-        <MappingPath>/data/smap_mapping</MappingPath>
+        <MappingPath>/extend/data_mapping/SMAP</MappingPath>
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
-        <KDFArchivePath>/data/smap_archive</KDFArchivePath>
+        <KDFArchivePath>data/data_archive/SMAP/</KDFArchivePath>
         
         <!--never trun on debug mode in production mode, default 0-->
         <DebugMode>0</DebugMode>
         
         <!--comma separated filters, case sensitive-->
-        <FilterOut>sbo</FilterOut><!--filter out kdf whose name contains sbo-->
+        <FilterOut></FilterOut><!--filter out kdf whose name contains sbo-->
         <!--comma separated selectors, case sensitive-->
-        <Selector>GFDRS</Selector> <!--select kdf whose name contains GFDRS-->
-        
-        <!--tester type field-->
-        <TesterTypeIndex>2</TesterTypeIndex>
-        <TesterType>P:93k_data,S:sapphire_data</TesterType>
-        
+        <Selector></Selector> <!--select kdf whose name contains GFDRS-->
         
         <!--list length while kdf name is split by underline-->
-        <UnderLineCnt>11</UnderLineCnt>
+        <UnderLineCnt>8</UnderLineCnt>
         <!--below params are filed name index in the kdf name-->
-        <LotNumberIndex>4</LotNumberIndex>
-        <TesterNumberIndex>3</TesterNumberIndex>
-        <MfgStepIndex>5</MfgStepIndex>
-        <TestCodeIndex></TestCodeIndex>
-        <WaferNumberIndex>7</WaferNumberIndex>
-        <SiteIndex></SiteIndex>
-        <KDFMonthIndex>9</KDFMonthIndex>
-        <SourceTypeIndex>0</SourceTypeIndex>
+        <LotNumberIndex>2</LotNumberIndex>
+        <WaferNumberIndex>4</WaferNumberIndex>
+        
+        <KDFMonthIndex>6</KDFMonthIndex>
         <!--comma separated file open time indices -->
-        <FileOpenTimeIndex>9,10</FileOpenTimeIndex>
+        <FileOpenTimeIndex>6,7</FileOpenTimeIndex>
         
         <!--if enabled, the file name will be added in the unit level doc, default 0-->
         <AddFileNameInUnit>1</AddFileNameInUnit>
-        
-        
-        <LogFailOnlyNodeSelector></LogFailOnlyNodeSelector>
         
     </SourceType>
         
@@ -526,7 +522,6 @@ and open the template in the editor.
         <XmlNode name= "LotNumber">
             <Field>lotId</Field>
             <Field>LOT_ID</Field>
-            <Index>1</Index>
             <LotNumber>1</LotNumber>
                 
             <SourceType name= "HTEST1" enabled = "1" >
@@ -573,7 +568,6 @@ and open the template in the editor.
         <XmlNode name= "Device">
             <Field>IDV</Field>
             <Field>internalDevVer</Field>
-            <Index>3</Index>
             
             <SourceType name= "HTEST1" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
@@ -780,7 +774,6 @@ and open the template in the editor.
             <Field>TESTER_ID</Field>
             <Field>equipmentId</Field>
             <LowerCase>1</LowerCase>
-            <Index>1</Index>
             
             <SourceType name= "HTEST1" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
@@ -867,7 +860,6 @@ and open the template in the editor.
         <XmlNode name= "Operation">
             <Field>TESTPHASE</Field>
             <Field>mfgStepName</Field>
-            <Index>2</Index>
             <Operation>1</Operation>
             
             <SourceType name= "HTEST1" enabled = "1" >
