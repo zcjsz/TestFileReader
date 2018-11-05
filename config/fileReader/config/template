@@ -138,13 +138,14 @@ PUT _template/all-test
     "index_patterns": [
       "wafer-sort-test-*",
       "slt-test-*",
-      "ft-test-*"
+      "ft-test-*",
+      "smap-test-*"
     ],
     "settings": {
       "index": {
-        "number_of_shards": "3",
+        "number_of_shards": "5",
         "number_of_replicas": "2",
-        "refresh_interval": "30s"
+        "refresh_interval": "300s"
       }
     },
     "mappings": {
@@ -162,760 +163,778 @@ PUT _template/all-test
         },
         "dynamic_templates": [
           {
-          "date_1": {
-            "match": "DoneTime",
-            "mapping": {
-              "type": "date"
-            }
-          }
-         },
-         {
-          "date_2": {
-            "match": "EndTestTime",
-            "mapping": {
-              "type": "date"
-            }
-          }
-         },
-         {
-          "date_3": {
-            "match": "FileTime",
-            "mapping": {
-              "type": "date"
-            }
-          }
-         },
-         {
-          "date_4": {
-            "match": "LotEndTime",
-            "mapping": {
-              "type": "date"
-            }
-          }
-         },
-         {
-          "date_5": {
-            "match": "LotStartTime",
-            "mapping": {
-              "type": "date"
-            }
-          }
-         },
-         {
-          "date_6": {
-            "match": "StartTestTime",
-            "mapping": {
-              "type": "date"
-            }
-          }
-         },
-         {
-          "date_7": {
-            "match": "TransferTime",
-            "mapping": {
-              "type": "date"
-            }
-          }
-         },
-         
-         
-         
-         
-         
-         {
-          "key_word_1": {
-            "match": "WaferLot",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_2": {
-            "match": "LotNumber",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_3": {
-            "match": "DIE_1",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_4": {
-            "match": "DIE_2",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_5": {
-            "match": "DIE_3",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_6": {
-            "match": "DataType",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_7": {
-            "match": "Device",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_8": {
-            "match": "Dib",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_9": {
-            "match": "FileName",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_10": {
-            "match": "HBin",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_11": {
-            "match": "HBinDesc",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_12": {
-            "match": "KDFName",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_13": {
-            "match": "MfgStep",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_14": {
-            "match": "Operation",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_15": {
-            "match": "PartNumber",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_16": {
-            "match": "Pattern",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_17": {
-            "match": "Pin",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_18": {
-            "match": "Program",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_19": {
-            "match": "ProgramVersion",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_20": {
-            "match": "SBin",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_21": {
-            "match": "SBinDesc",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_22": {
-            "match": "Site",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_23": {
-            "match": "TestCode",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_24": {
-            "match": "Tester",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_25": {
-            "match": "Type",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_26": {
-            "match": "UnitId",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_27": {
-            "match": "baseClass",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_28": {
-            "match": "comClass",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_29": {
-            "match": "comName",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_30": {
-            "match": "context",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_31": {
-            "match": "description",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_32": {
-            "match": "expression",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_33": {
-            "match": "failingArrayName",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_34": {
-            "match": "generatedTestName",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_35": {
-            "match": "name",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_36": {
-            "match": "queriedTests",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_37": {
-            "match": "segmentName",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_38": {
-            "match": "status",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_39": {
-            "match": "structureName",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_40": {
-            "match": "subClass",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_41": {
-            "match": "failingMacroId",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_42": {
-            "match": "failingMacroSubId",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_43": {
-            "match": "bistControllerId",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_44": {
-            "match": "units",
-            "mapping": {
-              "type": "keyword"
-              
-            }
-          }
-         },
-         {
-          "key_word_45": {
-            "match": "hostName",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_46": {
-            "match": "queryType",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_47": {
-            "match": "DieType",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "key_word_48": {
-            "match": "MasterDieId",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         
-         
-         
-         {
-          "text_1": {
-            "match": "bitValues",
-            "mapping": {
-              "type": "text"
-            }
-          }
-         },
-         {
-          "text_2": {
-            "match": "componentHash",
-            "mapping": {
-              "type": "text"
-            }
-          }
-         },
-         {
-          "text_3": {
-            "match": "highSpecLimit",
-            "mapping": {
-              "type": "text"
-            }
-          }
-         },
-         
-         {
-          "text_4": {
-            "match": "lowSpecLimit",
-            "mapping": {
-              "type": "text"
-            }
-          }
-         },
-         
-         
-         
-         
-         
-         
-         {
-          "byte_1": {
-            "match": "BinType",
-            "mapping": {
-              "type": "byte"
-            }
-          }
-         },
-         {
-          "byte_2": {
-            "match": "WaferNumber",
-            "mapping": {
-              "type": "byte"
-            }
-          }
-         },
-         {
-          "byte_3": {
-            "match": "X",
-            "mapping": {
-              "type": "byte"
-            }
-          }
-         },
-         {
-          "byte_4": {
-            "match": "Y",
-            "mapping": {
-              "type": "byte"
-            }
-          }
-         },
-         {
-          "byte_5": {
-            "match": "alarm",
-            "mapping": {
-              "type": "byte"
-            }
-          }
-         },
+            "date_1": {
+              "match": "DoneTime",
+              "mapping": {
+                "type": "date"
+              }
+            }
+          },
           {
-          "byte_6": {
-            "match": "timeout",
-            "mapping": {
-              "type": "byte"
+            "date_2": {
+              "match": "EndTestTime",
+              "mapping": {
+                "type": "date"
+              }
             }
-          }
-         },
-         {
-          "byte_7": {
-            "match": "result",
-            "mapping": {
-              "type": "byte"
-            }
-          }
-         },
-         {
-          "byte_8": {
-            "match": "networkError",
-            "mapping": {
-              "type": "byte"
-            }
-          }
-         },
-         
-         
-         
-         
-         
-         {
-          "short_1": {
-            "match": "UnitCnt",
-            "mapping": {
-              "type": "short"
-            }
-          }
-         },
-         {
-          "short_2": {
-            "match": "UnitSeq",
-            "mapping": {
-              "type": "short"
-            }
-          }
-         },
-         {
-          "short_3": {
-            "match": "connectTimeout",
-            "mapping": {
-              "type": "short"
-            }
-          }
-         },
-         {
-          "short_4": {
-            "match": "queryTimeout",
-            "mapping": {
-              "type": "short"
-            }
-          }
-         },
-        
-         {
-          "short_5": {
-            "match": "portNumber",
-            "mapping": {
-              "type": "short"
-            }
-          }
-         },
-         
-         
-         
-         
-         
-         {
-          "float_1": {
-            "match": "value",
-            "mapping": {
-              "type": "float"
-            }
-          }
-         },
-         {
-          "float_2": {
-            "match": "TestTime",
-            "mapping": {
-              "type": "float"
-            }
-          }
-         },
-         {
-          "float_3": {
-            "match": "connectTime",
-            "mapping": {
-              "type": "float"
-            }
-          }
-         },
-         {
-          "float_4": {
-            "match": "recvTime",
-            "mapping": {
-              "type": "float"
-            }
-          }
-         },
-         {
-          "float_5": {
-            "match": "totalQueryTime",
-            "mapping": {
-              "type": "float"
-            }
-          }
-         },
-         
-         
-         {
-          "integer_1": {
-            "match": "DocCnt",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         
-         {
-          "integer_2": {
-            "match": "KDFDate",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "integer_3": {
-            "match": "KDFMonth",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "integer_4": {
-            "match": "GrossTime",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "integer_5": {
-            "match": "cycle",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "integer_6": {
-            "match": "vector",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "integer_7": {
-            "match": "repCount",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
+          },
           {
-          "integer_8": {
-            "match": "sequence",
-            "mapping": {
-              "type": "integer"
+            "date_3": {
+              "match": "FileTime",
+              "mapping": {
+                "type": "date"
+              }
             }
-          }
-         },
-         
-         
-         
-         {
-          "long_1": {
-            "match": "timestamp",
-            "mapping": {
-              "type": "long"
+          },
+          {
+            "date_4": {
+              "match": "LotEndTime",
+              "mapping": {
+                "type": "date"
+              }
             }
-          }
-         },
-         {
-          "long_2": {
-            "match": "endTimestamp",
-            "mapping": {
-              "type": "long"
+          },
+          {
+            "date_5": {
+              "match": "LotStartTime",
+              "mapping": {
+                "type": "date"
+              }
             }
-          }
-         },
-         {
-          "long_3": {
-            "match": "startTimestamp",
-            "mapping": {
-              "type": "long"
+          },
+          {
+            "date_6": {
+              "match": "StartTestTime",
+              "mapping": {
+                "type": "date"
+              }
             }
-          }
-         },
-         
-         {
-          "integers": {
-            "match_mapping_type": "long",
-            "mapping": {
-              "type": "text"
+          },
+          {
+            "date_7": {
+              "match": "TransferTime",
+              "mapping": {
+                "type": "date"
+              }
             }
-          }
-         },
-         {
-          "float": {
-            "match_mapping_type": "double",
-            "mapping": {
-              "type": "float"
+          },
+          {
+            "key_word_1": {
+              "match": "WaferLot",
+              "mapping": {
+                "type": "keyword"
+              }
             }
-          }
-         },
-         {
+          },
+          {
+            "key_word_2": {
+              "match": "LotNumber",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_3": {
+              "match": "DIE_1",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_4": {
+              "match": "DIE_2",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_5": {
+              "match": "DIE_3",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_6": {
+              "match": "DataType",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_7": {
+              "match": "Device",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_8": {
+              "match": "Dib",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_9": {
+              "match": "FileName",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_10": {
+              "match": "HBin",
+              "mapping": {
+                "type": "keyword",
+                "fields": {
+                  "num": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "key_word_11": {
+              "match": "HBinDesc",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_12": {
+              "match": "KDFName",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_13": {
+              "match": "MfgStep",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_14": {
+              "match": "Operation",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_15": {
+              "match": "PartNumber",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_16": {
+              "match": "Pattern",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_17": {
+              "match": "Pin",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_18": {
+              "match": "Program",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_19": {
+              "match": "ProgramVersion",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_20": {
+              "match": "SBin",
+              "mapping": {
+                "type": "keyword",
+                "fields": {
+                  "num": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "key_word_21": {
+              "match": "SBinDesc",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_22": {
+              "match": "Site",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_23": {
+              "match": "TestCode",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_24": {
+              "match": "Tester",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_25": {
+              "match": "Type",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_26": {
+              "match": "UnitId",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_27": {
+              "match": "baseClass",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_28": {
+              "match": "comClass",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_29": {
+              "match": "comName",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_30": {
+              "match": "context",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_31": {
+              "match": "description",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_32": {
+              "match": "expression",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_33": {
+              "match": "failingArrayName",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_34": {
+              "match": "generatedTestName",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_35": {
+              "match": "name",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_36": {
+              "match": "queriedTests",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_37": {
+              "match": "segmentName",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_38": {
+              "match": "status",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_39": {
+              "match": "structureName",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_40": {
+              "match": "subClass",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_41": {
+              "match": "failingMacroId",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_42": {
+              "match": "failingMacroSubId",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_43": {
+              "match": "bistControllerId",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_44": {
+              "match": "units",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_45": {
+              "match": "hostName",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_46": {
+              "match": "queryType",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_47": {
+              "match": "DieType",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_48": {
+              "match": "MasterDieId",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_49": {
+              "match": "KDFDate",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_50": {
+              "match": "KDFMonth",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_51": {
+              "match": "WaferNumber",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_52": {
+              "match": "result",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_53": {
+              "match": "WaferID",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_54": {
+              "match": "SBOType",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_55": {
+              "match": "PPBin",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "key_word_56": {
+              "match": "Pick",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+
+
+          {
+            "text_1": {
+              "match": "bitValues",
+              "mapping": {
+                "type": "text"
+              }
+            }
+          },
+          {
+            "text_2": {
+              "match": "componentHash",
+              "mapping": {
+                "type": "text"
+              }
+            }
+          },
+          {
+            "text_3": {
+              "match": "highSpecLimit",
+              "mapping": {
+                "type": "text"
+              }
+            }
+          },
+          {
+            "text_4": {
+              "match": "lowSpecLimit",
+              "mapping": {
+                "type": "text"
+              }
+            }
+          },
+          {
+            "byte_1": {
+              "match": "BinType",
+              "mapping": {
+                "type": "byte"
+              }
+            }
+          },
+          {
+            "byte_3": {
+              "match": "X",
+              "mapping": {
+                "type": "byte"
+              }
+            }
+          },
+          {
+            "byte_4": {
+              "match": "Y",
+              "mapping": {
+                "type": "byte"
+              }
+            }
+          },
+          {
+            "byte_5": {
+              "match": "alarm",
+              "mapping": {
+                "type": "byte"
+              }
+            }
+          },
+          {
+            "byte_6": {
+              "match": "timeout",
+              "mapping": {
+                "type": "byte"
+              }
+            }
+          },
+          {
+            "byte_8": {
+              "match": "networkError",
+              "mapping": {
+                "type": "byte"
+              }
+            }
+          },
+          {
+            "short_1": {
+              "match": "UnitCnt",
+              "mapping": {
+                "type": "short"
+              }
+            }
+          },
+          {
+            "short_2": {
+              "match": "UnitSeq",
+              "mapping": {
+                "type": "short"
+              }
+            }
+          },
+          {
+            "short_3": {
+              "match": "connectTimeout",
+              "mapping": {
+                "type": "short"
+              }
+            }
+          },
+          {
+            "short_4": {
+              "match": "queryTimeout",
+              "mapping": {
+                "type": "short"
+              }
+            }
+          },
+          {
+            "short_5": {
+              "match": "portNumber",
+              "mapping": {
+                "type": "short"
+              }
+            }
+          },
+          {
+            "short_6": {
+              "match": "Bin",
+              "mapping": {
+                "type": "short"
+              }
+            }
+          },
+          {
+            "float_1": {
+              "match": "value",
+              "mapping": {
+                "type": "float"
+              }
+            }
+          },
+          {
+            "float_2": {
+              "match": "TestTime",
+              "mapping": {
+                "type": "float"
+              }
+            }
+          },
+          {
+            "float_3": {
+              "match": "connectTime",
+              "mapping": {
+                "type": "float"
+              }
+            }
+          },
+          {
+            "float_4": {
+              "match": "recvTime",
+              "mapping": {
+                "type": "float"
+              }
+            }
+          },
+          {
+            "float_5": {
+              "match": "totalQueryTime",
+              "mapping": {
+                "type": "float"
+              }
+            }
+          },
+          {
+            "integer_1": {
+              "match": "DocCnt",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "integer_4": {
+              "match": "GrossTime",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "integer_5": {
+              "match": "cycle",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "integer_6": {
+              "match": "vector",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "integer_7": {
+              "match": "repCount",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "integer_8": {
+              "match": "sequence",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "long_1": {
+              "match": "timestamp",
+              "mapping": {
+                "type": "long"
+              }
+            }
+          },
+          {
+            "long_2": {
+              "match": "endTimestamp",
+              "mapping": {
+                "type": "long"
+              }
+            }
+          },
+          {
+            "long_3": {
+              "match": "startTimestamp",
+              "mapping": {
+                "type": "long"
+              }
+            }
+          },
+          {
+            "integers": {
+              "match_mapping_type": "long",
+              "mapping": {
+                "type": "text"
+              }
+            }
+          },
+          {
+            "float": {
+              "match_mapping_type": "double",
+              "mapping": {
+                "type": "float"
+              }
+            }
+          },
+          {
             "string_fields": {
               "match_mapping_type": "string",
               "mapping": {
@@ -923,7 +942,6 @@ PUT _template/all-test
               }
             }
           }
-         
         ]
       }
     },
@@ -1027,6 +1045,38 @@ PUT _ingest/pipeline/slt-test
           "field": "FileTime",
           "index_name_prefix": "slt-test-",
           "date_rounding": "M"
+        }
+      }
+    ]
+  
+}
+PUT _ingest/pipeline/smap-test
+{
+ "description": "to parse the filebeat message",
+    "processors": [
+      {
+        "kv": {
+          "field": "message",
+          "field_split": ",",
+          "value_split": "="
+        }
+      },
+      {
+        "remove": {
+          "field": [
+            "message",
+            "source",
+            "offset",
+            "prospector",
+            "beat"
+          ]
+        }
+      },
+      {
+        "date_index_name": {
+          "field": "FileTime",
+          "index_name_prefix": "smap-test-",
+          "date_rounding": "y"
         }
       }
     ]
