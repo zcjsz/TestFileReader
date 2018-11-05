@@ -7,6 +7,11 @@ package org.himalayas.filereader.util;
 
 public
 	class FieldType {
+	
+	public final static
+		String PickUnitCnt = "PickUnitCnt";
+	public final static
+		String IsCaled = "IsCaled";
 
 	public final static
 		String PinRefPtr = "pinRefPtr";

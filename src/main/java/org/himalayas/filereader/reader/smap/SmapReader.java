@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 import org.himalayas.filereader.reader.Reader;
 import org.himalayas.filereader.util.Config;
 import org.himalayas.filereader.util.DataFormat;
-import org.himalayas.filereader.util.XmlNode;
+import org.himalayas.filereader.util.FieldType;
 
 /**
  *
@@ -89,13 +89,19 @@ final public class SmapReader extends Reader {
     public boolean writeLogFile() {
         this.setUnitCnt(this.dies.size());
         String lotHead = this.generateLotHeadKVStr();
+		int pickUnit = 0;
 
         for (Die die : this.dies) {
+			boolean isPick = this.isPickBin(die.getPickBin());
+			if(isPick){
+				pickUnit ++;
+			}
             String dieKVStr = this.getFormat().getUnit().getxCoordNode().getName() + "=" + die.getX()
                     + "," + this.getFormat().getUnit().getyCoordNode().getName() + "=" + die.getY()
+					+ "," + FieldType.Type + "=" + FieldType.Unit
                     + "," + "PPBin=" + die.getPickBin()
                     + "," + "Bin=" + this.convertBin(die.getPickBin())
-                    + "," + "Pick=" + this.isPickBin(die.getPickBin());
+                    + "," + "Pick=" + isPick;
             String docValue = lotHead + "," + dieKVStr + "\n";
             if (this.isDebugMode()) {
                 System.out.print(docValue);
@@ -105,6 +111,18 @@ final public class SmapReader extends Reader {
                 return false;
             }
         }
+		
+		// write the file
+		String docValue = lotHead 
+			+ "," + FieldType.Type + "=" + FieldType.File
+			+ "," + FieldType.UnitCnt + "=" + this.dies.size()
+			+ "," + FieldType.IsCaled + "=N"
+			+ "," + FieldType.PickUnitCnt + "=" + pickUnit
+			+ "\n";
+		if(!this.writeKVString(docValue)){
+            return false;
+        }
+		
         return true;
     }
 
