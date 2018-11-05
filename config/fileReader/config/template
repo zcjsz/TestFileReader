@@ -676,7 +676,14 @@ PUT _template/all-test
               }
             }
           },
-
+          {
+            "key_word_57": {
+              "match": "IsCaled",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
 
           {
             "text_1": {
@@ -806,6 +813,15 @@ PUT _template/all-test
               }
             }
           },
+          {
+            "short_7": {
+              "match": "PickUnitCnt",
+              "mapping": {
+                "type": "short"
+              }
+            }
+          },
+          
           {
             "float_1": {
               "match": "value",
