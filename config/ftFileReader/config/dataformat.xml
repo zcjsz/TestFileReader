@@ -535,10 +535,12 @@ and open the template in the editor.
             <SourceType name= "WAT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
                 <AliasName>WaferLot</AliasName>
+                <Index>2</Index>
             </SourceType>
             <SourceType name= "SMAP" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
                 <AliasName>WaferLot</AliasName>
+                <Index>2</Index>
             </SourceType>
         </XmlNode>
 
@@ -578,9 +580,11 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "WAT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
+                <Index>1</Index>
             </SourceType>
             <SourceType name= "SMAP" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
+                <Index>1</Index>
             </SourceType>
         </XmlNode>
 
@@ -773,6 +777,7 @@ and open the template in the editor.
             <Field>equipmentId</Field>
             <LowerCase>1</LowerCase>
             
+            
             <SourceType name= "HTEST1" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -784,8 +789,9 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "WAT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
+                <Index>1</Index>
             </SourceType>
-            <SourceType name= "SMAP" enabled = "1" >
+            <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
         </XmlNode>
@@ -858,7 +864,6 @@ and open the template in the editor.
         <XmlNode name= "Operation">
             <Field>TESTPHASE</Field>
             <Field>mfgStepName</Field>
-            
             <Operation>1</Operation>
             
             <SourceType name= "HTEST1" enabled = "1" >
@@ -870,10 +875,10 @@ and open the template in the editor.
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "WAT" enabled = "1" >
+            <SourceType name= "WAT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "SMAP" enabled = "1" >
+            <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
         </XmlNode>
@@ -959,6 +964,46 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "WaferID" >
+            <Field>testTemperature</Field>
+            
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Index>3</Index>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "SBOType" >
+            <Field>testTemperature</Field>
+            
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Index>5</Index>
             </SourceType>
         </XmlNode>
 
@@ -1111,10 +1156,10 @@ and open the template in the editor.
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "WAT" enabled = "0" >
+            <SourceType name= "WAT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "SMAP" enabled = "0" >
+            <SourceType name= "SMAP" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <IswaferNumber>1</IswaferNumber>
@@ -1230,7 +1275,7 @@ and open the template in the editor.
             </SourceType>
             <IsSoftBin>1</IsSoftBin>
         </XmlNode>
-    </Unit>   
+    </Unit>  
     
     
     

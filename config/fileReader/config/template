@@ -684,7 +684,6 @@ PUT _template/all-test
               }
             }
           },
-
           {
             "text_1": {
               "match": "bitValues",
@@ -821,7 +820,6 @@ PUT _template/all-test
               }
             }
           },
-          
           {
             "float_1": {
               "match": "value",
@@ -1042,14 +1040,21 @@ PUT _ingest/pipeline/slt-test
         "kv": {
           "field": "message",
           "field_split": ",",
-          "value_split": "="
+          "value_split": "=",
+          "on_failure" : [
+            {
+              "set" : {
+                "field" : "FileTime",
+                "value" : "2017-01-01T01:01:01.00+08:00"
+              }
+            }
+          ]
         }
       },
       {
         "remove": {
           "field": [
             "message",
-            "source",
             "offset",
             "prospector",
             "beat"
