@@ -29,7 +29,24 @@ do
                 fi
             fi
         fi
+
+        logFile=${line%smap*}
+        if [ $logFile != $line ]; then
+            logFile=${line%.*}
+            echo $logFile
+            if [ -f $logFile ]; then
+                rm -f $logFile
+                if [ $? = 0 ]; then
+                    echo "successed to remove kdf log file: $logFile"
+                else
+                    echo "failed to remove kdf log file: $logFile"
+                fi
+            fi
+        fi
     done
+    	
+
+
 done
 
 TIME=$(date "+%Y%m%d%H%M%S")
