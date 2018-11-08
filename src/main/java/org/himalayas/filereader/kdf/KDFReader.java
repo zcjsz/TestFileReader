@@ -952,6 +952,15 @@ public
 			return false;
 		}
 		this.logKDFDoneToES();
+		if(this.getFormat().getDataType().equals(Config.DataTypes.ATE)
+			|| this.getFormat().getDataType().equals(Config.DataTypes.SLT)
+			|| this.getFormat().getDataType().equals(Config.DataTypes.WaferSort)){
+			
+			String lotOperation = this.lotNumber + "_" + this.mfgStp;
+			if(!this.getFormat().getLotOpertions().contains(lotOperation)){
+				this.getFormat().getLotOpertions().add(lotOperation);
+			}
+		}
 		
 		// only rename or archive the kdf in production mode
 		this.renameOrArchiveKDF(this.doneArchiveFile, Config.KdfRename.done);

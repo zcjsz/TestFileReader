@@ -16,6 +16,9 @@ import org.himalayas.filereader.kdf.Bin;
 
 public
 	class DataFormat {
+	
+	private
+		ArrayList<String> lotOpertions = new ArrayList();
         private
                 String fileType = null;
 	
@@ -1402,7 +1405,11 @@ public
     public String getFileType() {
         return fileType;
     }
-        
-	
 
+	public
+	ArrayList<String> getLotOpertions() {
+		return lotOpertions;
+	}
+	
+    
 }
