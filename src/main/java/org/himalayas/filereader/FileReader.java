@@ -102,6 +102,13 @@ public class FileReader {
                     }
                 }
             }
+			
+			/**
+			 * @todo
+			 * for each lotOperation in dataformat
+			 * upsert lot operations to es index
+			 */	 
+				 
             System.out.println("*****************************************************************");
             System.out.println("**********                                     ******************");
             System.out.printf("**********           complete to proceed %s\n", format.getSourceType());
