@@ -1068,7 +1068,13 @@ PUT _ingest/pipeline/slt-test
           "date_rounding": "M"
         }
       }
-    ]
+    ],
+    "on_failure" : [{
+      "set" : {
+        "field" : "error.message",
+        "value" : "{{ _ingest.on_failure_message }}"
+      }
+    }]
   
 }
 PUT _ingest/pipeline/smap-test
