@@ -7,7 +7,7 @@ package org.himalayas.filereader.util;
 
 public
 	class FieldType {
-	
+
 	public final static
 		String PickUnitCnt = "PickUnitCnt";
 	public final static
@@ -75,61 +75,65 @@ public
 	
 	// lot info field
 	public final static
-		String Lot_UPH = "UPH";
+		String Lot_kdfUPH = "kdfUPH";
 	public final static
-		String Lot_UPHGood = "UPHGood";
+		String Lot_kdfUPHGood = "kdfUPHGood";
 
 	public final static
-		String Lot_AvgFailTestTime = "AvgFailTestTime";
+		String Lot_kdfAvgFailTestTime = "kdfAvgFailTestTime";
 
 	public final static
-		String Lot_AvgPassTestTime = "AvgPassTestTime";
+		String Lot_kdfAvgPassTestTime = "kdfAvgPassTestTime";
 
 	public final static
-		String Lot_AvgTestTime = "AvgTestTime";
+		String Lot_kdfAvgTestTime = "kdfAvgTestTime";
 
 	public final static
-		String Lot_FirstFailCnt = "FirstFailUnitCnt";
+		String Lot_kdfFirstFailCount = "kdfFirstFailCount";
 	public final static
-		String Lot_FirstPassCnt = "FirstPassUnitCnt";
+		String Lot_kdfFirstPassCount = "kdfFirstPassCount";
 	public final static
-		String Lot_GrossTestTime = "GrossTestTime";
+		String Lot_kdfGrossTestTime = "kdfGrossTestTime";
 	public final static
-		String Lot_KdfFinalYield = "KdfFinalYield";
+		String Lot_kdfFinalYield = "kdfFinalYield";
 	public final static
-		String Lot_KdfFirstYield = "KdfFirstYield";
+		String Lot_kdfFirstYield = "kdfFirstYield";
 	public final static
-		String Lot_KdfFtrd = "KdfFtrd";
+		String Lot_kdfFTRd = "kdfFTRd";
 	public final static
-		String Lot_KdfIr = "KdfIr";
+		String Lot_kdfIR = "kdfIR";
 	public final static
-		String Lot_LastFailCnt = "LastFailUnitCnt";
+		String Lot_kdfLastFailCount = "kdfLastFailCount";
 	public final static
-		String Lot_LastPassCnt = "LastPassUnitCnt";
+		String Lot_kdfLastPassCount = "kdfLastPassCount";
 	public final static
-		String Lot_TotalFailCnt = "FailUnitCnt";
+		String Lot_kdfTotalFailCount = "kdfTotalFailCount";
 	public final static
-		String Lot_TotalPassCnt = "PassUnitCnt";
+		String Lot_kdfTotalPassCount = "kdfTotalPassCount";
 
 	public final static
-		String Lot_TotalFailTestTime = "FailTestTime";
+		String Lot_kdfTotalFailTestTime = "kdfTotalFailTestTime";
 	public final static
 		String Lot_FileCnt = "FileCnt";
 
 	public final static
-		String Lot_TotalPassTestTime = "PassTestTime";
+		String Lot_kdfTotalPassTestTime = "kdfTotalPassTestTime";
 	public final static
-		String Lot_TotalTestedUnitCnt = "TestedUnitCnt";
+		String Lot_kdfTotalTestedCount = "kdfTotalTestedCount";
 
 	public final static
-		String Lot_TotalUniqueUnitCnt = "UniqueUnitCnt";
+		String Lot_kdfQtyIn = "kdfQtyIn";
 
 	public final static
-		String Lot_TotalUnitTestTime = "UnitTestTime";
+		String Lot_kdfTotalTestTime = "kdfTotalTestTime";
 	
 	public final static
 		String Lot_KDFLot = "KDFLot";
 	public final static
 		String Lot_Doc_id = "_id";
+        
+        public final static String Lot_LotStartTime = "LotStartTime";
+        public final static String Lot_LotEndTime = "LotEndTime";
+        
 
 }
