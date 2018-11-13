@@ -134,6 +134,7 @@ public
         
         public final static String Lot_LotStartTime = "LotStartTime";
         public final static String Lot_LotEndTime = "LotEndTime";
+	public final static byte Date = 35;
         
 
 }

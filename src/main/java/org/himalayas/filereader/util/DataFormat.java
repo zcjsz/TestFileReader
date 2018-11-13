@@ -16,7 +16,7 @@ import org.himalayas.filereader.kdf.Bin;
 
 public
 	class DataFormat {
-	
+
 	// add for camstar data type
 	private
 		boolean recalAll = false;
@@ -24,12 +24,12 @@ public
 		boolean reloadAll = false;
 	private
 		HashMap<String, String> camstarOperMappings = new HashMap();
-	
+
 	private
 		ArrayList<String> lotOpertions = new ArrayList();
-    private
-                String fileType = null;
-	
+	private
+		String fileType = null;
+
 	private
 		int fileLimit = 30;
 	private
@@ -195,7 +195,7 @@ public
 			for (Element node : nodes) {
 				fieldName = node.getName().trim();
 				fieldValue = node.getTextTrim();
-				if (fieldValue.isEmpty() && (! fieldName.equals("KDFDate"))) {
+				if (fieldValue.isEmpty() && (!fieldName.equals("KDFDate"))) {
 					continue;
 				}
 
@@ -214,21 +214,21 @@ public
 						this.recalAll = fieldValue.equals("1");
 						break;
 					case "OperMap":
-						for(String group: fieldValue.split(",")){
+						for (String group : fieldValue.split(",")) {
 							String[] temp = group.split(":");
-							if(temp.length != 2){
+							if (temp.length != 2) {
 								System.out.println("Error: the camstar operation to kdf mfg step mappings");
 								System.out.println("Please following the format: CamStartOper1:KDFMfgStep1,CamStartOper2:KDFMfgStep12...");
 								System.exit(1);
 							}
-							if(this.camstarOperMappings.containsKey(temp[0])){
+							if (this.camstarOperMappings.containsKey(temp[0])) {
 								System.out.printf("Error: dupicate camstar oper found:%s\n", temp[0]);
 								System.exit(1);
 							}
 							this.camstarOperMappings.put(temp[0], temp[1]);
 						}
-						break;	
-						
+						break;
+
 					case "GenerateMappingFile":
 						this.generateMappingFile = fieldValue.equals("1");
 						break;
@@ -255,7 +255,7 @@ public
 					case "KDFDate":
 						readKDFDate(node);
 						break;
-                                        case "Factory":
+					case "Factory":
 						this.factory = fieldValue;
 						break;
 					case "FileType":
@@ -266,21 +266,33 @@ public
 						break;
 					case "TestIndex":
 						this.testIndexName = fieldValue;
-						break;	
+						break;
 					case "Customer":
 						this.customer = fieldValue;
 						break;
 					case "KDFPath":
-						this.kdfPath = fieldValue;
+						if (fieldValue.charAt(0) == '/') {
+							fieldValue = fieldValue.substring(1, fieldValue.length());
+						}
+						this.kdfPath = Config.sourcePath + "/" + fieldValue;
 						break;
 					case "KDFArchivePath":
-						this.kdfArchivePath = fieldValue;
+						if (fieldValue.charAt(0) == '/') {
+							fieldValue = fieldValue.substring(1, fieldValue.length());
+						}
+						this.kdfArchivePath = Config.archivePath + "/" + fieldValue;
 						break;
 					case "XmlPath":
-						this.xmlPath = fieldValue;
+						if (fieldValue.charAt(0) == '/') {
+							fieldValue = fieldValue.substring(1, fieldValue.length());
+						}
+						this.xmlPath = Config.datalogPath + "/" + fieldValue;
 						break;
 					case "MappingPath":
-						this.mappingPath = fieldValue;
+						if (fieldValue.charAt(0) == '/') {
+							fieldValue = fieldValue.substring(1, fieldValue.length());
+						}
+						this.mappingPath = Config.mappingPath + "/" + fieldValue;
 						break;
 					case "DataType":
 						this.dataType = Config.DataTypes.valueOf(fieldValue);
@@ -471,76 +483,106 @@ public
 
 	public
 		boolean validate() {
-                System.out.printf("%s=%s, validation....\n",this.getSourceType(), this.isEnabled());
-		if (this.getSourceType().equalsIgnoreCase(Config.DataTypes.SMAP.name())
+		System.out.printf("%s=%s, validation....\n", this.getSourceType(), this.isEnabled());
+		if(this.getDataType().equals(Config.DataTypes.CAMSTAR)){
+			if (this.getDataType() == null) {
+				System.out.println("DateType can not be null");
+				return false;
+
+			}
+			if (this.getKdfPath() == null || (!new File(this.getKdfPath()).exists())) {
+				System.out.println("KdfPath can not be " + this.getKdfPath());
+				return false;
+			}
+			if ((this.generateMappingFile && this.mappingPath == null)
+				|| (this.generateMappingFile && (!new File(this.mappingPath).exists()) && (!new File(this.mappingPath).mkdirs()))) {
+				System.out.println("mappingPath can not be " + this.mappingPath);
+				return false;
+
+			}
+			if (this.xmlPath == null
+				|| ((!new File(this.xmlPath).exists()) && (!new File(this.xmlPath).mkdirs()))) {
+				System.out.println("xmlPath can not be " + this.xmlPath);
+				return false;
+
+			}
+			if (this.kdfArchivePath == null
+				|| ((!new File(this.kdfArchivePath).exists()) && (!new File(this.kdfArchivePath).mkdirs()))) {
+				System.out.println("kdfArchivePath can not be " + this.kdfArchivePath);
+				return false;
+
+			}
+			return true;
+		}
+		else if (this.getSourceType().equalsIgnoreCase(Config.DataTypes.SMAP.name())
 			|| this.getSourceType().equalsIgnoreCase(Config.DataTypes.WAT.name())) {
-                    if (this.getLotNumberIndex() == -1) {
-			System.out.println("LotNumberIndex can not be null");
-			return false;
+			if (this.getLotNumberIndex() == -1) {
+				System.out.println("LotNumberIndex can not be null");
+				return false;
 
-                    }
-                    if (this.getDataType() == null) {
-			System.out.println("DateType can not be null");
-			return false;
+			}
+			if (this.getDataType() == null) {
+				System.out.println("DateType can not be null");
+				return false;
 
-                    }
-                    if (this.getKdfMonthIndex() == -1) {
-			System.out.println("KdfMonthIndex can not be null");
-			return false;
+			}
+			if (this.getKdfMonthIndex() == -1) {
+				System.out.println("KdfMonthIndex can not be null");
+				return false;
 
-                    }
-                    if (this.getKdfPath() == null || (!new File(this.getKdfPath()).exists())) {
-                            System.out.println("KdfPath can not be " + this.getKdfPath());
-                            return false;
-                    }
-                    if (this.getUnderLineCnt() == -1) {
-			System.out.println("UnderLineCnt can not be null");
-			return false;
-                    }
-                        if ((this.generateMappingFile && this.mappingPath == null)
-                            || (this.generateMappingFile && (!new File(this.mappingPath).exists()) && (!new File(this.mappingPath).mkdirs()))) {
-                            System.out.println("mappingPath can not be " + this.mappingPath);
-                            return false;
+			}
+			if (this.getKdfPath() == null || (!new File(this.getKdfPath()).exists())) {
+				System.out.println("KdfPath can not be " + this.getKdfPath());
+				return false;
+			}
+			if (this.getUnderLineCnt() == -1) {
+				System.out.println("UnderLineCnt can not be null");
+				return false;
+			}
+			if ((this.generateMappingFile && this.mappingPath == null)
+				|| (this.generateMappingFile && (!new File(this.mappingPath).exists()) && (!new File(this.mappingPath).mkdirs()))) {
+				System.out.println("mappingPath can not be " + this.mappingPath);
+				return false;
 
-                    }
-                    if (this.xmlPath == null
-                            || ((!new File(this.xmlPath).exists()) && (!new File(this.xmlPath).mkdirs()))) {
-                            System.out.println("xmlPath can not be " + this.xmlPath);
-                            return false;
+			}
+			if (this.xmlPath == null
+				|| ((!new File(this.xmlPath).exists()) && (!new File(this.xmlPath).mkdirs()))) {
+				System.out.println("xmlPath can not be " + this.xmlPath);
+				return false;
 
-                    }
-                    if (this.kdfArchivePath == null
-                            || ((!new File(this.kdfArchivePath).exists()) && (!new File(this.kdfArchivePath).mkdirs()))) {
-                            System.out.println("kdfArchivePath can not be " + this.kdfArchivePath);
-                            return false;
+			}
+			if (this.kdfArchivePath == null
+				|| ((!new File(this.kdfArchivePath).exists()) && (!new File(this.kdfArchivePath).mkdirs()))) {
+				System.out.println("kdfArchivePath can not be " + this.kdfArchivePath);
+				return false;
 
-                    }
-                    if (this.getUnit().getxCoordNode() == null) {
-			System.out.println("Unit XcoordNode can not be null");
-			return false;
-                    }
-                    if (this.getUnit().getyCoordNode() == null) {
-                            System.out.println("Unit YCoordNode can not be null");
-                            return false;
-                    }
-                    if (this.getWaferNumberIndex() == -1 ) {
-			System.out.println("WaferNumberIndex can not be null for ");
-			return false;
+			}
+			if (this.getUnit().getxCoordNode() == null) {
+				System.out.println("Unit XcoordNode can not be null");
+				return false;
+			}
+			if (this.getUnit().getyCoordNode() == null) {
+				System.out.println("Unit YCoordNode can not be null");
+				return false;
+			}
+			if (this.getWaferNumberIndex() == -1) {
+				System.out.println("WaferNumberIndex can not be null for ");
+				return false;
 
-                    }
-                    if (this.getUnit().getWaferNumberNode() == null) {
-			System.out.println("Unit WaferNumberNode can not be null");
-			return false;
-                    }
-                    for(XmlNode xmlNode: this.lotHead.values()){
-                        if(xmlNode.isEnabled() && xmlNode.isEnabledLog() && (xmlNode.getIndex() == -1 || xmlNode.getIndex() >= this.getUnderLineCnt())){
-                            System.out.printf("please setup a correct index for head node %s in %s\n", xmlNode.getName(), this.getSourceType() );
-                            return false;
-                        }
-                        
-                    }
-                    
-                    return checkArchive();
+			}
+			if (this.getUnit().getWaferNumberNode() == null) {
+				System.out.println("Unit WaferNumberNode can not be null");
+				return false;
+			}
+			for (XmlNode xmlNode : this.lotHead.values()) {
+				if (xmlNode.isEnabled() && xmlNode.isEnabledLog() && (xmlNode.getIndex() == -1 || xmlNode.getIndex() >= this.getUnderLineCnt())) {
+					System.out.printf("please setup a correct index for head node %s in %s\n", xmlNode.getName(), this.getSourceType());
+					return false;
+				}
+
+			}
+
+			return checkArchive();
 		}
 		if (this.getCustomer() == null) {
 			System.out.println("customer can not be null");
@@ -611,7 +653,7 @@ public
 			return false;
 
 		}
-		if (this.getTesterTypes().isEmpty()){
+		if (this.getTesterTypes().isEmpty()) {
 			System.out.println("TesterType can not be null");
 			return false;
 		}
@@ -697,13 +739,13 @@ public
 			System.out.println("WaferLotNode of wafer sort can not be null");
 			return false;
 		}
-		
+
 		return checkArchive();
 	}
-               
-        private
-                boolean checkArchive(){
-                if (!Config.renameKDF) {
+
+	private
+		boolean checkArchive() {
+		if (!Config.renameKDF) {
 			this.badFormatArchivePath = new File(this.kdfArchivePath + "/" + Config.EventType.KDFBadFormat);
 			if (!this.mkArchivePath(this.badFormatArchivePath)) {
 				return false;
@@ -731,8 +773,8 @@ public
 
 			return true;
 		}
-                return true;
-        }
+		return true;
+	}
 
 	private
 		boolean mkArchivePath(File file) {
@@ -1042,12 +1084,12 @@ public
 				// never log the unit start time and end time into test level data
 				// never log the unit tets time to test level doc
 				// readd startTestTime to all test level doc
-					if (node.isTimeNode() || node.isUnitTestTimeNode()) {
-						if(!node.isStartTime()){
-							continue;
-						}
+				if (node.isTimeNode() || node.isUnitTestTimeNode()) {
+					if (!node.isStartTime()) {
+						continue;
 					}
-				
+				}
+
 				value += "," + node.toKVString();
 			}
 		}
@@ -1422,23 +1464,23 @@ public
 	}
 
 	public
-	int getFileLimit() {
+		int getFileLimit() {
 		return fileLimit;
 	}
 
 	public
-	String getTestIndexName() {
+		String getTestIndexName() {
 		return testIndexName;
 	}
 
-    public String getFileType() {
-        return fileType;
-    }
+	public
+		String getFileType() {
+		return fileType;
+	}
 
 	public
-	ArrayList<String> getLotOpertions() {
+		ArrayList<String> getLotOpertions() {
 		return lotOpertions;
 	}
-	
-    
+
 }

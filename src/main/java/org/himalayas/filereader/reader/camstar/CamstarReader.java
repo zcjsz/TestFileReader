@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.himalayas.filereader.reader.wat;
+package org.himalayas.filereader.reader.camstar;
 
 import java.io.File;
 import org.himalayas.filereader.reader.Reader;
@@ -14,37 +14,35 @@ import org.himalayas.filereader.util.DataFormat;
  *
  * @author ghfan
  */
-final
-	public class WatReader extends Reader {
+public
+	class CamstarReader extends Reader{
 
 	public
-		WatReader(DataFormat format) {
+	CamstarReader(DataFormat format) {
 		super(format);
 	}
 
 	@Override
 	public
-		boolean readFile() {
+	boolean readFile() {
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	@Override
 	public
-		void init() {
+	void init() {
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	@Override
-	public
-		boolean writeLogFile() {
+	protected
+	boolean writeLogFile() {
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
-
-	public static
-		void main(String[] args) {
+	public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
         new Config("config/dataformat.xml");
-        Reader reader = new WatReader(Config.smapFormat);
+        Reader reader = new CamstarReader(Config.camFormat);
 
         File testDataFile = new File("./testdata/extend/hygon_source_data/SMAP");
         for (File lotFile : testDataFile.listFiles()) {
@@ -57,4 +55,5 @@ final
         startTime = System.currentTimeMillis();
 
     }
+	
 }

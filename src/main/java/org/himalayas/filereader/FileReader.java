@@ -137,13 +137,6 @@ public class FileReader {
                         for (File kdfFile : lotFile.listFiles()) {
                             if (kdfFile.isFile()) {
                                 String fileName = kdfFile.getName();
-                                if (fileName.endsWith(Config.KdfRename.badFormat.name())
-                                        || fileName.endsWith(Config.KdfRename.done.name())
-                                        || fileName.endsWith(Config.KdfRename.exception.name())
-                                        || fileName.endsWith(Config.KdfRename.openErr.name())
-                                        || fileName.endsWith(Config.KdfRename.skip.name())) {
-                                    continue;
-                                }
                                 if (!kdfFile.canRead()) {
                                     System.out.println("Error: tdni has no permission to read this file");
                                     continue;
@@ -152,19 +145,13 @@ public class FileReader {
                                     System.out.printf("Error: file size = %d error, less than 100 byte\n", kdfFile.length());
                                     continue;
                                 }
-                                try {
-                                    smapReader.loadFile(kdfFile);
-                                    if (smapReader.getKdfDoneCnt() >= smapReader.getFormat().getFileLimit()) {
-                                        System.out.println("kdf done file cnt is " + (smapReader.getKdfDoneCnt()));
-                                        System.out.println("Have break now, bye");
-                                        return;
-                                    }
-                                } catch (Exception e) {
-                                    smapReader.logExceptionToES();
-                                    smapReader.renameOrArchiveKDF(smapReader.getExceptionArchiveFile(), Config.KdfRename.exception);
-                                    System.out.println();
-                                    e.printStackTrace();
-                                }
+                                
+								smapReader.loadFile(kdfFile);
+								if (smapReader.getKdfDoneCnt() >= smapReader.getFormat().getFileLimit()) {
+									System.out.println("kdf done file cnt is " + (smapReader.getKdfDoneCnt()));
+									System.out.println("Have break now, bye");
+									return;
+								}
                             }
                         }
                     }

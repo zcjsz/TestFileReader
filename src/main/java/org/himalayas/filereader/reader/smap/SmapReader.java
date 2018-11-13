@@ -235,7 +235,7 @@ final public class SmapReader extends Reader {
         new Config("config/dataformat.xml");
         Reader reader = new SmapReader(Config.smapFormat);
 
-        File testDataFile = new File("./testdata/KDF/SMAP");
+        File testDataFile = new File("./testdata/extend/hygon_source_data/SMAP");
         for (File lotFile : testDataFile.listFiles()) {
             for (File file : lotFile.listFiles()) {
                 reader.loadFile(file);

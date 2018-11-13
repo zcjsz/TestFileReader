@@ -21,7 +21,15 @@ import org.dom4j.io.SAXReader;
 
 public
 	class Config {
-	
+
+	public static
+		String sourcePath = null;
+	public static
+		String datalogPath = null;
+	public static
+		String mappingPath = null;
+	public static
+		String archivePath = null;
 	public static
 		ArrayList<String> productionHost = new ArrayList();
 	public static
@@ -55,7 +63,7 @@ public
 
 	public static
 		enum EventType {
-		KDFDone, KDFRepeat, KDFBadFormat, KDFOpenFailure, IOError,KDFException
+		KDFDone, KDFRepeat, KDFBadFormat, KDFOpenFailure, IOError, KDFException
 	}
 
 	public static
@@ -70,18 +78,23 @@ public
 		DataFormat smapFormat = null;
 	public static
 		DataFormat camFormat = null;
-	
+
 	public
 		Config(String configFile) {
 		if (!readDataFormat(configFile)) {
 			System.out.println("please setup correct config file");
 		}
+		if (!this.validatePath()) {
+			System.out.println("pleaset setup correct path!");
+			System.exit(1);
+		}
+
 		for (DataFormat dataFormat : dataFormats.values()) {
 			if (!dataFormat.validate()) {
 				System.exit(1);
 			}
 		}
-		if(Config.productionHost.isEmpty() || Config.testHost == null){
+		if (Config.productionHost.isEmpty() || Config.testHost == null) {
 			System.out.println("please setup the es host!");
 			System.exit(1);
 		}
@@ -99,6 +112,66 @@ public
 				void onEnd(ElementPath path) {
 				Element row = path.getCurrent();
 				lockFilePath = row.getTextTrim();
+				row.detach();
+			}
+
+			@Override
+			public
+				void onStart(ElementPath path) {
+			}
+
+		});
+		reader.addHandler("/root/SourcePath", new ElementHandler() {
+			@Override
+			public
+				void onEnd(ElementPath path) {
+				Element row = path.getCurrent();
+				Config.sourcePath = row.getTextTrim();
+				row.detach();
+			}
+
+			@Override
+			public
+				void onStart(ElementPath path) {
+			}
+
+		});
+		reader.addHandler("/root/DatalogPath", new ElementHandler() {
+			@Override
+			public
+				void onEnd(ElementPath path) {
+				Element row = path.getCurrent();
+				Config.datalogPath = row.getTextTrim();
+				row.detach();
+			}
+
+			@Override
+			public
+				void onStart(ElementPath path) {
+			}
+
+		});
+		reader.addHandler("/root/MappingPath", new ElementHandler() {
+			@Override
+			public
+				void onEnd(ElementPath path) {
+				Element row = path.getCurrent();
+				Config.mappingPath = row.getTextTrim();
+				row.detach();
+			}
+
+			@Override
+			public
+				void onStart(ElementPath path) {
+			}
+
+		});
+		reader.addHandler("/root/ArchivePath", new ElementHandler() {
+			@Override
+			public
+				void onEnd(ElementPath path) {
+				Element row = path.getCurrent();
+				Config.archivePath = row.getTextTrim();
 				row.detach();
 			}
 
@@ -129,8 +202,8 @@ public
 				void onEnd(ElementPath path) {
 				Element row = path.getCurrent();
 				String[] hosts = row.getTextTrim().split(",");
-				for(String host: hosts){
-					if(Config.productionHost.contains(host.trim())){
+				for (String host : hosts) {
+					if (Config.productionHost.contains(host.trim())) {
 						System.out.println("Faltal Error: duplicate host found: " + host.trim());
 						System.exit(1);
 					}
@@ -151,7 +224,7 @@ public
 				void onEnd(ElementPath path) {
 				Element row = path.getCurrent();
 				String host = row.getTextTrim();
-				if(host.length() > 5){
+				if (host.length() > 5) {
 					Config.testHost = host;
 				}
 				row.detach();
@@ -241,8 +314,8 @@ public
 				else if (dataFormat.getDataType().equals(Config.DataTypes.SMAP)) {
 					Config.smapFormat = dataFormat;
 				}
-				else if(dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)){
-				    Config.camFormat = dataFormat;
+				else if (dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)) {
+					Config.camFormat = dataFormat;
 				}
 				Config.dataFormats.put(dataFormat.getSourceType(), dataFormat);
 			}
@@ -341,7 +414,7 @@ public
 						break;
 					case "operation":
 						isOperation = value.equals("1");
-						break;	
+						break;
 					case "time":
 						isTime = value.equals("1");
 						break;
@@ -381,26 +454,26 @@ public
 							String aliasName = node.elementTextTrim("AliasName").trim();
 							xmlNode.setName(aliasName);
 						}
-                                                if (node.elements("Index").size() > 0) {
+						if (node.elements("Index").size() > 0) {
 							String indexValue = node.elementTextTrim("Index").trim();
-                                                        if (indexValue.isEmpty()) {
-                                                                System.out.printf("Fatal Error: please set the index for this head xml node %s\n", xmlNodeName);
-                                                                System.exit(1);
-                                                        }
-                                                        index = Integer.valueOf(indexValue);
-                                                        if (index < 0) {
-                                                                System.out.printf("Fatal Error: the index must be grate or equals 0 for this head xml node %s\n", xmlNodeName);
-                                                                System.exit(1);
-                                                        }
+							if (indexValue.isEmpty()) {
+								System.out.printf("Fatal Error: please set the index for this head xml node %s\n", xmlNodeName);
+								System.exit(1);
+							}
+							index = Integer.valueOf(indexValue);
+							if (index < 0) {
+								System.out.printf("Fatal Error: the index must be grate or equals 0 for this head xml node %s\n", xmlNodeName);
+								System.exit(1);
+							}
 							xmlNode.setIndex(index);
 						}
 						// only add for camstart lot node 
-						if(dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)){
+						if (dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)) {
 							if (node.elements("Name").size() > 0) {
 								String aliasName = node.elementTextTrim("Name").trim();
 								xmlNode.setCamColumnName(aliasName);
 							}
-							else{
+							else {
 								System.out.println("Fatal Error: please setup the name for camstar column: " + xmlNodeName);
 								System.exit(1);
 							}
@@ -408,40 +481,44 @@ public
 								String notEmpty = node.elementTextTrim("AllowEmpty").trim();
 								xmlNode.setAllowEmpty(notEmpty.equals("1"));
 							}
-							else{
+							else {
 								System.out.println("Fatal Error: please setup the name for camstar column: " + xmlNodeName);
 								System.exit(1);
 							}
-							
+
 							if (node.elements("Type").size() > 0) {
-								String typeName = node.elementTextTrim("Type").trim();
-								switch (typeName){
+								String typeName = node.elementTextTrim("Type").trim().toLowerCase();
+								switch (typeName) {
 									case "string":
 										xmlNode.setCamColumnType(KDFFieldData.STRING);
 										break;
 									case "integer":
 										xmlNode.setCamColumnType(KDFFieldData.INT);
-										break;		
+										break;
 									case "long":
 										xmlNode.setCamColumnType(KDFFieldData.LONG);
-										break;		
+										break;
 									case "double":
 										xmlNode.setCamColumnType(KDFFieldData.DOUBLE);
 										break;
 									case "float":
 										xmlNode.setCamColumnType(KDFFieldData.FLOAT);
 										break;
+									case "date":
+										xmlNode.setCamColumnType(FieldType.Date);
+										break;
 									default:
+										System.out.println("Fatal Error: unsupportted camstar data type found: " + typeName);
 										System.out.println("Fatal Error: camstar data type can only be one of below types: string, integer, long, double, float");
-										System.exit(1);	
+										System.exit(1);
 								}
 							}
-							else{
+							else {
 								System.out.println("Fatal Error: please setup the name for camstar column: " + xmlNodeName);
 								System.exit(1);
 							}
-						}					
-                                                
+						}
+
 						if (dataFormat.getLotHead().containsKey(xmlNodeName)) {
 							System.out.printf("Fatal Error: duplicate head xml node found %s\n", xmlNodeName);
 							System.exit(1);
@@ -465,7 +542,8 @@ public
 					System.exit(1);
 				}
 				if (xmlNode.isEnabled()) {
-					if (fieldNames.isEmpty()) {
+					// CAMSTAR data type does not need the field tag
+					if (fieldNames.isEmpty() && (!dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR))) {
 						System.out.printf("Fatal Error: please add field for this head xml node %s\n", xmlNodeName);
 						System.exit(1);
 					}
@@ -475,13 +553,13 @@ public
 					xmlNode.setLotOpenTime(isLotOpenTime);
 					xmlNode.setLotStartTime(isLotStartTime);
 					xmlNode.setLotEndTime(isLotEndTime);
-					if(isLotNumber) {
+					if (isLotNumber) {
 						dataFormat.setLotNumberNode(xmlNode);
 					}
-					if(isOperation) {
+					if (isOperation) {
 						dataFormat.setOperationNode(xmlNode);
 					}
-					
+
 				}
 				else {
 					dataFormat.getLotHead().remove(xmlNodeName);
@@ -707,18 +785,42 @@ public
 			System.exit(1);
 		}
 	}
-	
-	public static DataFormat getFTFormat(){
-		for(DataFormat format: Config.dataFormats.values()) {
-			if(format.getDataType().equals(Config.DataTypes.ATE)) {
+
+	private
+		boolean validatePath() {
+		if ((!this.isFileExist(Config.sourcePath))
+			|| (!this.isFileExist(Config.datalogPath))
+			|| (!this.isFileExist(Config.mappingPath))
+			|| (!this.isFileExist(Config.archivePath))) {
+			return false;
+		}
+		return true;
+	}
+
+	private
+		boolean isFileExist(String filePath) {
+		if (filePath != null && new File(filePath).exists()) {
+			return true;
+		}
+		System.out.printf("Path: %s doesn't exist\n", filePath);
+		return false;
+
+	}
+
+	public static
+		DataFormat getFTFormat() {
+		for (DataFormat format : Config.dataFormats.values()) {
+			if (format.getDataType().equals(Config.DataTypes.ATE)) {
 				return format;
 			}
 		}
 		return null;
 	}
-	public static DataFormat getSLTFormat(){
-		for(DataFormat format: Config.dataFormats.values()) {
-			if(format.getDataType().equals(Config.DataTypes.SLT)) {
+
+	public static
+		DataFormat getSLTFormat() {
+		for (DataFormat format : Config.dataFormats.values()) {
+			if (format.getDataType().equals(Config.DataTypes.SLT)) {
 				return format;
 			}
 		}
