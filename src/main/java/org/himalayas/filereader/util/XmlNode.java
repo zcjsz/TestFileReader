@@ -65,7 +65,14 @@ public
 		boolean lotNumberNode = false;
 	private
 		boolean operationNode = false;
-
+	
+	// add for cam start node=
+	private
+		String camColumnName = null;
+	private
+		boolean allowEmpty = false;
+	private
+		byte camColumnType = 0;
 	/**
 	 *
 	 * @param fileName
@@ -408,6 +415,36 @@ public
 	public
 		void setIndex(int index) {
 		this.index = index;
+	}
+	
+	public
+	void setCamColumnType(byte camColumnType) {
+		this.camColumnType = camColumnType;
+	}
+
+	public
+	void setAllowEmpty(boolean allowEmpty) {
+		this.allowEmpty = allowEmpty;
+	}
+
+	public
+	void setCamColumnName(String camColumnName) {
+		this.camColumnName = camColumnName;
+	}
+
+	public
+	boolean isAllowEmpty() {
+		return allowEmpty;
+	}
+
+	public
+	byte getCamColumnType() {
+		return camColumnType;
+	}
+
+	public
+	String getCamColumnName() {
+		return camColumnName;
 	}
 
 	public static
