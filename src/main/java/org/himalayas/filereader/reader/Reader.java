@@ -105,6 +105,15 @@ public abstract
             this.init();
 
             this.file = file;
+            
+            if (fileName.endsWith(Config.KdfRename.badFormat.name())
+                || fileName.endsWith(Config.KdfRename.done.name())
+                || fileName.endsWith(Config.KdfRename.exception.name())
+                || fileName.endsWith(Config.KdfRename.openErr.name())
+                || fileName.endsWith(Config.KdfRename.skip.name())) {
+                return false;
+            }
+            
             if (!this.validateFile()) {
                 this.failType = Config.FailureCase.BadFormat;
                 this.logBadFormatFileToES();
@@ -114,14 +123,7 @@ public abstract
             if (!validateKDFDate()) {
                 return false;
             }
-            if (fileName.endsWith(Config.KdfRename.badFormat.name())
-                || fileName.endsWith(Config.KdfRename.done.name())
-                || fileName.endsWith(Config.KdfRename.exception.name())
-                || fileName.endsWith(Config.KdfRename.openErr.name())
-                || fileName.endsWith(Config.KdfRename.skip.name())) {
-                return false;
-            }
-
+            
             if (this.isRepeatFile()) {
                 this.failType = Config.FailureCase.RepeatKDF;
                 this.logRepeatFileToES();
