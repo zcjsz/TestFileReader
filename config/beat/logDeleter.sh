@@ -21,12 +21,19 @@ do
             logFile=${line%.*}
             echo $logFile
             if [ -f $logFile ]; then
-                rm -f $logFile
-                if [ $? = 0 ]; then
-                    echo "successed to remove kdf log file: $logFile"
-                else
-                    echo "failed to remove kdf log file: $logFile"
-                fi
+		FileTime=`stat -c %Y $logFile`
+            	CurrTime=`date +%s`
+	
+		if [ $[ $CurrTime - $FileTime ] -gt 14400 ]; then	
+			rm -f $logFile
+			if [ $? = 0 ]; then
+			    echo "successed to remove kdf log file: $logFile"
+			else
+			    echo "failed to remove kdf log file: $logFile"
+			fi
+		else
+			echo "this file only existing for less than 4 hours"
+		fi
             fi
         fi
 
@@ -34,13 +41,22 @@ do
         if [ $logFile != $line ]; then
             logFile=${line%.*}
             echo $logFile
+            echo $logFile
             if [ -f $logFile ]; then
-                rm -f $logFile
-                if [ $? = 0 ]; then
-                    echo "successed to remove kdf log file: $logFile"
-                else
-                    echo "failed to remove kdf log file: $logFile"
+		FileTime=`stat -c %Y $logFile`
+                CurrTime=`date +%s`
+
+		if [ $[ $CurrTime - $FileTime ] -gt 14400 ]; then
+			rm -f $logFile
+			if [ $? = 0 ]; then
+			    echo "successed to remove kdf log file: $logFile"
+			else
+			    echo "failed to remove kdf log file: $logFile"
+			fi
+		else
+                        echo "this file only existing for less than 4 hours"
                 fi
+
             fi
         fi
     done
