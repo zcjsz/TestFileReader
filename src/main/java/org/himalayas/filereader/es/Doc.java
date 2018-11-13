@@ -19,6 +19,9 @@ public
 		int binType = 0;
 	private
 		String startTime = null;
+        
+        private String endTime = null;
+        
 	private
 		String id = null;
 	private
@@ -35,10 +38,11 @@ public
 	 * @param startTime 
 	 */
 	public
-	Doc(String id, int binType, String startTime, String index, double testTime) {
+	Doc(String id, int binType, String startTime, String endTime, String index, double testTime) {
 		this.id = id;
 		this.binType = binType;
 		this.startTime = startTime;
+                this.endTime = endTime;
 		this.index = index;
 		this.testTime = testTime;
 	}
@@ -62,6 +66,14 @@ public
 	void setStartTime(String startTime) {
 		this.startTime = startTime;
 	}
+
+        public String getEndTime() {
+            return endTime;
+        }
+
+        public void setEndTime(String endTime) {
+            this.endTime = endTime;
+        }
 
 	public
 	String getId() {
