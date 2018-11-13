@@ -6,37 +6,37 @@
 package org.himalayas.filereader.kdf;
 
 public
-	class ComponentHash {
+    class ComponentHash {
 
-	private
-		String comClass = null;
-	private
-		String comName = null;
+    private
+        String comClass = null;
+    private
+        String comName = null;
 
-	/**
-	 *
-	 * @param comClass
-	 * @param comName
-	 */
-	public
-		ComponentHash(String comClass, String comName) {
-		this.comClass = comClass.replace(',', '_').replace('=', '_');
-		this.comName = comName.replace(',', '_').replace('=', '_');
-	}
+    /**
+     *
+     * @param comClass
+     * @param comName
+     */
+    public
+        ComponentHash(String comClass, String comName) {
+        this.comClass = comClass.replace(',', '_').replace('=', '_');
+        this.comName = comName.replace(',', '_').replace('=', '_');
+    }
 
-	public
-		String getComClass() {
-		return comClass;
-	}
+    public
+        String getComClass() {
+        return comClass;
+    }
 
-	public
-		String getComName() {
-		return comName;
-	}
+    public
+        String getComName() {
+        return comName;
+    }
 
-	public
-		String getKVString() {
-		return ",comName=" + this.getComName() + ",comClass=" + this.getComClass();
-	}
+    public
+        String getKVString() {
+        return ",comName=" + this.getComName() + ",comClass=" + this.getComClass();
+    }
 
 }

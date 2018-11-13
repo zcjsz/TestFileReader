@@ -21,17 +21,22 @@ import org.himalayas.filereader.util.FieldType;
  *
  * @author ghfan
  */
-final public class SmapReader extends Reader {
+final public
+    class SmapReader extends Reader {
 
-    private ArrayList<String> pickBins = new ArrayList();
-    private ArrayList<Die> dies = new ArrayList();
+    private
+        ArrayList<String> pickBins = new ArrayList();
+    private
+        ArrayList<Die> dies = new ArrayList();
 
-    public SmapReader(DataFormat format) {
+    public
+        SmapReader(DataFormat format) {
         super(format);
     }
 
     @Override
-    public boolean readFile() {
+    public
+        boolean readFile() {
         try {
             List<String> lines = Files.readAllLines(this.getFile().toPath());
             if (lines.isEmpty()) {
@@ -71,7 +76,8 @@ final public class SmapReader extends Reader {
             }
             System.out.println();
 
-        } catch (IOException ex) {
+        }
+        catch (IOException ex) {
             Logger.getLogger(SmapReader.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
@@ -79,54 +85,57 @@ final public class SmapReader extends Reader {
     }
 
     @Override
-    public void init() {
+    public
+        void init() {
         this.dies.clear();
         this.pickBins.clear();
 
     }
 
     @Override
-    public boolean writeLogFile() {
+    public
+        boolean writeLogFile() {
         this.setUnitCnt(this.dies.size());
         String lotHead = this.generateLotHeadKVStr();
-		int pickUnit = 0;
+        int pickUnit = 0;
 
         for (Die die : this.dies) {
-			boolean isPick = this.isPickBin(die.getPickBin());
-			if(isPick){
-				pickUnit ++;
-			}
+            boolean isPick = this.isPickBin(die.getPickBin());
+            if (isPick) {
+                pickUnit++;
+            }
             String dieKVStr = this.getFormat().getUnit().getxCoordNode().getName() + "=" + die.getX()
-                    + "," + this.getFormat().getUnit().getyCoordNode().getName() + "=" + die.getY()
-					+ "," + FieldType.Type + "=" + FieldType.Unit
-                    + "," + "PPBin=" + die.getPickBin()
-                    + "," + "Bin=" + this.convertBin(die.getPickBin())
-                    + "," + "Pick=" + isPick;
+                + "," + this.getFormat().getUnit().getyCoordNode().getName() + "=" + die.getY()
+                + "," + FieldType.Type + "=" + FieldType.Unit
+                + "," + "PPBin=" + die.getPickBin()
+                + "," + "Bin=" + this.convertBin(die.getPickBin())
+                + "," + "Pick=" + isPick;
             String docValue = lotHead + "," + dieKVStr + "\n";
             if (this.isDebugMode()) {
                 System.out.print(docValue);
             }
 
-            if(!this.writeKVString(docValue)){
+            if (!this.writeKVString(docValue)) {
                 return false;
             }
         }
-		
-		// write the file
-		String docValue = lotHead 
-			+ "," + FieldType.Type + "=" + FieldType.File
-			+ "," + FieldType.UnitCnt + "=" + this.dies.size()
-			+ "," + FieldType.IsCaled + "=N"
-			+ "," + FieldType.PickUnitCnt + "=" + pickUnit
-			+ "\n";
-		if(!this.writeKVString(docValue)){
+
+        // write the file
+        String docValue = lotHead
+            + "," + FieldType.Type + "=" + FieldType.File
+            + "," + FieldType.UnitCnt + "=" + this.dies.size()
+            + "," + FieldType.IsCaled + "=N"
+            + "," + FieldType.PickUnitCnt + "=" + pickUnit
+            + "\n";
+        if (!this.writeKVString(docValue)) {
             return false;
         }
-		
+
         return true;
     }
 
-    private void readMap(String content, int ycoord) {
+    private
+        void readMap(String content, int ycoord) {
         String[] names = content.split(" ");
         int size = names.length;
         int xcoord = 0;
@@ -138,31 +147,36 @@ final public class SmapReader extends Reader {
         }
     }
 
-    public void readBins(String content) {
+    public
+        void readBins(String content) {
         String[] bins = content.split(";");
         for (String bin : bins) {
             String pickBin = bin.trim();
             if (validatePickBin(pickBin)) {
                 this.pickBins.add(bin.trim());
-            } else {
+            }
+            else {
                 System.out.println("Warning: there's an invalid pick bin found: " + pickBin);
             }
         }
     }
 
-    private boolean validatePickBin(String bin) {
+    private
+        boolean validatePickBin(String bin) {
         int size = bin.length();
         for (int i = 0; i != size; i++) {
             char chr = bin.charAt(i);
             if ((chr >= '0' && chr <= '9') || (chr >= 'A' && chr <= 'F')) {
-            } else {
+            }
+            else {
                 return false;
             }
         }
         return true;
     }
 
-    private int convertBin(String bin) {
+    private
+        int convertBin(String bin) {
         int size = bin.length();
         int index = 0;
         int value = 0;
@@ -217,10 +231,12 @@ final public class SmapReader extends Reader {
         return value;
     }
 
-    private boolean isPickBin(String bin) {
+    private
+        boolean isPickBin(String bin) {
         if (this.pickBins.contains(bin)) {
             return true;
-        } else {
+        }
+        else {
             for (String pickBin : this.pickBins) {
                 if (convertBin(pickBin) == convertBin(bin)) {
                     return true;
@@ -230,7 +246,8 @@ final public class SmapReader extends Reader {
         return false;
     }
 
-    public static void main(String[] args) {
+    public static
+        void main(String[] args) {
         long startTime = System.currentTimeMillis();
         new Config("config/dataformat.xml");
         Reader reader = new SmapReader(Config.smapFormat);

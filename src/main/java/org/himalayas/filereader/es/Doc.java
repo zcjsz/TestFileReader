@@ -10,112 +10,112 @@ package org.himalayas.filereader.es;
  * @author ghfan
  */
 public
-	class Doc {
-	
-	private
-		String index = null;
-	
-	private
-		int binType = 0;
-	private
-		String startTime = null;
-        
-        private String endTime = null;
-        
-	private
-		String id = null;
-	private
-		String waferNumber = null;
-	private
-		String motherLotInsertion = null;
-	private
-		double testTime = 0;
+    class Doc {
 
-	/**
-	 * 
-	 * @param id
-	 * @param binType
-	 * @param startTime 
-	 */
-	public
-	Doc(String id, int binType, String startTime, String endTime, String index, double testTime) {
-		this.id = id;
-		this.binType = binType;
-		this.startTime = startTime;
-                this.endTime = endTime;
-		this.index = index;
-		this.testTime = testTime;
-	}
+    private
+        String index = null;
 
-	public
-	int getBinType() {
-		return binType;
-	}
+    private
+        int binType = 0;
+    private
+        String startTime = null;
 
-	public
-	void setBinType(int binType) {
-		this.binType = binType;
-	}
+    private
+        String endTime = null;
 
-	public
-	String getStartTime() {
-		return startTime;
-	}
+    private
+        String id = null;
+    private
+        String waferNumber = null;
+    private
+        String motherLotInsertion = null;
+    private
+        double testTime = 0;
 
-	public
-	void setStartTime(String startTime) {
-		this.startTime = startTime;
-	}
+    /**
+     *
+     * @param id
+     * @param binType
+     * @param startTime
+     */
+    public
+        Doc(String id, int binType, String startTime, String endTime, String index, double testTime) {
+        this.id = id;
+        this.binType = binType;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.index = index;
+        this.testTime = testTime;
+    }
 
-        public String getEndTime() {
-            return endTime;
-        }
+    public
+        int getBinType() {
+        return binType;
+    }
 
-        public void setEndTime(String endTime) {
-            this.endTime = endTime;
-        }
+    public
+        void setBinType(int binType) {
+        this.binType = binType;
+    }
 
-	public
-	String getId() {
-		return id;
-	}
+    public
+        String getStartTime() {
+        return startTime;
+    }
 
-	public
-	void setId(String id) {
-		this.id = id;
-	}
+    public
+        void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
 
-	public
-	String getWaferNumber() {
-		return waferNumber;
-	}
+    public
+        String getEndTime() {
+        return endTime;
+    }
 
-	public
-	void setWaferNumber(String waferNumber) {
-		this.waferNumber = waferNumber;
-	}
+    public
+        void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
 
-	public
-	String getMotherLotInsertion() {
-		return motherLotInsertion;
-	}
+    public
+        String getId() {
+        return id;
+    }
 
-	public
-	void setMotherLotInsertion(String motherLotInsertion) {
-		this.motherLotInsertion = motherLotInsertion;
-	}
+    public
+        void setId(String id) {
+        this.id = id;
+    }
 
-	public
-	String getIndex() {
-		return index;
-	}
+    public
+        String getWaferNumber() {
+        return waferNumber;
+    }
 
-	public
-	double getTestTime() {
-		return testTime;
-	}
-	
+    public
+        void setWaferNumber(String waferNumber) {
+        this.waferNumber = waferNumber;
+    }
 
-	
-	
+    public
+        String getMotherLotInsertion() {
+        return motherLotInsertion;
+    }
+
+    public
+        void setMotherLotInsertion(String motherLotInsertion) {
+        this.motherLotInsertion = motherLotInsertion;
+    }
+
+    public
+        String getIndex() {
+        return index;
+    }
+
+    public
+        double getTestTime() {
+        return testTime;
+    }
+
 }

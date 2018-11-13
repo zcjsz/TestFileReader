@@ -10,41 +10,41 @@ package org.himalayas.filereader.kdf;
  * @author ghfan
  */
 public
-	class TestDesc {
+    class TestDesc {
 
-	private
-		String baseClass = null;
-	private
-		String subClass = null;
-	private
-		String value = null;
+    private
+        String baseClass = null;
+    private
+        String subClass = null;
+    private
+        String value = null;
 
-	/**
-	 *
-	 * @param base
-	 * @param sub
-	 * @param value
-	 */
-	public
-		TestDesc(String base, String sub, String value) {
-		this.subClass = sub;
-		this.baseClass = base;
-		this.value = value;
-	}
+    /**
+     *
+     * @param base
+     * @param sub
+     * @param value
+     */
+    public
+        TestDesc(String base, String sub, String value) {
+        this.subClass = sub;
+        this.baseClass = base;
+        this.value = value;
+    }
 
-	public
-		String getBaseClass() {
-		return baseClass;
-	}
+    public
+        String getBaseClass() {
+        return baseClass;
+    }
 
-	public
-		String getSubClass() {
-		return subClass;
-	}
+    public
+        String getSubClass() {
+        return subClass;
+    }
 
-	public
-		String getValue() {
-		return value;
-	}
+    public
+        String getValue() {
+        return value;
+    }
 
 }

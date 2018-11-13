@@ -15,31 +15,33 @@ import org.himalayas.filereader.util.DataFormat;
  * @author ghfan
  */
 public
-	class CamstarReader extends Reader{
+    class CamstarReader extends Reader {
 
-	public
-	CamstarReader(DataFormat format) {
-		super(format);
-	}
+    public
+        CamstarReader(DataFormat format) {
+        super(format);
+    }
 
-	@Override
-	public
-	boolean readFile() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    @Override
+    public
+        boolean readFile() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-	@Override
-	public
-	void init() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    @Override
+    public
+        void init() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-	@Override
-	protected
-	boolean writeLogFile() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-	public static void main(String[] args) {
+    @Override
+    protected
+        boolean writeLogFile() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public static
+        void main(String[] args) {
         long startTime = System.currentTimeMillis();
         new Config("config/dataformat.xml");
         Reader reader = new CamstarReader(Config.camFormat);
@@ -55,5 +57,5 @@ public
         startTime = System.currentTimeMillis();
 
     }
-	
+
 }

@@ -6,31 +6,31 @@
 package org.himalayas.filereader.kdf;
 
 public
-	class SlaveUnit {
+    class SlaveUnit {
 
-	private
-		String unitId = null;
-	private
-		String comHash = null;
+    private
+        String unitId = null;
+    private
+        String comHash = null;
 
-	/**
-	 *
-	 * @param unitId
-	 * @param comHash
-	 */
-	public
-		SlaveUnit(String unitId, String comHash) {
-		this.comHash = comHash;
-		this.unitId = unitId;
-	}
+    /**
+     *
+     * @param unitId
+     * @param comHash
+     */
+    public
+        SlaveUnit(String unitId, String comHash) {
+        this.comHash = comHash;
+        this.unitId = unitId;
+    }
 
-	public
-		String getComHash() {
-		return comHash;
-	}
+    public
+        String getComHash() {
+        return comHash;
+    }
 
-	public
-		String getUnitId() {
-		return unitId;
-	}
+    public
+        String getUnitId() {
+        return unitId;
+    }
 }

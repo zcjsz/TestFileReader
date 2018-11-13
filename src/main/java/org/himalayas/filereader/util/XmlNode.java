@@ -12,447 +12,448 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 public
-	class XmlNode {
+    class XmlNode {
 
-	private
-		int index = -1;
+    private
+        int index = -1;
 
-	private
-		String name = null;
-	private
-		String value = null;
+    private
+        String name = null;
+    private
+        String value = null;
 
-	private
-		ArrayList<String> fieldNames = new ArrayList();
-	private
-		boolean timeNode = false;
-	private
-		boolean toLowerCase = false;
-	private
-		boolean endTime = false;
-	private
-		boolean startTime = false;
-	private
-		boolean unitTestTimeNode = false;
+    private
+        ArrayList<String> fieldNames = new ArrayList();
+    private
+        boolean timeNode = false;
+    private
+        boolean toLowerCase = false;
+    private
+        boolean endTime = false;
+    private
+        boolean startTime = false;
+    private
+        boolean unitTestTimeNode = false;
 
-	private
-		boolean lotStartTime = false;
-	private
-		boolean lotOpenTime = false;
-	private
-		boolean lotEndTime = false;
-	private
-		String timeLongValue = null;
-	private
-		boolean enabledLog = true;
-	private
-		boolean enabled = false;
-	private
-		int startIndex = -1;
-	private
-		int endIndex = -1;
-	private
-		boolean unitIdNode = false;
-	private
-		boolean waferNumberNode = false;
-	private
-		boolean waferLotNode = false;
-	private
-		boolean xNode = false;
-	private
-		boolean yNode = false;
-	private
-		boolean lotNumberNode = false;
-	private
-		boolean operationNode = false;
-	
-	// add for cam start node=
-	private
-		String camColumnName = null;
-	private
-		boolean allowEmpty = false;
-	private
-		byte camColumnType = 0;
-	/**
-	 *
-	 * @param fileName
-	 */
-	public
-		XmlNode(String fieldName) {
-		this.name = fieldName;
-	}
+    private
+        boolean lotStartTime = false;
+    private
+        boolean lotOpenTime = false;
+    private
+        boolean lotEndTime = false;
+    private
+        String timeLongValue = null;
+    private
+        boolean enabledLog = true;
+    private
+        boolean enabled = false;
+    private
+        int startIndex = -1;
+    private
+        int endIndex = -1;
+    private
+        boolean unitIdNode = false;
+    private
+        boolean waferNumberNode = false;
+    private
+        boolean waferLotNode = false;
+    private
+        boolean xNode = false;
+    private
+        boolean yNode = false;
+    private
+        boolean lotNumberNode = false;
+    private
+        boolean operationNode = false;
 
-	public
-		ArrayList<String> getFieldNames() {
-		return fieldNames;
-	}
+    // add for cam start node=
+    private
+        String camColumnName = null;
+    private
+        boolean allowEmpty = false;
+    private
+        byte camColumnType = 0;
 
-	public
-		void setFieldNames(ArrayList<String> fieldNames) {
-		this.fieldNames = fieldNames;
-	}
+    /**
+     *
+     * @param fileName
+     */
+    public
+        XmlNode(String fieldName) {
+        this.name = fieldName;
+    }
 
-	public
-		String getName() {
-		return name;
-	}
+    public
+        ArrayList<String> getFieldNames() {
+        return fieldNames;
+    }
 
-	public
-		String getValue() {
-		return value;
-	}
+    public
+        void setFieldNames(ArrayList<String> fieldNames) {
+        this.fieldNames = fieldNames;
+    }
 
-	public
-		String getXmlValue() {
-		if (this.value == null) {
-			return "";
-		}
-		else {
-			return this.value;
-		}
-	}
+    public
+        String getName() {
+        return name;
+    }
 
-	/**
-	 * Empty content is not valid
-	 *
-	 * @param aValue
-	 */
-	public
-		void setValue(String aValue) {
-		if (this.value != null && (!this.value.isEmpty())) {
+    public
+        String getValue() {
+        return value;
+    }
+
+    public
+        String getXmlValue() {
+        if (this.value == null) {
+            return "";
+        }
+        else {
+            return this.value;
+        }
+    }
+
+    /**
+     * Empty content is not valid
+     *
+     * @param aValue
+     */
+    public
+        void setValue(String aValue) {
+        if (this.value != null && (!this.value.isEmpty())) {
 
 //            System.out.printf("skip since has value %s = %s \n" , this.name, this.value);
-			return;
-		}
-		if ((!aValue.trim().equals(""))
-			&& (!aValue.equalsIgnoreCase("null"))) {
-			this.value = aValue.trim();
-		}
-		else {
-			return;
-		}
+            return;
+        }
+        if ((!aValue.trim().equals(""))
+            && (!aValue.equalsIgnoreCase("null"))) {
+            this.value = aValue.trim();
+        }
+        else {
+            return;
+        }
 
-	}
+    }
 
-	public
-		void resetTime() {
-		if (this.value == null) {
-			return;
-		}
+    public
+        void resetTime() {
+        if (this.value == null) {
+            return;
+        }
 
-		if (this.isTimeNode()) {
-			this.value = this.toNumber(this.value);
-			this.timeLongValue = this.value;
-			if (this.value.startsWith("1") && this.value.length() == 13) {
-				this.value = toTimeStr(this.value);
-			}
-			else {
-				this.timeLongValue = null;
-				this.value = null;
-			}
+        if (this.isTimeNode()) {
+            this.value = this.toNumber(this.value);
+            this.timeLongValue = this.value;
+            if (this.value.startsWith("1") && this.value.length() == 13) {
+                this.value = toTimeStr(this.value);
+            }
+            else {
+                this.timeLongValue = null;
+                this.value = null;
+            }
 
-		}
-		if (this.isToLowerCase()) {
-			this.value = this.value.toLowerCase();
-		}
-	}
+        }
+        if (this.isToLowerCase()) {
+            this.value = this.value.toLowerCase();
+        }
+    }
 
-	@Override
-	public
-		String toString() {
-		return "XmlNode = " + this.name
-			+ " , Value = " + this.value
-			+ " , Fields = " + this.fieldNames.toString()
-			+ ", enabledLoged = " + this.enabledLog
-			+ ", startIndex = " + this.startIndex
-			+ ", endIndex = " + this.endIndex
-			+ "\n";
-	}
+    @Override
+    public
+        String toString() {
+        return "XmlNode = " + this.name
+            + " , Value = " + this.value
+            + " , Fields = " + this.fieldNames.toString()
+            + ", enabledLoged = " + this.enabledLog
+            + ", startIndex = " + this.startIndex
+            + ", endIndex = " + this.endIndex
+            + "\n";
+    }
 
-	public
-		String toKVString() {
+    public
+        String toKVString() {
 
-		if (this.isTimeNode()) {
-			if (Config.convertTime) {
-				if (this.value.length() != 14) {
-					this.value = LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss"));
-				}
-				return this.name + "=" + this.value.substring(0, 4) + "-" + this.value.substring(4, 6) + "-" + this.value.substring(6, 8)
-					+ "T" + this.value.substring(8, 10) + ":" + this.value.substring(10, 12) + ":"
-					+ this.value.substring(12, 14) + ".00+08:00";
-			}
-			else {
-				return this.name + "=" + this.timeLongValue;
-			}
-		}
-		else {
-			char cr = 13;
-			char crlf = 10;
-			return this.name + "=" + this.value.replace(',', ' ').replace('=', ' ').replace(cr, ' ').replace(crlf, ' ');
-		}
+        if (this.isTimeNode()) {
+            if (Config.convertTime) {
+                if (this.value.length() != 14) {
+                    this.value = LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss"));
+                }
+                return this.name + "=" + this.value.substring(0, 4) + "-" + this.value.substring(4, 6) + "-" + this.value.substring(6, 8)
+                    + "T" + this.value.substring(8, 10) + ":" + this.value.substring(10, 12) + ":"
+                    + this.value.substring(12, 14) + ".00+08:00";
+            }
+            else {
+                return this.name + "=" + this.timeLongValue;
+            }
+        }
+        else {
+            char cr = 13;
+            char crlf = 10;
+            return this.name + "=" + this.value.replace(',', ' ').replace('=', ' ').replace(cr, ' ').replace(crlf, ' ');
+        }
 
-	}
+    }
 
-	void resetValue() {
-		this.value = null;
-	}
+    void resetValue() {
+        this.value = null;
+    }
 
-	public
-		boolean isTimeNode() {
-		return timeNode;
-	}
+    public
+        boolean isTimeNode() {
+        return timeNode;
+    }
 
-	public
-		boolean isToLowerCase() {
-		return toLowerCase;
-	}
+    public
+        boolean isToLowerCase() {
+        return toLowerCase;
+    }
 
-	public
-		void setTimeNode(boolean timeNode) {
-		this.timeNode = timeNode;
-	}
+    public
+        void setTimeNode(boolean timeNode) {
+        this.timeNode = timeNode;
+    }
 
-	public
-		void setToLowerCase(boolean toLowerCase) {
-		this.toLowerCase = toLowerCase;
-	}
+    public
+        void setToLowerCase(boolean toLowerCase) {
+        this.toLowerCase = toLowerCase;
+    }
 
-	public
-		boolean isStartTime() {
-		return startTime;
-	}
+    public
+        boolean isStartTime() {
+        return startTime;
+    }
 
-	public
-		boolean isEndTime() {
-		return endTime;
-	}
+    public
+        boolean isEndTime() {
+        return endTime;
+    }
 
-	public
-		void setName(String name) {
-		this.name = name;
-	}
+    public
+        void setName(String name) {
+        this.name = name;
+    }
 
-	public
-		void setEndTime(boolean endTime) {
-		this.endTime = endTime;
-	}
+    public
+        void setEndTime(boolean endTime) {
+        this.endTime = endTime;
+    }
 
-	public
-		void setLotStartTime(boolean lotStartTime) {
-		this.lotStartTime = lotStartTime;
-	}
+    public
+        void setLotStartTime(boolean lotStartTime) {
+        this.lotStartTime = lotStartTime;
+    }
 
-	public
-		void setLotOpenTime(boolean lotOpenTime) {
-		this.lotOpenTime = lotOpenTime;
-	}
+    public
+        void setLotOpenTime(boolean lotOpenTime) {
+        this.lotOpenTime = lotOpenTime;
+    }
 
-	public
-		void setUnitTestTimeNode(boolean unitTestTimeNode) {
-		this.unitTestTimeNode = unitTestTimeNode;
-	}
+    public
+        void setUnitTestTimeNode(boolean unitTestTimeNode) {
+        this.unitTestTimeNode = unitTestTimeNode;
+    }
 
-	public
-		boolean isUnitTestTimeNode() {
-		return unitTestTimeNode;
-	}
+    public
+        boolean isUnitTestTimeNode() {
+        return unitTestTimeNode;
+    }
 
-	public
-		void setStartTime(boolean startTime) {
-		this.startTime = startTime;
-	}
+    public
+        void setStartTime(boolean startTime) {
+        this.startTime = startTime;
+    }
 
-	public
-		boolean isLotStartTime() {
-		return lotStartTime;
-	}
+    public
+        boolean isLotStartTime() {
+        return lotStartTime;
+    }
 
-	public
-		boolean isLotOpenTime() {
-		return lotOpenTime;
-	}
+    public
+        boolean isLotOpenTime() {
+        return lotOpenTime;
+    }
 
-	private
-		String toNumber(String value) {
-		String number = "";
-		for (int i = 0; i != value.length(); i++) {
-			char chr = value.charAt(i);
-			if (chr >= '0' && chr <= '9') {
-				number += chr;
-			}
-		}
-		return number;
-	}
+    private
+        String toNumber(String value) {
+        String number = "";
+        for (int i = 0; i != value.length(); i++) {
+            char chr = value.charAt(i);
+            if (chr >= '0' && chr <= '9') {
+                number += chr;
+            }
+        }
+        return number;
+    }
 
-	public static
-		String toTimeStr(String time) {
-		Calendar c = Calendar.getInstance();
-		c.setTimeZone(TimeZone.getTimeZone("GMT"));
-		c.setTimeInMillis(Long.valueOf(time));
-		return String.format("%1$tY%1$tm%1$td%1$tH%1$tM%1$tS", c);
-	}
+    public static
+        String toTimeStr(String time) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeZone(TimeZone.getTimeZone("GMT"));
+        c.setTimeInMillis(Long.valueOf(time));
+        return String.format("%1$tY%1$tm%1$td%1$tH%1$tM%1$tS", c);
+    }
 
-	public
-		void forceValueTo(String value) {
-		this.value = value;
-	}
+    public
+        void forceValueTo(String value) {
+        this.value = value;
+    }
 
-	public
-		boolean isEnabledLog() {
-		return enabledLog;
-	}
+    public
+        boolean isEnabledLog() {
+        return enabledLog;
+    }
 
-	public
-		void setEnabledLog(boolean enabledLog) {
-		this.enabledLog = enabledLog;
-	}
+    public
+        void setEnabledLog(boolean enabledLog) {
+        this.enabledLog = enabledLog;
+    }
 
-	public
-		boolean isEnabled() {
-		return enabled;
-	}
+    public
+        boolean isEnabled() {
+        return enabled;
+    }
 
-	public
-		void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
+    public
+        void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
-	public
-		int getStartIndex() {
-		return startIndex;
-	}
+    public
+        int getStartIndex() {
+        return startIndex;
+    }
 
-	public
-		int getEndIndex() {
-		return endIndex;
-	}
+    public
+        int getEndIndex() {
+        return endIndex;
+    }
 
-	public
-		void setStartIndex(int startIndex) {
-		this.startIndex = startIndex;
-	}
+    public
+        void setStartIndex(int startIndex) {
+        this.startIndex = startIndex;
+    }
 
-	public
-		void setEndIndex(int endIndex) {
-		this.endIndex = endIndex;
-	}
+    public
+        void setEndIndex(int endIndex) {
+        this.endIndex = endIndex;
+    }
 
-	public
-		boolean isUnitIdNode() {
-		return unitIdNode;
-	}
+    public
+        boolean isUnitIdNode() {
+        return unitIdNode;
+    }
 
-	public
-		void setUnitIdNode(boolean unitIdNode) {
-		this.unitIdNode = unitIdNode;
-	}
+    public
+        void setUnitIdNode(boolean unitIdNode) {
+        this.unitIdNode = unitIdNode;
+    }
 
-	public
-		boolean isLotEndTime() {
-		return lotEndTime;
-	}
+    public
+        boolean isLotEndTime() {
+        return lotEndTime;
+    }
 
-	public
-		void setLotEndTime(boolean lotEndTime) {
-		this.lotEndTime = lotEndTime;
-	}
+    public
+        void setLotEndTime(boolean lotEndTime) {
+        this.lotEndTime = lotEndTime;
+    }
 
-	public
-		String getTimeLongValue() {
-		return timeLongValue;
-	}
+    public
+        String getTimeLongValue() {
+        return timeLongValue;
+    }
 
-	public
-		void setyNode(boolean yNode) {
-		this.yNode = yNode;
-	}
+    public
+        void setyNode(boolean yNode) {
+        this.yNode = yNode;
+    }
 
-	public
-		void setxNode(boolean xNode) {
-		this.xNode = xNode;
-	}
+    public
+        void setxNode(boolean xNode) {
+        this.xNode = xNode;
+    }
 
-	public
-		void setWaferNumberNode(boolean waferNumberNode) {
-		this.waferNumberNode = waferNumberNode;
-	}
+    public
+        void setWaferNumberNode(boolean waferNumberNode) {
+        this.waferNumberNode = waferNumberNode;
+    }
 
-	public
-		void setWaferLotNode(boolean waferLotNode) {
-		this.waferLotNode = waferLotNode;
-	}
+    public
+        void setWaferLotNode(boolean waferLotNode) {
+        this.waferLotNode = waferLotNode;
+    }
 
-	public
-		void setTimeLongValue(String timeLongValue) {
-		this.timeLongValue = timeLongValue;
-	}
+    public
+        void setTimeLongValue(String timeLongValue) {
+        this.timeLongValue = timeLongValue;
+    }
 
-	public
-		boolean isyNode() {
-		return yNode;
-	}
+    public
+        boolean isyNode() {
+        return yNode;
+    }
 
-	public
-		boolean isxNode() {
-		return xNode;
-	}
+    public
+        boolean isxNode() {
+        return xNode;
+    }
 
-	public
-		boolean isWaferNumberNode() {
-		return waferNumberNode;
-	}
+    public
+        boolean isWaferNumberNode() {
+        return waferNumberNode;
+    }
 
-	public
-		boolean isWaferLotNode() {
-		return waferLotNode;
-	}
+    public
+        boolean isWaferLotNode() {
+        return waferLotNode;
+    }
 
-	public
-		int getIndex() {
-		return index;
-	}
+    public
+        int getIndex() {
+        return index;
+    }
 
-	public
-		void setIndex(int index) {
-		this.index = index;
-	}
-	
-	public
-	void setCamColumnType(byte camColumnType) {
-		this.camColumnType = camColumnType;
-	}
+    public
+        void setIndex(int index) {
+        this.index = index;
+    }
 
-	public
-	void setAllowEmpty(boolean allowEmpty) {
-		this.allowEmpty = allowEmpty;
-	}
+    public
+        void setCamColumnType(byte camColumnType) {
+        this.camColumnType = camColumnType;
+    }
 
-	public
-	void setCamColumnName(String camColumnName) {
-		this.camColumnName = camColumnName;
-	}
+    public
+        void setAllowEmpty(boolean allowEmpty) {
+        this.allowEmpty = allowEmpty;
+    }
 
-	public
-	boolean isAllowEmpty() {
-		return allowEmpty;
-	}
+    public
+        void setCamColumnName(String camColumnName) {
+        this.camColumnName = camColumnName;
+    }
 
-	public
-	byte getCamColumnType() {
-		return camColumnType;
-	}
+    public
+        boolean isAllowEmpty() {
+        return allowEmpty;
+    }
 
-	public
-	String getCamColumnName() {
-		return camColumnName;
-	}
+    public
+        byte getCamColumnType() {
+        return camColumnType;
+    }
 
-	public static
-		void main(String[] args) {
-		String value = "1494200055407";
-		String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss"));
-		System.out.println(date);
+    public
+        String getCamColumnName() {
+        return camColumnName;
+    }
 
-	}
+    public static
+        void main(String[] args) {
+        String value = "1494200055407";
+        String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss"));
+        System.out.println(date);
+
+    }
 
 }

@@ -9,30 +9,36 @@ package org.himalayas.filereader.reader.smap;
  *
  * @author guanghao
  */
-public class Die {
-    private int x = 0;
-    private int y = 0;
-    private String pickBin = null;
+public
+    class Die {
 
-    public Die(int x, int y, String bin) {
+    private
+        int x = 0;
+    private
+        int y = 0;
+    private
+        String pickBin = null;
+
+    public
+        Die(int x, int y, String bin) {
         this.x = x;
         this.y = y;
         this.pickBin = bin;
     }
 
-    public String getPickBin() {
+    public
+        String getPickBin() {
         return pickBin;
     }
 
-    public int getX() {
+    public
+        int getX() {
         return x;
     }
 
-    public int getY() {
+    public
+        int getY() {
         return y;
     }
-    
-    
-    
-    
+
 }

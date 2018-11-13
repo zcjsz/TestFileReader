@@ -14,34 +14,34 @@ import org.himalayas.filereader.util.DataFormat;
  *
  * @author ghfan
  */
-final
-	public class WatReader extends Reader {
+final public
+    class WatReader extends Reader {
 
-	public
-		WatReader(DataFormat format) {
-		super(format);
-	}
+    public
+        WatReader(DataFormat format) {
+        super(format);
+    }
 
-	@Override
-	public
-		boolean readFile() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    @Override
+    public
+        boolean readFile() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-	@Override
-	public
-		void init() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    @Override
+    public
+        void init() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-	@Override
-	public
-		boolean writeLogFile() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    @Override
+    public
+        boolean writeLogFile() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-	public static
-		void main(String[] args) {
+    public static
+        void main(String[] args) {
         long startTime = System.currentTimeMillis();
         new Config("config/dataformat.xml");
         Reader reader = new WatReader(Config.smapFormat);
