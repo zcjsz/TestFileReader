@@ -106,11 +106,11 @@ public abstract
 
             this.file = file;
             
-            if (fileName.endsWith(Config.KdfRename.badFormat.name())
-                || fileName.endsWith(Config.KdfRename.done.name())
-                || fileName.endsWith(Config.KdfRename.exception.name())
-                || fileName.endsWith(Config.KdfRename.openErr.name())
-                || fileName.endsWith(Config.KdfRename.skip.name())) {
+            if (this.file.getName().endsWith(Config.KdfRename.badFormat.name())
+                || this.file.getName().endsWith(Config.KdfRename.done.name())
+                || this.file.getName().endsWith(Config.KdfRename.exception.name())
+                || this.file.getName().endsWith(Config.KdfRename.openErr.name())
+                || this.file.getName().endsWith(Config.KdfRename.skip.name())) {
                 return false;
             }
             
@@ -202,6 +202,9 @@ public abstract
         }
         else if (this.getFormat().getDataType().equals(Config.DataTypes.WAT)) {
             names = fileName.split("dis.");
+        }
+        else if (this.getFormat().getDataType().equals(Config.DataTypes.CAMSTAR)) {
+            names = fileName.split("xls.");
         }
         else {
             System.err.println("Fatal Error: bad Data Type found: " + this.getFormat().getDataType().toString());
