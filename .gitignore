@@ -21,3 +21,5 @@
 
 /dist/
 /target/
+/testdata/extend/data_mapping/
+/testdata/extend/data_log/
