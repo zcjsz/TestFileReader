@@ -6,19 +6,18 @@
 package org.himalayas.filereader.es;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.status.StatusLogger;
-import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -29,7 +28,6 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.action.search.ShardSearchFailure;
 import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
@@ -57,81 +55,188 @@ import org.himalayas.filereader.util.FieldType;
 public
 	class ESConnection {
 
-	private
-		RestHighLevelClient client = null;
+	private final
+		CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 
+	private
+		RestHighLevelClient productionClient = null;
+	private
+		RestHighLevelClient testClient = null;
 	private
 		SearchRequest searchUnitRequest = null;
 	private
 		SearchRequest searchFileRequest = null;
-
 	private
-		String unitIDName = null;
+		AggregationBuilder grossTimeAgg = null;
 	private
-		String startTimeName = null;
+		SearchResponse searchResponse = null;
 	final
 		Scroll scroll = new Scroll(TimeValue.timeValueMinutes(1L));
-	final
-		CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 	private
 		LotInfo lotInfo = new LotInfo();
 	private
-		int unitNo = 0;
-	private
-		String testTimeName = null;
-	private
-		AggregationBuilder aggregation = null;
-	private
-		SearchResponse searchResponse = null;
-	private
 		DataFormat dataFormat = null;
+	private static
+		ESConnection instance = null;
 
-	public
+	private
 		ESConnection() {
 	}
 
-	private
+	public static
+		ESConnection getInstance() {
+		if (ESConnection.instance == null) {
+			ESConnection.instance = new ESConnection();
+		}
+		return ESConnection.instance;
+	}
+
+	public
 		boolean init() {
-		StatusLogger.getLogger().setLevel(Level.INFO);
-		this.initClient();
-		this.initSearchUnitRequest();
-		this.initSearchFileRequest();
+
+		if (!initProductionClient()) {
+			System.out.printf("%s: failed to connect production es host!\n", LocalDateTime.now().toString());
+			System.out.printf("Please make sure those host are available: %s\n", Arrays.toString(Config.productionHost.toArray()));
+			return false;
+		}
+		if (!initTestClient()) {
+			System.out.printf("%s: failed to connect test es host!\n", LocalDateTime.now().toString());
+			System.out.printf("Please make sure those host are available: %s\n", Config.testHost);
+			return false;
+		}
 		return true;
 	}
 
 	private
-		void initClient() {
-		credentialsProvider.setCredentials(AuthScope.ANY,
-			new UsernamePasswordCredentials("admin", "admin"));
-
-		RestClientBuilder builder = RestClient.builder(
-			new HttpHost("10.72.1.239", 9200, "http"),
-			new HttpHost("10.72.1.237", 9200, "http"),
-			new HttpHost("10.72.1.238", 9200, "http"));
-
-		builder.setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
-			@Override
-			public
-				HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
-				return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+		boolean initProductionClient() {
+		try {
+			this.credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("admin", "TDnI@Admin"));
+			HttpHost[] httpHosts = new HttpHost[Config.productionHost.size()];
+			int hostNo = 0;
+			for (String host : Config.productionHost) {
+				httpHosts[hostNo] = new HttpHost(host, 9200, "http");
 			}
-		});
+			RestClientBuilder builder = RestClient.builder(httpHosts);
+			builder.setMaxRetryTimeoutMillis(6 * 60 * 1000);
+			builder.setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
+				@Override
+				public
+					HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
+					//return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+					RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
+						.setConnectTimeout(2 * 60 * 1000)
+						.setSocketTimeout(2 * 60 * 1000)
+						.setConnectionRequestTimeout(1 * 60 * 1000);
+					httpClientBuilder.setDefaultRequestConfig(requestConfigBuilder.build())
+						.setDefaultCredentialsProvider(credentialsProvider);
+					return httpClientBuilder;
+				}
+			});
+			this.productionClient = new RestHighLevelClient(builder);
+			return productionClient.ping(RequestOptions.DEFAULT);
 
-		this.client = new RestHighLevelClient(builder);
-
+		}
+		catch (IOException ex) {
+			ex.printStackTrace();
+			return false;
+		}
 	}
 
 	private
+		boolean initTestClient() {
+		try {
+			HttpHost[] httpHosts = new HttpHost[1];
+			httpHosts[0] = new HttpHost(Config.testHost, 9200, "http");
+
+			RestClientBuilder builder = RestClient.builder(httpHosts);
+			builder.setMaxRetryTimeoutMillis(6 * 60 * 1000);
+			builder.setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
+				@Override
+				public
+					HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
+					RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
+						.setConnectTimeout(2 * 60 * 1000)
+						.setSocketTimeout(2 * 60 * 1000)
+						.setConnectionRequestTimeout(1 * 60 * 1000);
+					httpClientBuilder.setDefaultRequestConfig(requestConfigBuilder.build())
+						.setDefaultCredentialsProvider(credentialsProvider);
+					return httpClientBuilder;
+				}
+			});
+			this.testClient = new RestHighLevelClient(builder);
+			return this.testClient.ping(RequestOptions.DEFAULT);
+
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
+
+	public
+		boolean closeConn() {
+		try {
+			if (productionClient != null) {
+				productionClient.close();
+				System.out.printf("%s:%s\n", LocalDateTime.now().toString(), "successed to close the test client");
+			}
+			if (testClient != null) {
+				testClient.close();
+				System.out.printf("%s:%s\n", LocalDateTime.now().toString(), "successed to close the test client");
+			}
+			return true;
+		}
+		catch (Exception ex) {
+			System.out.printf("%s:%s\n", LocalDateTime.now().toString(), "failed to close the client");
+			ex.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+	 * private boolean handlerInit() { this.lotNumber =
+	 * camData.getOrDefault("Lot", null); this.operation =
+	 * operStepMap.getOrDefault(camData.getOrDefault("Oper", "UnknowOper"),
+	 * null); switch (operation) { case "FT": { lotIndexName =
+	 * EnvConf.getFtLotIndexName(); unitIndexName =
+	 * EnvConf.getFtUnitIndexName(); dataFormat = ftDataFormat; break; } case
+	 * "FT2": { lotIndexName = EnvConf.getFtLotIndexName(); unitIndexName =
+	 * EnvConf.getFtUnitIndexName(); dataFormat = ftDataFormat; break; } case
+	 * "FT-FUSE": { lotIndexName = EnvConf.getFtLotIndexName(); unitIndexName =
+	 * EnvConf.getFtUnitIndexName(); dataFormat = ftDataFormat; break; } case
+	 * "SLT": { lotIndexName = EnvConf.getSltLotIndexName(); unitIndexName =
+	 * EnvConf.getSltUnitIndexName(); dataFormat = sltDataFormat; break; } case
+	 * "CESLT": { lotIndexName = EnvConf.getSltLotIndexName(); unitIndexName =
+	 * EnvConf.getSltUnitIndexName(); dataFormat = sltDataFormat; break; }
+	 * default: { lotIndexName = null; unitIndexName = null; dataFormat = null;
+	 * break; } }
+	 *
+	 * if (lotNumber == null || operation == null || dataFormat == null ||
+	 * lotIndexName == null || unitIndexName == null) { StringBuilder strBud =
+	 * new StringBuilder(); if (lotNumber == null) { strBud.append("Lot Number
+	 * is Null!\n"); } if (operation == null) { strBud.append("Operation is
+	 * Null!\n"); } if (dataFormat == null) { strBud.append("Data Format is
+	 * Null\n"); } if (lotIndexName == null) { strBud.append("Lot Index Name is
+	 * Null\n"); } if (unitIndexName == null) { strBud.append("Unit Index Name
+	 * is Null\n"); } logger.info(strBud.toString()); strBud.setLength(0);
+	 * return false; }
+	 *
+	 * this.setDataFormat(dataFormat);
+	 * this.initSearchUnitRequest(unitIndexName);
+	 * this.initSearchFileRequest(unitIndexName); return true; }
+	 */
+	private
 		void initSearchUnitRequest() {
 		this.searchUnitRequest = new SearchRequest();
-		this.searchUnitRequest.indices("*-test-*");
-		this.searchUnitRequest.scroll(scroll);
+		this.searchUnitRequest.indices(this.dataFormat.getTestIndexName());
+		this.searchUnitRequest.scroll(this.scroll);
 
 		// source unit_id, bin_type
-		this.unitIDName = Config.getFTFormat().getUnit().getUnitIdNode().getName();
-		this.startTimeName = Config.getFTFormat().getUnit().getStartTimeNode().getName();
-		this.testTimeName = Config.getFTFormat().getUnit().getTestTimeNode().getName();
-		String[] includeFields = new String[]{unitIDName, FieldType.BinType, startTimeName, "UnitSeq", this.testTimeName, FieldType.DieType};
+		String unitIDName = this.dataFormat.getUnit().getUnitIdNode().getName();
+		String startTimeName = this.dataFormat.getUnit().getStartTimeNode().getName();
+		String endTimeName = this.dataFormat.getUnit().getEndTimeNode().getName();
+		String testTimeName = this.dataFormat.getUnit().getTestTimeNode().getName();
+		String[] includeFields = new String[]{unitIDName, FieldType.BinType, startTimeName, endTimeName, testTimeName, FieldType.DieType};
 		String[] excludeFields = new String[]{"_type"};
 
 		this.searchUnitRequest.source(new SearchSourceBuilder()
@@ -145,7 +250,7 @@ public
 	private
 		void initSearchFileRequest() {
 		this.searchFileRequest = new SearchRequest();
-		this.searchFileRequest.indices("*-test-*");
+		this.searchFileRequest.indices(this.dataFormat.getTestIndexName());
 		this.searchFileRequest.source(new SearchSourceBuilder()
 			.size(0)
 			.timeout(new TimeValue(180, TimeUnit.SECONDS))
@@ -155,22 +260,17 @@ public
 //		this.aggregation = AggregationBuilders.global("LotInfo")
 //			.subAggregation(AggregationBuilders.sum(FieldType.GrossTime).field(FieldType.GrossTime))
 //			.subAggregation(AggregationBuilders.sum(FieldType.UnitCnt).field(FieldType.Unit));
-		this.aggregation = AggregationBuilders.sum(FieldType.GrossTime).field(FieldType.GrossTime);
+		this.grossTimeAgg = AggregationBuilders.sum(FieldType.GrossTime).field(FieldType.GrossTime);
 
 	}
-		
+
 	/**
 	 *
 	 * @param lotNumber
 	 * @param operation
 	 */
-		
 	private
-	void InitLot(String lotNumber, String operation) {
-		if(this.dataFormat == null) {
-			System.out.println("Error: please setup dataformat for this lot");
-			return;
-		}
+		void InitLot(String lotNumber, String operation) {
 		this.getLotInfo().reset();
 		this.getLotInfo().setLotNumber(lotNumber);
 		this.getLotInfo().setLotNumberName(this.dataFormat.getLotNumberNode().getName());
@@ -189,47 +289,50 @@ public
 	 */
 	private
 		boolean getUnitData() {
-		this.unitNo = 0;
 		this.getLotInfo().setWaferSort(this.dataFormat.getDataType().equals(Config.DataTypes.WaferSort));
 
 		this.searchUnitRequest.source().query(this.getQueryBuilder(this.getLotInfo().getLotNumber(), this.getLotInfo().getOperation(), FieldType.Unit));
 		try {
-			searchResponse = client.search(searchUnitRequest, RequestOptions.DEFAULT);
+			this.searchResponse = this.productionClient.search(this.searchUnitRequest, RequestOptions.DEFAULT);
 
-			RestStatus status = searchResponse.status();
-			TimeValue took = searchResponse.getTook();
-			Boolean terminatedEarly = searchResponse.isTerminatedEarly();
-			boolean timedOut = searchResponse.isTimedOut();
+			RestStatus status = this.searchResponse.status();
+			TimeValue took = this.searchResponse.getTook();
+			Boolean terminatedEarly = this.searchResponse.isTerminatedEarly();
+			boolean timedOut = this.searchResponse.isTimedOut();
 
-			int totalShards = searchResponse.getTotalShards();
-			int successfulShards = searchResponse.getSuccessfulShards();
-			int failedShards = searchResponse.getFailedShards();
-			for (ShardSearchFailure failure : searchResponse.getShardFailures()) {
+			int totalShards = this.searchResponse.getTotalShards();
+			int successfulShards = this.searchResponse.getSuccessfulShards();
+			int failedShards = this.searchResponse.getFailedShards();
+			for (ShardSearchFailure failure : this.searchResponse.getShardFailures()) {
 				// failures should be handled here
 			}
 
-			String scrollId = searchResponse.getScrollId();
-			SearchHit[] searchHits = searchResponse.getHits().getHits();
+			String scrollId = this.searchResponse.getScrollId();
+			SearchHit[] searchHits = this.searchResponse.getHits().getHits();
 			this.fillData(searchHits);
+
+			if (searchHits == null || searchHits.length < 1) {
+				System.out.printf("%s: there's no any unit data found in this query\n", LocalDateTime.now().toString());
+				return false;
+			}
 
 			while (searchHits != null && searchHits.length > 0) {
 				SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId);
 				scrollRequest.scroll(scroll);
-				searchResponse = client.scroll(scrollRequest, RequestOptions.DEFAULT);
-				scrollId = searchResponse.getScrollId();
+				this.searchResponse = this.productionClient.scroll(scrollRequest, RequestOptions.DEFAULT);
+				scrollId = this.searchResponse.getScrollId();
 
-				searchHits = searchResponse.getHits().getHits();
+				searchHits = this.searchResponse.getHits().getHits();
 				this.fillData(searchHits);
 			}
+
 			ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
 			clearScrollRequest.addScrollId(scrollId);
-			ClearScrollResponse clearScrollResponse = client.clearScroll(clearScrollRequest, RequestOptions.DEFAULT);
+			ClearScrollResponse clearScrollResponse = this.productionClient.clearScroll(clearScrollRequest, RequestOptions.DEFAULT);
 			boolean succeeded = clearScrollResponse.isSucceeded();
-
-			//client.close();
 		}
-		catch (IOException ex) {
-			Logger.getLogger(ESConnection.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+		catch (Exception ex) {
+			ex.printStackTrace();
 			return false;
 		}
 		return true;
@@ -245,33 +348,30 @@ public
 	 */
 	private
 		boolean getLotAggData() {
-		this.unitNo = 0;
-
 		this.searchFileRequest.source().query(this.getAggQueryBuilder(this.getLotInfo().getLotNumber(), this.getLotInfo().getOperation(), FieldType.File));
 		try {
 
-			this.searchFileRequest.source().aggregation(aggregation);
-			searchResponse = client.search(searchFileRequest, RequestOptions.DEFAULT);
+			this.searchFileRequest.source().aggregation(this.grossTimeAgg);
+			searchResponse = productionClient.search(searchFileRequest, RequestOptions.DEFAULT);
 
-			RestStatus status = searchResponse.status();
-			TimeValue took = searchResponse.getTook();
-			Boolean terminatedEarly = searchResponse.isTerminatedEarly();
-			boolean timedOut = searchResponse.isTimedOut();
+			RestStatus status = this.searchResponse.status();
+			TimeValue took = this.searchResponse.getTook();
+			Boolean terminatedEarly = this.searchResponse.isTerminatedEarly();
+			boolean timedOut = this.searchResponse.isTimedOut();
 
-			int totalShards = searchResponse.getTotalShards();
-			int successfulShards = searchResponse.getSuccessfulShards();
-			int failedShards = searchResponse.getFailedShards();
-			for (ShardSearchFailure failure : searchResponse.getShardFailures()) {
+			int totalShards = this.searchResponse.getTotalShards();
+			int successfulShards = this.searchResponse.getSuccessfulShards();
+			int failedShards = this.searchResponse.getFailedShards();
+			for (ShardSearchFailure failure : this.searchResponse.getShardFailures()) {
 				// failures should be handled here
 			}
 
-			long totalHits = searchResponse.getHits().getTotalHits();
+			long totalHits = this.searchResponse.getHits().getTotalHits();
 			this.getLotInfo().setTotalFileCnt(totalHits);
-
 			this.fillLotData();
 		}
-		catch (IOException ex) {
-			Logger.getLogger(ESConnection.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+		catch (Exception ex) {
+			ex.printStackTrace();
 			return false;
 		}
 		return true;
@@ -281,7 +381,6 @@ public
 	private
 		void fillLotData() {
 		Aggregations aggregations = this.searchResponse.getAggregations();
-////		Global lotAggInfo = aggregations.get("LotInfo");
 		for (Aggregation agg : aggregations) {
 			String name = agg.getName();
 			if (name.equals(FieldType.GrossTime)) {
@@ -293,19 +392,18 @@ public
 	private
 		void fillData(SearchHit[] searchHits) {
 		for (SearchHit hit : searchHits) {
-			// do something with the SearchHit
 			String index = hit.getIndex();
 			String id = hit.getId();
 			Map<String, Object> sourceAsMap = hit.getSourceAsMap();
-			String unitID = (String) sourceAsMap.get(unitIDName);
-			String startTime = (String) sourceAsMap.get(startTimeName);
+
+			String unitID = (String) sourceAsMap.get(this.dataFormat.getUnit().getUnitIdNode().getName());
+			String startTime = (String) sourceAsMap.get(this.dataFormat.getUnit().getStartTimeNode().getName());
+			String endTime = (String) sourceAsMap.get(this.dataFormat.getUnit().getEndTimeNode().getName());
 			int binType = Integer.valueOf((String) sourceAsMap.get(FieldType.BinType));
 			boolean masterDie = ((String) sourceAsMap.get(FieldType.DieType)).equals(FieldType.MasterDie);
+			double testTime = Double.valueOf((String) sourceAsMap.get(this.dataFormat.getUnit().getTestTimeNode().getName()));
 
-			double testTime = Double.valueOf((String) sourceAsMap.get(this.testTimeName));
-
-			System.out.printf("UnitNo= %d, %s\n", ++this.unitNo, hit.getSourceAsString());
-
+			// no unit id case here
 			if (unitID == null) {
 				unitID = id;
 			}
@@ -317,113 +415,177 @@ public
 				this.getLotInfo().getDataSets().put(unitID, dataSet);
 				dataSet.setMasterDie(masterDie);
 			}
-			dataSet.getUnitData().add(new Doc(id, binType, startTime, index, testTime));
+			dataSet.getUnitData().add(new Doc(id, binType, startTime, endTime, index, testTime));
 		}
 	}
 
 	private
-		void updateUnitData() {
+		boolean updateUnitData() {
 
 		try {
 			BulkRequest bulkRequest = new BulkRequest();
-			bulkRequest.timeout(TimeValue.timeValueSeconds(20));
-
+			bulkRequest.timeout(TimeValue.timeValueSeconds(60));
+			int docCnt = 0;
 			for (DataSet dataSet : this.getLotInfo().getDataSets().values()) {
-
 				for (Doc doc : dataSet.getUnitData()) {
 					/**
 					 * generate the bulk update request
 					 */
 					Map<String, Object> jsonMap = new HashMap<>();
 					jsonMap.put(FieldType.Rank, doc.getMotherLotInsertion());
-					System.out.printf("%s,Time=%s,%s\n", dataSet.getUnitId(), doc.getMotherLotInsertion(), doc.getStartTime());
 					bulkRequest.add(new UpdateRequest(
 						doc.getIndex(),
 						"doc",
 						doc.getId()).doc(jsonMap));
+					docCnt++;
 				}
 			}
 
-			BulkResponse bulkResponse = client.bulk(bulkRequest, RequestOptions.DEFAULT);
+			BulkResponse bulkResponse = productionClient.bulk(bulkRequest, RequestOptions.DEFAULT);
 			if (bulkResponse.hasFailures()) {
+				System.out.printf("%s: failed to update the unit %s\n", LocalDateTime.now().toString(), FieldType.Rank);
 				for (BulkItemResponse bulkItemResponse : bulkResponse) {
 					if (bulkItemResponse.isFailed()) {
 						BulkItemResponse.Failure failure = bulkItemResponse.getFailure();
+						System.out.printf("%s:%s\n", LocalDateTime.now().toString(), failure.getMessage());
 					}
 				}
+				return false;
 			}
-
-			System.out.println("successed to update the " + FieldType.Rank);
+			else {
+				return true;
+			}
 		}
-		catch (IOException ex) {
-			Logger.getLogger(ESConnection.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+		catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
 		}
-
 	}
-		
+
 	/**
-	 * insert or update mother lot info
-	 * doc_id: lotNumber + operation
-	 * TODO: need to set the mother lot index here
-	 * 
-	 * @return 
+	 * insert or update mother lot info doc_id: lotNumber + operation
+	 *
+	 * @return
 	 */
 	private
 		boolean updateLotData() {
-		
+		/**
 		try {
 			Map<String, Object> jsonMap = this.getLotInfo().getJsonMap();
-			UpdateRequest request = new UpdateRequest(this.dataFormat.getLotIndexName(),"doc", this.getLotInfo().getDoc_Id())
-				.doc(jsonMap);
-			request.timeout(TimeValue.timeValueSeconds(2));
+
+			if (camData != null && camData.size() > 0) {
+				for (Map.Entry<String, String> entry : camData.entrySet()) {
+					String fieldName = entry.getKey();
+					String fieldValue = entry.getValue();
+					if ("IsLotMatched".equals(fieldName) || "IsLotCal".equals(fieldName)) {
+						continue;
+					}
+					String aliasName = camFieldConfByName.containsKey(fieldName) ? camFieldConfByName.get(fieldName).get("Alias") : "unknow";
+					if ("unknow".equalsIgnoreCase(aliasName)) {
+						jsonMap.put(fieldName, fieldValue);
+					}
+					else {
+						jsonMap.put(aliasName, fieldValue);
+					}
+
+				}
+			}
+
+			UpdateRequest request = new UpdateRequest(this.dataFormat.getLotIndexName(), "doc", this.getLotInfo().getDoc_Id()).doc(jsonMap);
+			request.timeout(TimeValue.timeValueSeconds(20));
 			request.docAsUpsert(true);
-			
-			UpdateResponse updateResponse = client.update(request, RequestOptions.DEFAULT);
-			
-			if (updateResponse.getResult() == DocWriteResponse.Result.CREATED) {
-				System.out.println("created");
-				
+
+			String lotNumOper = this.lotInfo.getLotNumber() + " --- " + this.lotInfo.getOperation();
+			UpdateResponse updateResponse = testClient.update(request, RequestOptions.DEFAULT);
+
+			if (null != updateResponse.getResult()) {
+				switch (updateResponse.getResult()) {
+					case CREATED:
+						logger.info("Lot Created : " + lotNumOper);
+						break;
+					case UPDATED:
+						logger.info("Lot Updated : " + lotNumOper);
+						break;
+					case DELETED:
+						logger.info("Lot Deleted : " + lotNumOper);
+						break;
+					case NOOP:
+						logger.info("Lot Noop : " + lotNumOper);
+						break;
+					default:
+						break;
+				}
 			}
-			else if (updateResponse.getResult() == DocWriteResponse.Result.UPDATED) {
-				System.out.println("updated");
-			}
-			else if (updateResponse.getResult() == DocWriteResponse.Result.DELETED) {
-				System.out.println("deleted");
-			}
-			else if (updateResponse.getResult() == DocWriteResponse.Result.NOOP) {
-				System.out.println("Noop");
-			}
+
+			logger.info("Update Lot Data PASS : " + this.getLotInfo().toString());
 		}
-		catch (IOException ex) {
-			Logger.getLogger(ESConnection.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+		catch (Exception ex) {
+			logger.info("Update Lot Data FAIL : " + this.getLotInfo().toString());
+			logger.error(ex.getMessage(), ex);
 			return false;
 		}
+		**/
 		return true;
 	}
 
+	/**
+	 * this method is to update or insert the lot doc isCaled to 'N'
+	 *
+	 * @param lotNumber
+	 * @param operation
+	 * @param dataFormat
+	 * @return
+	 */
 	public
-		boolean proceesLot(String lotNumber, String operation) {
+		boolean upsertLotIsCalFlag2N(String lotNumber, String operation, DataFormat dataFormat) {
+		String lotIndex = dataFormat.getLotIndexName();
+		//@todo upsert lot IsCaled to N
+		return true;
+	}
+
+	/**
+	 * proceed lot is only responsible for below 2 tasks: 1) update the unit
+	 * Rank 2) update the lot level doc
+	 *
+	 * here we use the 'upsert' to insert or update info to a lot level doc
+	 * please use another method to update camstar info to this doc if needed
+	 *
+	 * @return
+	 */
+	public
+		boolean proceesLot(String lotNumber, String operation, DataFormat dataFromat) {
+		if (lotNumber == null
+			|| operation == null
+			|| dataFormat == null) {
+			return false;
+		}
+
+		this.dataFormat = dataFormat;
 		this.InitLot(lotNumber, operation);
-		this.getUnitData();
+
+		if (!this.getUnitData()) {
+			return false;
+		}
+
+		if (!getLotAggData()) {
+			return false;
+		}
+
+		//camData.put("IsLotMatched", "Y");
 		this.getLotInfo().calInsertion();
 		this.getLotInfo().calKPI();
-		this.updateUnitData();
-		this.getLotAggData();
-		this.updateLotData();
-		System.out.print(this.getLotInfo().toString());
+		this.getLotInfo().calStartEndTime();
+
+		if (!updateUnitData()) {
+			return false;
+		}
+
+		if (!updateLotData()) {
+			return false;
+		}
+
+		//camData.put("IsLotCal", "Y");
 		return true;
-	}
-
-	private
-		void close() {
-		try {
-			this.client.close();
-
-		}
-		catch (IOException ex) {
-			Logger.getLogger(ESConnection.class
-				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		}
 	}
 
 	private
@@ -508,7 +670,7 @@ public
 	 * .must(QueryBuilders.termQuery(Config.watFormat.getOperationNode().getName(),
 	 * operation)) .must(QueryBuilders.termQuery(FieldType.Type, nodeType));
 	 * return queryBuilder; }
-	*
+	 *
 	 */
 	private
 		QueryBuilder getAggQueryBuilder(String lotNumber, String operation, String nodeType) {
@@ -524,25 +686,25 @@ public
 		LotInfo getLotInfo() {
 		return lotInfo;
 	}
-	
 
 	public
-	void setDataFormat(DataFormat dataFormat) {
+		void setDataFormat(DataFormat dataFormat) {
 		this.dataFormat = dataFormat;
 	}
 
 	public static
-		void main(String[] args) throws IOException {	
-		new Config("config/dataformat.xml");
-		ESConnection es = new ESConnection();
-		es.init();
-		es.setDataFormat(Config.getFTFormat());
-	
-		es.proceesLot("HG50099B", "FT-FUSE");
-		es.close();
-		
-	}
+		void main(String[] args) {
+			ESConnection es = ESConnection.getInstance();
+			if(!es.init()){
+				return;
+			}
+			String lotNumber =null;
+			String operation = null;
+			DataFormat format = null;
+			es.proceesLot(lotNumber, operation, format);
+			
 
-	
+
+	}
 
 }
