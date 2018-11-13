@@ -42,7 +42,7 @@ filebeat.inputs:
 - type: log
 
   # Change to true to enable this input configuration.
-  enabled: false
+  enabled: true
 
   # Paths that should be crawled and fetched. Glob based paths.
   paths:
@@ -52,17 +52,19 @@ filebeat.inputs:
   # Exclude files. A list of regular expressions to match. Filebeat drops the files that
   # are matching any regular expression from the list. By default, no files are dropped.
   #exclude_files: ['.gz$']
-  scan_frequency: 1
+  scan_frequency: 300
   close_eof: true
-  clean_removed: true
-  harvester_limit: 2
+  clean_removed: false
+  ignore_older: 2h
+  clean_inactive: 3h
+  harvester_limit: 5
   
   pipeline: ft-test
   
 - type: log
 
   # Change to true to enable this input configuration.
-  enabled: false
+  enabled: true
 
   # Paths that should be crawled and fetched. Glob based paths.
   paths:
@@ -72,12 +74,30 @@ filebeat.inputs:
   # Exclude files. A list of regular expressions to match. Filebeat drops the files that
   # are matching any regular expression from the list. By default, no files are dropped.
   #exclude_files: ['.gz$']
-  scan_frequency: 1
+  # matching any regular expression from the list.
+  include_lines: ['^LotNumber', '^Type']
+  scan_frequency: 300
+  close_eof: true
+  clean_removed: false
+  ignore_older: 2h
+  clean_inactive: 3h
+  harvester_limit: 100
+  
+  pipeline: slt-test
+
+
+
+
+- type: log
+  enabled: false
+  paths:
+   - /extend/data_log/SLT_debug/*.log
   close_eof: true
   clean_removed: true
   harvester_limit: 10
-  
-  pipeline: slt-test
+  pipeline: slt-test-debug
+
+
   
 - type: log
 
@@ -86,24 +106,50 @@ filebeat.inputs:
 
   # Paths that should be crawled and fetched. Glob based paths.
   paths:
-    - /extend/data_log/sort/*.log
-    #- c:\programdata\elasticsearch\logs\*
+    - /extend/data_log/SORT/*.log
+    #- c:\programdata\elasticsearch\logs\*.temp
 
   # Exclude files. A list of regular expressions to match. Filebeat drops the files that
   # are matching any regular expression from the list. By default, no files are dropped.
   #exclude_files: ['.gz$']
-  scan_frequency: 1
+  scan_frequency: 300
   close_eof: true
-  clean_removed: true
-  harvester_limit: 2
+  clean_removed: false
+  ignore_older: 2h
+  clean_inactive: 3h
+  harvester_limit: 5
   
   pipeline: wafer-sort-test
 
 - type: log
 
   # Change to true to enable this input configuration.
-  enabled: false
+  enabled: true
 
+  # Paths that should be crawled and fetched. Glob based paths.
+  paths:
+    - /extend/data_log/EngSORT/*.log
+    #- c:\programdata\elasticsearch\logs\*.temp
+
+  # Exclude files. A list of regular expressions to match. Filebeat drops the files that
+  # are matching any regular expression from the list. By default, no files are dropped.
+  #exclude_files: ['.gz$']
+  scan_frequency: 300
+  close_eof: true
+  clean_removed: false
+  ignore_older: 2h
+  clean_inactive: 3h
+  harvester_limit: 5
+ 
+  pipeline: eng-sort-test  
+  
+  
+  
+
+- type: log
+
+  # Change to true to enable this input configuration.
+  enabled: true
   # Paths that should be crawled and fetched. Glob based paths.
   paths:
     - /extend/data_log/SMAP/*.log
@@ -112,10 +158,12 @@ filebeat.inputs:
   # Exclude files. A list of regular expressions to match. Filebeat drops the files that
   # are matching any regular expression from the list. By default, no files are dropped.
   #exclude_files: ['.gz$']
-  scan_frequency: 1
+  scan_frequency: 300
   close_eof: true
-  clean_removed: true
-  harvester_limit: 3
+  clean_removed: false
+  ignore_older: 2h
+  clean_inactive: 3h
+  harvester_limit: 5
   
   pipeline: smap-test
   
@@ -132,7 +180,7 @@ filebeat.inputs:
   # Exclude files. A list of regular expressions to match. Filebeat drops the files that
   # are matching any regular expression from the list. By default, no files are dropped.
   #exclude_files: ['.gz$']
-  scan_frequency: 1
+  scan_frequency: 5
   close_eof: true
   clean_removed: true
   harvester_limit: 3
@@ -152,7 +200,7 @@ filebeat.inputs:
   # Exclude files. A list of regular expressions to match. Filebeat drops the files that
   # are matching any regular expression from the list. By default, no files are dropped.
   #exclude_files: ['.gz$']
-  scan_frequency: 1
+  scan_frequency: 5
   close_eof: true
   clean_removed: true
   harvester_limit: 3
@@ -208,7 +256,7 @@ queue:
     # before providing a batch of events to the outputs.
     # A value of 0 (the default) ensures events are immediately available
     # to be sent to the outputs.
-    flush.min_events: 2048
+    flush.min_events: 0
 
     # Maximum duration after which events are available to the outputs,
     # if the number of events stored in the queue is < min_flush_events.
@@ -267,8 +315,8 @@ output.elasticsearch:
   
   # Optional protocol and basic auth credentials.
   #protocol: "https"
-  #username: "elastic"
-  #password: "changeme"
+  username: "admin"
+  password: "TDnI@Admin"
 
 #----------------------------- Logstash output --------------------------------
 #output.logstash:
@@ -293,13 +341,14 @@ logging.level: info
 logging.files:
   path: /var/log/filebeat
   name: filebeat
-  keepfiles: 2
+  keepfiles: 10
   permissions: 0644
+  rotateeverybytes: 100000000
 
 # At debug level, you can selectively enable logging only for some components.
 # To enable all selectors use ["*"]. Examples of other selectors are "beat",
 # "publish", "service".
-#logging.selectors: ["*"]
+logging.selectors: ["*"]
 
 #============================== Xpack Monitoring ===============================
 # filebeat can export internal metrics to a central Elasticsearch monitoring
