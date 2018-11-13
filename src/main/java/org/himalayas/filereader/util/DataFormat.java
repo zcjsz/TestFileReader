@@ -1483,4 +1483,10 @@ public
         return lotOpertions;
     }
 
+    public
+    void setProductionMode(boolean productionMode) {
+        this.productionMode = productionMode;
+    }
+    
+
 }

@@ -45,6 +45,7 @@ final public
         long startTime = System.currentTimeMillis();
         new Config("config/dataformat.xml");
         Reader reader = new WatReader(Config.smapFormat);
+        Config.smapFormat.setProductionMode(false);
 
         File testDataFile = new File("./testdata/extend/hygon_source_data/SMAP");
         for (File lotFile : testDataFile.listFiles()) {
