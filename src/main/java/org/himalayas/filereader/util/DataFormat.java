@@ -17,9 +17,17 @@ import org.himalayas.filereader.kdf.Bin;
 public
 	class DataFormat {
 	
+	// add for camstar data type
+	private
+		boolean recalAll = false;
+	private
+		boolean reloadAll = false;
+	private
+		HashMap<String, String> camstarOperMappings = new HashMap();
+	
 	private
 		ArrayList<String> lotOpertions = new ArrayList();
-        private
+    private
                 String fileType = null;
 	
 	private
@@ -199,7 +207,28 @@ public
 					case "AppendSlaveUnitId2Test":
 						this.appendSlaveUnitId2Test = fieldValue.equals("1");
 						break;
-
+					case "ReloadAll":
+						this.reloadAll = fieldValue.equals("1");
+						break;
+					case "RelcalAll":
+						this.recalAll = fieldValue.equals("1");
+						break;
+					case "OperMap":
+						for(String group: fieldValue.split(",")){
+							String[] temp = group.split(":");
+							if(temp.length != 2){
+								System.out.println("Error: the camstar operation to kdf mfg step mappings");
+								System.out.println("Please following the format: CamStartOper1:KDFMfgStep1,CamStartOper2:KDFMfgStep12...");
+								System.exit(1);
+							}
+							if(this.camstarOperMappings.containsKey(temp[0])){
+								System.out.printf("Error: dupicate camstar oper found:%s\n", temp[0]);
+								System.exit(1);
+							}
+							this.camstarOperMappings.put(temp[0], temp[1]);
+						}
+						break;	
+						
 					case "GenerateMappingFile":
 						this.generateMappingFile = fieldValue.equals("1");
 						break;
