@@ -5,8 +5,14 @@
  */
 package org.himalayas.filereader.es;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.himalayas.filereader.util.FieldType;
 
 /**
@@ -16,6 +22,8 @@ import org.himalayas.filereader.util.FieldType;
 public
 	class LotInfo {
 	
+        private static Pattern pat1 = Pattern.compile("(\\d{4}-\\d{2}-\\d{2})T(\\d{2}:\\d{2}:\\d{2})\\.\\d{2}(\\+\\d{2}:\\d{2})");
+    
 	private
 		String doc_Id = null;
 
@@ -88,6 +96,12 @@ public
 		int totalFailCnt = 0;
 	private
 		int totalPassCnt = 0;
+        
+        private String lotStartTime = "1970-01-01 00:00:00.00 +0800";
+        private String lotEndTime   = "2099-12-31 23:59:59.00 +0800";
+        private Set<String> lotStartTimeSet = new TreeSet<>();
+        private Set<String> lotEndTimeSet = new TreeSet<>();
+        
 
 	public
 		LotInfo() {
@@ -129,6 +143,9 @@ public
 		this.totalTouchDownTestTime = 0;
 		this.totalUniqueUnitCnt = 0;
 		this.totalUnitTestTime = 0;
+                
+                this.lotStartTime = null;
+                this.lotEndTime = null;
 	}
 
 	public
@@ -266,6 +283,25 @@ public
 		this.avgIndexTime = avgIndexTime;
 	}
 
+        public String getLotStartTime() {
+            return lotStartTime;
+        }
+
+        public void setLotStartTime(String lotStartTime) {
+            this.lotStartTime = lotStartTime;
+        }
+
+        public String getLotEndTime() {
+            return lotEndTime;
+        }
+
+        public void setLotEndTime(String lotEndTime) {
+            this.lotEndTime = lotEndTime;
+        }
+                
+                
+        
+
 	public
 		void calInsertion() {
 		for (DataSet dataSet : this.getDataSets().values()) {
@@ -298,44 +334,77 @@ public
 
 			// 
 			for (Doc doc : dataSet.getUnitData()) {
-				if (doc.getBinType() == 1) {
-					this.totalPassCnt += 1;
-					this.totalPassTestTime += doc.getTestTime();
-				}
-				else {
-					this.totalFailCnt += 1;
-					this.totalFailTestTime += doc.getTestTime();
-				}
-
-				this.totalUnitTestTimeInc(doc.getTestTime());
-				this.totalTestedUnitCntInc(1);
+                            if (doc.getBinType() == 1) {
+                                    this.totalPassCnt += 1;
+                                    this.totalPassTestTime += doc.getTestTime();
+                            }
+                            else {
+                                    this.totalFailCnt += 1;
+                                    this.totalFailTestTime += doc.getTestTime();
+                            }
+                            this.totalUnitTestTimeInc(doc.getTestTime());
+                            this.totalTestedUnitCntInc(1);
+                            
+                            lotStartTimeSet.add(doc.getStartTime());
+                            lotEndTimeSet.add(doc.getEndTime());
+                            
 			}
 		}
 	}
 
-	public
-		void calKPI() {
 
-		if (this.totalTestedUnitCnt != 0) {
-			this.uph = (int) (this.grossTestTime / this.totalTestedUnitCnt);
-			this.uphGood = (int) (this.totalPassCnt * 3600 / this.grossTestTime);
+        public void calStartEndTime() {
+            
+            List<String> tmpStartTimeList = new ArrayList<>(lotStartTimeSet);
+            List<String> tmpEndTimeList = new ArrayList<>(lotEndTimeSet);
+            
+            for(int i=0; i<tmpStartTimeList.size(); i++) {
+                String tmpStartTime = tmpStartTimeList.get(i);
+                Matcher matcher = pat1.matcher(tmpStartTime);
+                if(matcher.find()){
+                    lotStartTime = matcher.group(0);
+                    break;
+                } else {
+                    continue;
+                }
+            }
+            
+            for(int j=tmpEndTimeList.size()-1; j>=0; j--) {
+                String tmpEndTime = tmpEndTimeList.get(j);
+                Matcher matcher = pat1.matcher(tmpEndTime);
+                if(matcher.find()){
+                    lotEndTime = matcher.group(0);
+                    break;
+                } else {
+                    continue;
+                }
+            }
+            
+        }
+                
+                
+	public void calKPI() {
 
-			this.avgUnitTestTime = this.totalUnitTestTime / this.totalTestedUnitCnt;
+            if (this.totalTestedUnitCnt != 0) {
+                this.uph = (int) (this.totalTestedUnitCnt * 3600 / this.grossTestTime);
+                this.uphGood = (int) (this.totalPassCnt * 3600 / this.grossTestTime);
 
-			this.kdfFirstYield = ((double) this.firstPassCnt) / this.totalUniqueUnitCnt;
-			this.kdfFinalYield = ((double) this.lastPassCnt) / this.totalUniqueUnitCnt;
-			this.kdfFtrd = this.kdfFinalYield - this.kdfFirstYield;
+                this.avgUnitTestTime = this.totalUnitTestTime / this.totalTestedUnitCnt;
 
-			this.kdfIr = ((double) this.totalTestedUnitCnt) / this.totalUniqueUnitCnt;
+                this.kdfFirstYield = ((double) this.firstPassCnt) / this.totalUniqueUnitCnt;
+                this.kdfFinalYield = ((double) this.lastPassCnt) / this.totalUniqueUnitCnt;
+                this.kdfFtrd = this.kdfFinalYield - this.kdfFirstYield;
 
-		}
-		if (this.totalPassCnt != 0) {
-			this.avgPassTestTime = (float) (this.totalPassTestTime / this.totalPassCnt);
-		}
+                this.kdfIr = ((double) this.totalTestedUnitCnt) / this.totalUniqueUnitCnt;
 
-		if (this.totalFailCnt != 0) {
-			this.avgFailTestTime = (float) (this.totalFailTestTime / this.totalFailCnt);
-		}
+            }
+            if (this.totalPassCnt != 0) {
+                    this.avgPassTestTime = (float) (this.totalPassTestTime / this.totalPassCnt);
+            }
+
+            if (this.totalFailCnt != 0) {
+                    this.avgFailTestTime = (float) (this.totalFailTestTime / this.totalFailCnt);
+            }
 
 	}
 
@@ -471,28 +540,30 @@ public
 			+ this.lotNumberName + "=" + this.lotNumber + ","
 			+ this.operationName + "=" + this.operation + ","
 			+ FieldType.Lot_Doc_id + "=" + this.doc_Id + ","
-			+ FieldType.Lot_AvgFailTestTime + "=" + this.valueOf2f(this.avgFailTestTime) + ","
-			+ FieldType.Lot_AvgPassTestTime + "=" + this.valueOf2f(this.avgPassTestTime) + ","
-			+ FieldType.Lot_AvgTestTime + "=" + this.valueOf2f(this.avgUnitTestTime) + ","
+			+ FieldType.Lot_kdfAvgFailTestTime + "=" + this.valueOf2f(this.avgFailTestTime) + ","
+			+ FieldType.Lot_kdfAvgPassTestTime + "=" + this.valueOf2f(this.avgPassTestTime) + ","
+			+ FieldType.Lot_kdfAvgTestTime + "=" + this.valueOf2f(this.avgUnitTestTime) + ","
 			+ FieldType.Lot_FileCnt + "=" + this.totalFileCnt + ","
-			+ FieldType.Lot_FirstFailCnt + "=" + this.firstFailCnt + ","
-			+ FieldType.Lot_FirstPassCnt + "=" + this.firstPassCnt + ","
-			+ FieldType.Lot_GrossTestTime + "=" + this.valueOf2f(this.grossTestTime) + ","
-			+ FieldType.Lot_KdfFinalYield + "=" + this.valueOf4f(this.kdfFinalYield) + ","
-			+ FieldType.Lot_KdfFirstYield + "=" + this.valueOf4f(this.kdfFirstYield) + ","
-			+ FieldType.Lot_KdfFtrd + "=" + this.valueOf4f(this.kdfFtrd) + ","
-			+ FieldType.Lot_KdfIr + "=" + this.valueOf4f(this.kdfIr) + ","
-			+ FieldType.Lot_LastFailCnt + "=" + this.lastFailCnt + ","
-			+ FieldType.Lot_LastPassCnt + "=" + this.lastPassCnt + ","
-			+ FieldType.Lot_TotalFailCnt + "=" + this.totalFailCnt + ","
-			+ FieldType.Lot_TotalFailTestTime + "=" + this.valueOf2f(this.totalFailTestTime) + ","
-			+ FieldType.Lot_TotalPassCnt + "=" + this.totalPassCnt + ","
-			+ FieldType.Lot_TotalPassTestTime + "=" + this.valueOf2f(this.totalPassTestTime) + ","
-			+ FieldType.Lot_TotalTestedUnitCnt + "=" + this.totalTestedUnitCnt + ","
-			+ FieldType.Lot_TotalUniqueUnitCnt + "=" + this.totalUniqueUnitCnt + ","
-			+ FieldType.Lot_TotalUnitTestTime + "=" + this.valueOf2f(this.totalUnitTestTime) + ","
-			+ FieldType.Lot_UPH + "=" + this.uph + ","
-			+ FieldType.Lot_UPHGood + "=" + this.uphGood + "\n";
+			+ FieldType.Lot_kdfFirstFailCount + "=" + this.firstFailCnt + ","
+			+ FieldType.Lot_kdfFirstPassCount + "=" + this.firstPassCnt + ","
+			+ FieldType.Lot_kdfGrossTestTime + "=" + this.valueOf2f(this.grossTestTime) + ","
+			+ FieldType.Lot_kdfFinalYield + "=" + this.valueOf4f(this.kdfFinalYield) + ","
+			+ FieldType.Lot_kdfFirstYield + "=" + this.valueOf4f(this.kdfFirstYield) + ","
+			+ FieldType.Lot_kdfFTRd + "=" + this.valueOf4f(this.kdfFtrd) + ","
+			+ FieldType.Lot_kdfIR + "=" + this.valueOf4f(this.kdfIr) + ","
+			+ FieldType.Lot_kdfLastFailCount + "=" + this.lastFailCnt + ","
+			+ FieldType.Lot_kdfLastPassCount + "=" + this.lastPassCnt + ","
+			+ FieldType.Lot_kdfTotalFailCount + "=" + this.totalFailCnt + ","
+			+ FieldType.Lot_kdfTotalFailTestTime + "=" + this.valueOf2f(this.totalFailTestTime) + ","
+			+ FieldType.Lot_kdfTotalPassCount + "=" + this.totalPassCnt + ","
+			+ FieldType.Lot_kdfTotalPassTestTime + "=" + this.valueOf2f(this.totalPassTestTime) + ","
+			+ FieldType.Lot_kdfTotalTestedCount + "=" + this.totalTestedUnitCnt + ","
+			+ FieldType.Lot_kdfQtyIn + "=" + this.totalUniqueUnitCnt + ","
+			+ FieldType.Lot_kdfTotalTestTime + "=" + this.valueOf2f(this.totalUnitTestTime) + ","
+			+ FieldType.Lot_kdfUPH + "=" + this.uph + ","
+			+ FieldType.Lot_kdfUPHGood + "=" + this.uphGood + ","
+                        + FieldType.Lot_LotStartTime + "=" + this.lotStartTime + ","
+                        + FieldType.Lot_LotEndTime + "=" + this.lotEndTime;
 	}
 
 	public
@@ -501,30 +572,31 @@ public
 		jsonMap.put(FieldType.Type, FieldType.Lot_KDFLot);
 		jsonMap.put(this.lotNumberName, this.lotNumber);
 		jsonMap.put(this.operationName, this.operation);
-		jsonMap.put(FieldType.Lot_Doc_id, this.doc_Id);
-		jsonMap.put(FieldType.Lot_AvgFailTestTime, this.valueOf2f(this.avgFailTestTime));
-		jsonMap.put(FieldType.Lot_AvgPassTestTime, this.valueOf2f(this.avgPassTestTime));
-		jsonMap.put(FieldType.Lot_AvgTestTime, this.valueOf2f(this.avgUnitTestTime));
+//		jsonMap.put(FieldType.Lot_Doc_id, this.doc_Id);
+		jsonMap.put(FieldType.Lot_kdfAvgFailTestTime, this.valueOf2f(this.avgFailTestTime));
+		jsonMap.put(FieldType.Lot_kdfAvgPassTestTime, this.valueOf2f(this.avgPassTestTime));
+		jsonMap.put(FieldType.Lot_kdfAvgTestTime, this.valueOf2f(this.avgUnitTestTime));
 		jsonMap.put(FieldType.Lot_FileCnt, this.totalFileCnt);
-		jsonMap.put(FieldType.Lot_FirstFailCnt, this.firstFailCnt);
-		jsonMap.put(FieldType.Lot_FirstPassCnt, this.firstPassCnt);
-		jsonMap.put(FieldType.Lot_GrossTestTime, this.valueOf2f(this.grossTestTime));
-		jsonMap.put(FieldType.Lot_KdfFinalYield, this.valueOf4f(this.kdfFinalYield));
-		jsonMap.put(FieldType.Lot_KdfFirstYield, this.valueOf4f(this.kdfFirstYield));
-		jsonMap.put(FieldType.Lot_KdfFtrd, this.valueOf4f(this.kdfFtrd));
-		jsonMap.put(FieldType.Lot_KdfIr, this.valueOf4f(this.kdfIr));
-		jsonMap.put(FieldType.Lot_LastFailCnt, this.lastFailCnt);
-		jsonMap.put(FieldType.Lot_LastPassCnt, this.lastPassCnt);
-		jsonMap.put(FieldType.Lot_TotalFailCnt, this.totalFailCnt);
-		jsonMap.put(FieldType.Lot_TotalFailTestTime, this.valueOf2f(this.totalFailTestTime));
-		jsonMap.put(FieldType.Lot_TotalPassCnt, this.totalPassCnt);
-		jsonMap.put(FieldType.Lot_TotalPassTestTime, this.valueOf2f(this.totalPassTestTime));
-		jsonMap.put(FieldType.Lot_TotalTestedUnitCnt, this.totalTestedUnitCnt);
-		jsonMap.put(FieldType.Lot_TotalUniqueUnitCnt, this.totalUniqueUnitCnt);
-		jsonMap.put(FieldType.Lot_TotalUnitTestTime, this.valueOf2f(this.totalUnitTestTime));
-		jsonMap.put(FieldType.Lot_UPH, this.uph);
-		jsonMap.put(FieldType.Lot_UPHGood, this.uphGood);
-
+		jsonMap.put(FieldType.Lot_kdfFirstFailCount, this.firstFailCnt);
+		jsonMap.put(FieldType.Lot_kdfFirstPassCount, this.firstPassCnt);
+		jsonMap.put(FieldType.Lot_kdfGrossTestTime, this.valueOf2f(this.grossTestTime));
+		jsonMap.put(FieldType.Lot_kdfFinalYield, this.valueOf4f(this.kdfFinalYield));
+		jsonMap.put(FieldType.Lot_kdfFirstYield, this.valueOf4f(this.kdfFirstYield));
+		jsonMap.put(FieldType.Lot_kdfFTRd, this.valueOf4f(this.kdfFtrd));
+		jsonMap.put(FieldType.Lot_kdfIR, this.valueOf4f(this.kdfIr));
+		jsonMap.put(FieldType.Lot_kdfLastFailCount, this.lastFailCnt);
+		jsonMap.put(FieldType.Lot_kdfLastPassCount, this.lastPassCnt);
+		jsonMap.put(FieldType.Lot_kdfTotalFailCount, this.totalFailCnt);
+		jsonMap.put(FieldType.Lot_kdfTotalFailTestTime, this.valueOf2f(this.totalFailTestTime));
+		jsonMap.put(FieldType.Lot_kdfTotalPassCount, this.totalPassCnt);
+		jsonMap.put(FieldType.Lot_kdfTotalPassTestTime, this.valueOf2f(this.totalPassTestTime));
+		jsonMap.put(FieldType.Lot_kdfTotalTestedCount, this.totalTestedUnitCnt);
+		jsonMap.put(FieldType.Lot_kdfQtyIn, this.totalUniqueUnitCnt);
+		jsonMap.put(FieldType.Lot_kdfTotalTestTime, this.valueOf2f(this.totalUnitTestTime));
+		jsonMap.put(FieldType.Lot_kdfUPH, this.uph);
+		jsonMap.put(FieldType.Lot_kdfUPHGood, this.uphGood);
+                jsonMap.put(FieldType.Lot_LotStartTime, this.lotStartTime);
+                jsonMap.put(FieldType.Lot_LotEndTime, this.lotEndTime);
 		return jsonMap;
 
 	}
