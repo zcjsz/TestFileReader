@@ -5,6 +5,7 @@
  */
 package org.himalayas.filereader.util;
 
+import com.amd.kdf.KDFFieldData;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +21,11 @@ import org.dom4j.io.SAXReader;
 
 public
 	class Config {
+	
+	public static
+		ArrayList<String> productionHost = new ArrayList();
+	public static
+		String testHost = null;
 
 	public static
 		boolean renameKDF = false;
@@ -34,7 +40,7 @@ public
 
 	public static
 		enum DataTypes {
-		WaferSort, ATE, SLT, WAT, SMAP
+		WaferSort, ATE, SLT, WAT, SMAP, CAMSTAR
 	};
 
 	public static
@@ -62,7 +68,9 @@ public
 		DataFormat watFormat = null;
 	public static
 		DataFormat smapFormat = null;
-
+	public static
+		DataFormat camFormat = null;
+	
 	public
 		Config(String configFile) {
 		if (!readDataFormat(configFile)) {
@@ -72,6 +80,10 @@ public
 			if (!dataFormat.validate()) {
 				System.exit(1);
 			}
+		}
+		if(Config.productionHost.isEmpty() || Config.testHost == null){
+			System.out.println("please setup the es host!");
+			System.exit(1);
 		}
 	}
 
@@ -102,6 +114,46 @@ public
 				void onEnd(ElementPath path) {
 				Element row = path.getCurrent();
 				convertTime = row.getTextTrim().equals("1");
+				row.detach();
+			}
+
+			@Override
+			public
+				void onStart(ElementPath path) {
+			}
+
+		});
+		reader.addHandler("/root/ESHostProduction", new ElementHandler() {
+			@Override
+			public
+				void onEnd(ElementPath path) {
+				Element row = path.getCurrent();
+				String[] hosts = row.getTextTrim().split(",");
+				for(String host: hosts){
+					if(Config.productionHost.contains(host.trim())){
+						System.out.println("Faltal Error: duplicate host found: " + host.trim());
+						System.exit(1);
+					}
+					Config.productionHost.add(host.trim());
+				}
+				row.detach();
+			}
+
+			@Override
+			public
+				void onStart(ElementPath path) {
+			}
+
+		});
+		reader.addHandler("/root/ESHostTest", new ElementHandler() {
+			@Override
+			public
+				void onEnd(ElementPath path) {
+				Element row = path.getCurrent();
+				String host = row.getTextTrim();
+				if(host.length() > 5){
+					Config.testHost = host;
+				}
 				row.detach();
 			}
 
@@ -183,11 +235,14 @@ public
 					System.out.println("Fatal Error: duplicate source data found " + dataFormat.getSourceType());
 					System.exit(1);
 				}
-				if (dataFormat.getSourceType().equalsIgnoreCase("wat")) {
+				if (dataFormat.getDataType().equals(Config.DataTypes.WAT)) {
 					Config.watFormat = dataFormat;
 				}
-				else if (dataFormat.getSourceType().equalsIgnoreCase("smap")) {
+				else if (dataFormat.getDataType().equals(Config.DataTypes.SMAP)) {
 					Config.smapFormat = dataFormat;
+				}
+				else if(dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)){
+				    Config.camFormat = dataFormat;
 				}
 				Config.dataFormats.put(dataFormat.getSourceType(), dataFormat);
 			}
@@ -339,6 +394,53 @@ public
                                                         }
 							xmlNode.setIndex(index);
 						}
+						// only add for camstart lot node 
+						if(dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)){
+							if (node.elements("Name").size() > 0) {
+								String aliasName = node.elementTextTrim("Name").trim();
+								xmlNode.setCamColumnName(aliasName);
+							}
+							else{
+								System.out.println("Fatal Error: please setup the name for camstar column: " + xmlNodeName);
+								System.exit(1);
+							}
+							if (node.elements("AllowEmpty").size() > 0) {
+								String notEmpty = node.elementTextTrim("AllowEmpty").trim();
+								xmlNode.setAllowEmpty(notEmpty.equals("1"));
+							}
+							else{
+								System.out.println("Fatal Error: please setup the name for camstar column: " + xmlNodeName);
+								System.exit(1);
+							}
+							
+							if (node.elements("Type").size() > 0) {
+								String typeName = node.elementTextTrim("Type").trim();
+								switch (typeName){
+									case "string":
+										xmlNode.setCamColumnType(KDFFieldData.STRING);
+										break;
+									case "integer":
+										xmlNode.setCamColumnType(KDFFieldData.INT);
+										break;		
+									case "long":
+										xmlNode.setCamColumnType(KDFFieldData.LONG);
+										break;		
+									case "double":
+										xmlNode.setCamColumnType(KDFFieldData.DOUBLE);
+										break;
+									case "float":
+										xmlNode.setCamColumnType(KDFFieldData.FLOAT);
+										break;
+									default:
+										System.out.println("Fatal Error: camstar data type can only be one of below types: string, integer, long, double, float");
+										System.exit(1);	
+								}
+							}
+							else{
+								System.out.println("Fatal Error: please setup the name for camstar column: " + xmlNodeName);
+								System.exit(1);
+							}
+						}					
                                                 
 						if (dataFormat.getLotHead().containsKey(xmlNodeName)) {
 							System.out.printf("Fatal Error: duplicate head xml node found %s\n", xmlNodeName);
