@@ -174,6 +174,8 @@ public
         XmlNode lotNumberNode = null;
     private
         XmlNode operationNode = null;
+    private
+        XmlNode camLotNode = null;
 
     public
         DataFormat(Element sourceData) {
@@ -1487,6 +1489,14 @@ public
     void setProductionMode(boolean productionMode) {
         this.productionMode = productionMode;
     }
-    
 
+    public
+    XmlNode getCamLotNode() {
+        return camLotNode;
+    }
+
+    public
+    void setCamLotNode(XmlNode camLotNode) {
+        this.camLotNode = camLotNode;
+    }
 }

@@ -400,6 +400,7 @@ public
             int index = -1;
             boolean isLotNumber = false;
             boolean isOperation = false;
+            boolean isCamLot = false;
 
             for (Element node : nodes) {
                 String nodeName = node.getName().trim().toLowerCase();
@@ -412,6 +413,9 @@ public
                     case "lotnumber":
                         isLotNumber = value.equals("1");
                         break;
+                    case "Iscamlot":
+                        isCamLot = value.equals("1");
+                        break;    
                     case "operation":
                         isOperation = value.equals("1");
                         break;
@@ -558,6 +562,9 @@ public
                     }
                     if (isOperation) {
                         dataFormat.setOperationNode(xmlNode);
+                    }
+                    if (isCamLot) {
+                        dataFormat.setCamLotNode(xmlNode);
                     }
 
                 }

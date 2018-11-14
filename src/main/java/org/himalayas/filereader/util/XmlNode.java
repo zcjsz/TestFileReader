@@ -73,6 +73,8 @@ public
         boolean allowEmpty = false;
     private
         byte camColumnType = 0;
+    private
+        boolean camLot = false;
 
     /**
      *
@@ -447,7 +449,7 @@ public
         String getCamColumnName() {
         return camColumnName;
     }
-
+    
     public static
         void main(String[] args) {
         String value = "1494200055407";
