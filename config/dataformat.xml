@@ -484,8 +484,10 @@ and open the template in the editor.
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
         
-        <FileOpenTimeIndex>9,10</FileOpenTimeIndex>
-        <FileOpenTimeFormat>uuuu-MM-dd-hh-mm-ss</FileOpenTimeFormat>
+        <!--list length while kdf name is split by underline-->
+        <UnderLineCnt>4</UnderLineCnt>
+        <FileOpenTimeIndex>3</FileOpenTimeIndex>
+        <FileOpenTimeFormat>uuuu-MM-dd-HH-mm-ss</FileOpenTimeFormat>
         
         <!--ProcessLot>Y</ProcessLot>
         <UpdateUnit>Y</UpdateUnit>
