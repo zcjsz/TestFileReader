@@ -685,7 +685,6 @@ public abstract
                 i++;
             }
         }
-        value += "," + this.getFormat().getUnit().getWaferNumberNode().getName() + "=" + names[this.getFormat().getWaferNumberIndex()];
         value += "," + FieldType.FileTime + "=" + this.formatTimeStr(this.fileOpenTime);
         if (this.getFormat().isAddFileName()) {
             value += "," + FieldType.FileName + "=" + this.fileName;

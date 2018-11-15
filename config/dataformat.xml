@@ -1311,6 +1311,32 @@ and open the template in the editor.
             </SourceType>
         </XmlNode>
         
+        <!--add WaferNumber node for wat and smap in lot level head doc-->
+        <XmlNode name= "WaferNumber" >
+            <Field>wafer</Field>
+         
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Index>3</Index>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Index>4</Index>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+        </XmlNode>
+        
         
         
         <!--items starting from this is for camstar lot only-->
