@@ -307,7 +307,6 @@ public
         this.getLotInfo().setLotNumberName(this.dataFormat.getLotNumberNode().getName());
         this.getLotInfo().setOperation(operation);
         this.getLotInfo().setOperationName(this.dataFormat.getOperationNode().getName());
-        this.getLotInfo().setDoc_Id(lotNumber + "_" + operation);
     }
 
     /**
@@ -647,6 +646,7 @@ public
 
     /**
      * this method is to update or insert the lot doc isCaled to 'N'
+     * the key is the 
      *
      * @param lotNumber
      * @param operation

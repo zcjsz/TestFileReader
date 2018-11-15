@@ -648,13 +648,16 @@ public
         this.operationName = operationName;
     }
 
-    public
+    private
         void setDoc_Id(String doc_Id) {
         this.doc_Id = doc_Id;
     }
 
     public
         String getDoc_Id() {
+        if(this.doc_Id == null) {
+            this.setDoc_Id(lotNumber + "_" + operation);
+        }
         return doc_Id;
     }
 
