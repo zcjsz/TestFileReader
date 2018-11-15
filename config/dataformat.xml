@@ -451,6 +451,11 @@ and open the template in the editor.
         <!--if this a lot file, the mapping path is date/lot/file, else is just use date/file-->
         <IsLotFile>0</IsLotFile>
         
+        <!--comma separated filters, case sensitive-->
+        <FilterOut></FilterOut><!--filter out kdf whose name contains sbo-->
+        <!--comma separated selectors, case sensitive-->
+        <Selector>xls,TMP</Selector> <!--select kdf whose name contains GFDRS-->
+        
         <KDFDate>
             <Start>20180401</Start>
             <End>20181001</End>
