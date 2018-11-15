@@ -105,15 +105,9 @@ public abstract
             this.init();
 
             this.file = file;
-            
-            if (this.file.getName().endsWith(Config.KdfRename.badFormat.name())
-                || this.file.getName().endsWith(Config.KdfRename.done.name())
-                || this.file.getName().endsWith(Config.KdfRename.exception.name())
-                || this.file.getName().endsWith(Config.KdfRename.openErr.name())
-                || this.file.getName().endsWith(Config.KdfRename.skip.name())) {
+            if (!this.preValidate()) {
                 return false;
             }
-            
             if (!this.validateFile()) {
                 this.failType = Config.FailureCase.BadFormat;
                 this.logBadFormatFileToES();
@@ -123,7 +117,7 @@ public abstract
             if (!validateKDFDate()) {
                 return false;
             }
-            
+
             if (this.isRepeatFile()) {
                 this.failType = Config.FailureCase.RepeatKDF;
                 this.logRepeatFileToES();
@@ -221,27 +215,6 @@ public abstract
         this.transferTime = this.formatTimeStr(names[1]);
 
         this.fileName = fileName.substring(0, fileName.length() - 15);
-
-        boolean skip = false;
-        for (String filter : this.getFormat().getFilters()) {
-            if (fileName.contains(filter)) {
-                skip = true;
-                break;
-            }
-        }
-        if (skip) {
-            return false;
-        }
-
-        for (String selector : this.getFormat().getSelectors()) {
-            if (!fileName.contains(selector)) {
-                skip = true;
-                break;
-            }
-        }
-        if (skip) {
-            return false;
-        }
 
         names = fileName.split("_");
         if (names.length != this.getFormat().getUnderLineCnt()) {
@@ -341,6 +314,41 @@ public abstract
         }
         this.kdfDate = fileOpenTime.substring(0, 8);
         return true;
+    }
+
+    protected
+        boolean preValidate() {
+
+        if (this.file.getName().endsWith(Config.KdfRename.badFormat.name())
+            || this.file.getName().endsWith(Config.KdfRename.done.name())
+            || this.file.getName().endsWith(Config.KdfRename.exception.name())
+            || this.file.getName().endsWith(Config.KdfRename.openErr.name())
+            || this.file.getName().endsWith(Config.KdfRename.skip.name())) {
+            return false;
+        }
+
+        boolean skip = false;
+        for (String filter : this.getFormat().getFilters()) {
+            if (fileName.contains(filter)) {
+                skip = true;
+                break;
+            }
+        }
+        if (skip) {
+            return false;
+        }
+
+        for (String selector : this.getFormat().getSelectors()) {
+            if (!fileName.contains(selector)) {
+                skip = true;
+                break;
+            }
+        }
+        if (skip) {
+            return false;
+        }
+        return true;
+
     }
 
     private
