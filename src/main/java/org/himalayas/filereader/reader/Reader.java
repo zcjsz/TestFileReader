@@ -377,7 +377,13 @@ public abstract
         return true;
 
     }
-
+    
+    /**
+     * return the local datatime with offset
+     * this input time string format must be 'uuuuMMddhhmmss'
+     * @param timeStr
+     * @return 
+     */
     private
         String formatTimeStr(String timeStr) {
         return timeStr.substring(0, 4) + "-" + timeStr.substring(4, 6) + "-" + timeStr.substring(6, 8)
