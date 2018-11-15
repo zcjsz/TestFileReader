@@ -1334,6 +1334,11 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
+                <EnabledLog>0</EnabledLog>
+                <Index>0</Index>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
         
