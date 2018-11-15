@@ -163,9 +163,9 @@ public abstract
             return true;
         }
         catch (Exception e) {
+            e.printStackTrace();
             this.logExceptionToES();
             this.renameOrArchiveKDF(this.getExceptionArchiveFile(), Config.KdfRename.exception);
-            e.printStackTrace();
             return false;
         }
     }
@@ -295,7 +295,8 @@ public abstract
                 try {
                     LocalDateTime dateTime = LocalDateTime.parse(tempDate.subSequence(0, this.getFormat().getFileOpenTimeFormat().length()), DateTimeFormatter.ofPattern(this.getFormat().getFileOpenTimeFormat()));
                     this.kdfMonth = dateTime.format(DateTimeFormatter.ofPattern("uuuuMMdd"));
-                    this.fileOpenTime = dateTime.format(DateTimeFormatter.ofPattern("uuuuMMddhhmmss"));
+                    this.fileOpenTime = dateTime.format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss"));
+                    this.kdfDate = this.kdfMonth.substring(0, 8);
                     return true;
                 }
                 catch (Exception e) {
@@ -356,7 +357,7 @@ public abstract
 
         boolean skip = false;
         for (String filter : this.getFormat().getFilters()) {
-            if (fileName.contains(filter)) {
+            if (this.getFile().getName().contains(filter)) {
                 skip = true;
                 break;
             }
@@ -366,7 +367,7 @@ public abstract
         }
 
         for (String selector : this.getFormat().getSelectors()) {
-            if (!fileName.contains(selector)) {
+            if (!this.getFile().getName().contains(selector)) {
                 skip = true;
                 break;
             }
@@ -377,12 +378,13 @@ public abstract
         return true;
 
     }
-    
+
     /**
-     * return the local datatime with offset
-     * this input time string format must be 'uuuuMMddhhmmss'
+     * return the local datatime with offset this input time string format must
+     * be 'uuuuMMddhhmmss'
+     *
      * @param timeStr
-     * @return 
+     * @return
      */
     private
         String formatTimeStr(String timeStr) {
@@ -638,7 +640,7 @@ public abstract
             FieldType.KdfMonth, this.kdfMonth,
             FieldType.KdfDate, this.kdfDate,
             FieldType.TransferTime, this.transferTime,
-            FieldType.KdfName, this.fileName,
+            FieldType.KdfName, this.file.getName(),
             FieldType.DataType, this.getFormat().getDataType()
         );
     }
