@@ -16,6 +16,12 @@ import org.himalayas.filereader.kdf.Bin;
 
 public
     class DataFormat {
+    
+    private
+        String fileOpenTimeFormat = null;
+    
+    private
+         boolean lotFile = true;
 
     // add for camstar data type
     private
@@ -202,7 +208,10 @@ public
                 }
 
                 switch (fieldName) {
-
+                    
+                    case "FileOpenTimeFormat":
+                        this.fileOpenTimeFormat = fieldValue;
+                        break;
                     case "EnabledComponentHash":
                         this.enabledComponentHash = fieldValue.equals("1");
                         break;
@@ -214,6 +223,9 @@ public
                         break;
                     case "RelcalAll":
                         this.recalAll = fieldValue.equals("1");
+                        break;
+                    case "IsLotFile":
+                        this.lotFile = fieldValue.equals("1");
                         break;
                     case "OperMap":
                         for (String group : fieldValue.split(",")) {
@@ -1499,4 +1511,15 @@ public
     void setCamLotNode(XmlNode camLotNode) {
         this.camLotNode = camLotNode;
     }
+
+    public
+    boolean isLotFile() {
+        return lotFile;
+    }
+
+    public
+    String getFileOpenTimeFormat() {
+        return fileOpenTimeFormat;
+    }
+ 
 }

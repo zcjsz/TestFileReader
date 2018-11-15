@@ -448,6 +448,8 @@ and open the template in the editor.
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
         <GenerateMappingFile>0</GenerateMappingFile>
+        <!--if this a lot file, the mapping path is date/lot/file, else is just use date/file-->
+        <IsLotFile>0</IsLotFile>
         
         <KDFDate>
             <Start>20180401</Start>
@@ -477,7 +479,8 @@ and open the template in the editor.
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
         
-        
+        <FileOpenTimeIndex>9,10</FileOpenTimeIndex>
+        <FileOpenTimeFormat>uuuu-MM-dd-hh-mm-ss</FileOpenTimeFormat>
         
         <!--ProcessLot>Y</ProcessLot>
         <UpdateUnit>Y</UpdateUnit>

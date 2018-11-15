@@ -12,6 +12,7 @@ import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.himalayas.filereader.util.Config;
@@ -226,38 +227,38 @@ public abstract
             System.out.println("Skip since bad Format of KDF date");
             return false;
         }
-
-        this.lotNumber = names[format.getLotNumberIndex()];
-
+        if (this.format.isLotFile()) {
+            this.lotNumber = names[format.getLotNumberIndex()];
+        }
         // archive file
         this.doneArchiveFile = new File(this.getFormat().getDoneArchivePath()
             + "/" + this.kdfDate
-            + "/" + lotNumber
+            + (this.format.isLotFile() ? ("/" + lotNumber) : "")
             + "/" + this.file.getName());
 
         this.badFormatArchiveFile = new File(this.getFormat().getBadFormatArchivePath()
             + "/" + this.kdfDate
-            + "/" + lotNumber
+            + (this.format.isLotFile() ? ("/" + lotNumber) : "")
             + "/" + this.file.getName());
 
         this.openErrorArchiveFile = new File(this.getFormat().getOpenErrorArchivePath()
             + "/" + this.kdfDate
-            + "/" + lotNumber
+            + (this.format.isLotFile() ? ("/" + lotNumber) : "")
             + "/" + this.file.getName());
 
         this.repeatArchiveFile = new File(this.getFormat().getRepeatArchivePath()
             + "/" + this.kdfDate
-            + "/" + lotNumber
+            + (this.format.isLotFile() ? ("/" + lotNumber) : "")
             + "/" + this.file.getName());
         this.exceptionArchiveFile = new File(this.getFormat().getExceptionArchivePath()
             + "/" + this.kdfDate
-            + "/" + lotNumber
+            + (this.format.isLotFile() ? ("/" + lotNumber) : "")
             + "/" + this.file.getName());
 
         // mapping file
         this.mappingFile = new File(this.getFormat().getMappingPath()
             + "/" + this.kdfDate
-            + "/" + lotNumber
+            + (this.format.isLotFile() ? ("/" + lotNumber) : "")
             + "/" + this.fileName);
 
         return true;
@@ -281,6 +282,32 @@ public abstract
     private
         boolean setFileDate() {
         String[] names = this.file.getName().split("_");
+
+        if (this.format.getFileOpenTimeFormat() != null) {
+            String tempDate = "";
+            for (int index : format.getFileOpenTimeIndex()) {
+                if (names[index].contains(".")) {
+                    names[index] = names[index].substring(0, names[index].indexOf('.'));
+                }
+                tempDate += names[index];
+            }
+            if (tempDate.length() >= this.getFormat().getFileOpenTimeFormat().length()) {
+                try {
+                    LocalDateTime dateTime = LocalDateTime.parse(tempDate.subSequence(0, this.getFormat().getFileOpenTimeFormat().length()), DateTimeFormatter.ofPattern(this.getFormat().getFileOpenTimeFormat()));
+                    this.kdfMonth = dateTime.format(DateTimeFormatter.ofPattern("uuuuMMdd"));
+                    this.fileOpenTime = dateTime.format(DateTimeFormatter.ofPattern("uuuuMMddhhmmss"));
+                    return true;
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+
         this.kdfMonth = names[format.getKdfMonthIndex()];
         if (this.kdfMonth.length() == 4) {
             //0604
