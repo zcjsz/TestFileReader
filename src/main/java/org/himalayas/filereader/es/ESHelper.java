@@ -645,8 +645,8 @@ public
     }
 
     /**
-     * this method is to update or insert the lot doc isCaled to 'N'
-     * the key is the 
+     * this method is to update or insert the lot doc isCaled to 'N' the key is
+     * the
      *
      * @param lotNumber
      * @param operation
@@ -819,10 +819,10 @@ public
 //        String operation = null;
 //        DataFormat format = null;
 //        es.calLot(lotNumber, operation, format);
-        for(DataFormat dataFormat: Config.dataFormats.values()){
-            if(dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)
+        for (DataFormat dataFormat : Config.dataFormats.values()) {
+            if (dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)
                 || dataFormat.getDataType().equals(Config.DataTypes.SMAP)
-                || dataFormat.getDataType().equals(Config.DataTypes.WAT)){
+                || dataFormat.getDataType().equals(Config.DataTypes.WAT)) {
                 continue;
             }
             es.proceedUncaledLot();
