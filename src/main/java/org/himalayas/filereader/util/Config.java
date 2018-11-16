@@ -471,23 +471,27 @@ public
                             }
                             xmlNode.setIndex(index);
                         }
-                        // only add for camstart lot node
-                        if (dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)) {
+                        // only add for camstart lot node and WAT node, but WAT is only optional, camstar is must have
+                        if (dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR) || dataFormat.getDataType().equals(Config.DataTypes.WAT)) {
                             if (node.elements("Name").size() > 0) {
                                 String aliasName = node.elementTextTrim("Name").trim();
                                 xmlNode.setCamColumnName(aliasName);
                             }
                             else {
-                                System.out.println("Fatal Error: please setup the name for camstar column: " + xmlNodeName);
-                                System.exit(1);
+                                if (dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)) {
+                                    System.out.println("Fatal Error: please setup the name for camstar column: " + xmlNodeName);
+                                    System.exit(1);
+                                }
                             }
                             if (node.elements("AllowEmpty").size() > 0) {
                                 String notEmpty = node.elementTextTrim("AllowEmpty").trim();
                                 xmlNode.setAllowEmpty(notEmpty.equals("1"));
                             }
                             else {
-                                System.out.println("Fatal Error: please setup the name for camstar column: " + xmlNodeName);
-                                System.exit(1);
+                                if (dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)) {
+                                    System.out.println("Fatal Error: please setup the AllowEmpty for camstar column: " + xmlNodeName);
+                                    System.exit(1);
+                                }
                             }
 
                             if (node.elements("Type").size() > 0) {
@@ -518,8 +522,10 @@ public
                                 }
                             }
                             else {
-                                System.out.println("Fatal Error: please setup the name for camstar column: " + xmlNodeName);
-                                System.exit(1);
+                                if (dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)) {
+                                    System.out.println("Fatal Error: please setup the Type for camstar column: " + xmlNodeName);
+                                    System.exit(1);
+                                }
                             }
                         }
 
