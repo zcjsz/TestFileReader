@@ -51,6 +51,7 @@ and open the template in the editor.
             <Start>20180401</Start>
             <End>20181001</End>
         </KDFDate>
+        <LatestDays></LatestDays>
         <FileLimit>100</FileLimit>
         
         <Customer>AMD</Customer>
@@ -154,6 +155,7 @@ and open the template in the editor.
             <Start></Start>
             <End>201805</End>
         </KDFDate>
+        <LatestDays></LatestDays>
         <FileLimit>100</FileLimit>
         
         <Customer>Hygon</Customer>
@@ -256,6 +258,7 @@ and open the template in the editor.
             <Start></Start>
             <End></End>
         </KDFDate>
+        <LatestDays></LatestDays>
         <FileLimit>500</FileLimit>
         
         <Customer>Hygon</Customer>
@@ -346,6 +349,7 @@ and open the template in the editor.
             <Start></Start>
             <End></End>
         </KDFDate>
+        <LatestDays></LatestDays>
         <FileLimit>100</FileLimit>
         
         <Customer>Hygon</Customer>
@@ -402,6 +406,7 @@ and open the template in the editor.
             <Start></Start>
             <End></End>
         </KDFDate>
+        <LatestDays></LatestDays>
         <FileLimit>5000</FileLimit>
         
         <Customer>Hygon</Customer>
@@ -460,6 +465,7 @@ and open the template in the editor.
             <Start>20180401</Start>
             <End>20181001</End>
         </KDFDate>
+        <LatestDays></LatestDays>
         <FileLimit>1000</FileLimit>
         
         

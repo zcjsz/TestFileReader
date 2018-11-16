@@ -6,6 +6,8 @@
 package org.himalayas.filereader.util;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,12 +18,15 @@ import org.himalayas.filereader.kdf.Bin;
 
 public
     class DataFormat {
-    
+
+    private
+        int latestDays = 0;
+
     private
         String fileOpenTimeFormat = null;
-    
+
     private
-         boolean lotFile = true;
+        boolean lotFile = true;
 
     // add for camstar data type
     private
@@ -208,7 +213,20 @@ public
                 }
 
                 switch (fieldName) {
-                    
+
+                    case "LatestDays":
+                        try {
+                            this.latestDays = Integer.valueOf(fieldValue);
+                            if (this.latestDays <= 0) {
+                                System.out.println("Fatal Error: LatestDays should be a number grate than 0");
+                                System.exit(1);
+                            }
+                        }
+                        catch (NumberFormatException e) {
+                            System.out.println("Fatal Error: LatestDays should be a number");
+                            System.exit(1);
+                        }
+                        break;
                     case "FileOpenTimeFormat":
                         this.fileOpenTimeFormat = fieldValue;
                         break;
@@ -1498,28 +1516,37 @@ public
     }
 
     public
-    void setProductionMode(boolean productionMode) {
+        void setProductionMode(boolean productionMode) {
         this.productionMode = productionMode;
     }
 
     public
-    XmlNode getCamLotNode() {
+        XmlNode getCamLotNode() {
         return camLotNode;
     }
 
     public
-    void setCamLotNode(XmlNode camLotNode) {
+        void setCamLotNode(XmlNode camLotNode) {
         this.camLotNode = camLotNode;
     }
 
     public
-    boolean isLotFile() {
+        boolean isLotFile() {
         return lotFile;
     }
 
     public
-    String getFileOpenTimeFormat() {
+        String getFileOpenTimeFormat() {
         return fileOpenTimeFormat;
     }
- 
+
+    public
+        String getMinDateString() {
+        String date = "1";
+        if (this.latestDays > 0) {
+            date = LocalDate.now().minusDays(this.latestDays).format(DateTimeFormatter.BASIC_ISO_DATE);
+        }
+        return date;
+    }
+
 }

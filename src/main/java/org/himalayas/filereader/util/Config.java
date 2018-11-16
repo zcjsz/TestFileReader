@@ -415,7 +415,7 @@ public
                         break;
                     case "Iscamlot":
                         isCamLot = value.equals("1");
-                        break;    
+                        break;
                     case "operation":
                         isOperation = value.equals("1");
                         break;
@@ -471,7 +471,7 @@ public
                             }
                             xmlNode.setIndex(index);
                         }
-                        // only add for camstart lot node 
+                        // only add for camstart lot node
                         if (dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)) {
                             if (node.elements("Name").size() > 0) {
                                 String aliasName = node.elementTextTrim("Name").trim();
@@ -547,7 +547,9 @@ public
                 }
                 if (xmlNode.isEnabled()) {
                     // CAMSTAR data type does not need the field tag
-                    if (fieldNames.isEmpty() && (!dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR))) {
+                    if (fieldNames.isEmpty()
+                        && (!dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR))
+                        && (!dataFormat.getDataType().equals(Config.DataTypes.WAT))) {
                         System.out.printf("Fatal Error: please add field for this head xml node %s\n", xmlNodeName);
                         System.exit(1);
                     }

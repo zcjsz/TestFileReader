@@ -66,11 +66,7 @@ public
 
             kdfReader.setFormat(format);
             for (File dateFile : new File(format.getKdfPath()).listFiles()) {
-                if (dateFile.isDirectory()
-                    && (dateFile.getName().length() == 8 || dateFile.getName().length() == 10)) {
-
-                }
-                else {
+                if (!this.checkDateFile(dateFile, format.getMinDateString())) {
                     continue;
                 }
 
@@ -133,11 +129,7 @@ public
             System.out.println("*****************************************************************");
             File rootFile = new File(Config.smapFormat.getKdfPath());
             for (File dateFile : rootFile.listFiles()) {
-                if (dateFile.isDirectory()
-                    && (dateFile.getName().length() == 8 || dateFile.getName().length() == 10)) {
-
-                }
-                else {
+                if (!this.checkDateFile(dateFile, Config.smapFormat.getMinDateString())) {
                     continue;
                 }
                 for (File lotFile : dateFile.listFiles()) {
@@ -191,6 +183,28 @@ public
         }
         System.out.println();
         System.out.println(LocalDateTime.now().toString() + ": All task completed,total time = " + (System.currentTimeMillis() - startTime));
+    }
+
+    public
+        boolean checkDateFile(File dateFile, String minDate) {
+
+        if (dateFile.isDirectory()
+            && (dateFile.getName().length() == 8 || dateFile.getName().length() == 10)
+            && dateFile.getName().startsWith("20")) {
+            try {
+                int temp = Integer.valueOf(dateFile.getName());
+                return dateFile.getName().compareTo(minDate) >= 0;
+            }
+            catch (NumberFormatException e) {
+                System.out.printf("Warning: skip %s since minDate is %s\n", dateFile.getName(), minDate);
+                return false;
+            }
+
+        }
+        else {
+            return false;
+        }
+
     }
 
     public static
