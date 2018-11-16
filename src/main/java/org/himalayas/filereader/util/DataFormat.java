@@ -544,7 +544,7 @@ public
                 return false;
 
             }
-            return true;
+            return checkArchive();
         }
         else if (this.getSourceType().equalsIgnoreCase(Config.DataTypes.SMAP.name())
             || this.getSourceType().equalsIgnoreCase(Config.DataTypes.WAT.name())) {
