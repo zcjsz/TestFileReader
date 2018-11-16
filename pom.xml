@@ -64,32 +64,31 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
+            <!--plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>copy-resources</id>
-                        <!-- here the phase you need -->
                         <phase>install</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>config/</outputDirectory>
+                            <outputDirectory>config/engFileReader/</outputDirectory>
                             <resources>          
                                 <resource>
                                     <directory>target/</directory>
                                     <filtering>true</filtering>
                                     <includes>
-                                        <include>*.jar</include>
+                                        <include>*s.jar</include>
                                     </includes>
                                 </resource>
                             </resources>              
                         </configuration>            
                     </execution>
                 </executions>
-            </plugin>
+            </plugin-->
         </plugins>
     </build>
 </project>
