@@ -364,12 +364,19 @@ public
         });
         try {
             document = reader.read(configFile);
-            if (lockFilePath == null
-                || (!new File(lockFilePath).exists())
-                || testDescId == null) {
-                System.err.println("please setup correct lockFilePath");
+            if (testDescId == null) {
+                System.err.println("please setup correct testDescId field name for kdf");
                 return false;
             }
+            if (Config.subClass == null) {
+                System.err.println("please setup correct subClass field name for kdf");
+                return false;
+            }
+            if (Config.baseClass == null) {
+                System.err.println("please setup correct baseClass field name for kdf");
+                return false;
+            }
+
         }
         catch (DocumentException ex) {
             Logger.getLogger(DataFormat.class.getName()).log(Level.SEVERE, null, ex);

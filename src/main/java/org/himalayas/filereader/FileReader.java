@@ -67,6 +67,7 @@ public
             kdfReader.setFormat(format);
             for (File dateFile : new File(format.getKdfPath()).listFiles()) {
                 if (!this.checkDateFile(dateFile, format.getMinDateString())) {
+                    System.out.printf("Warning: skip %s since minDate is %s\n", dateFile.getName(), format.getMinDateString());
                     continue;
                 }
 
@@ -122,6 +123,7 @@ public
             File rootFile = new File(Config.smapFormat.getKdfPath());
             for (File dateFile : rootFile.listFiles()) {
                 if (!this.checkDateFile(dateFile, Config.smapFormat.getMinDateString())) {
+                    System.out.printf("Warning: skip %s since minDate is %s\n", dateFile.getName(), Config.smapFormat.getMinDateString());
                     continue;
                 }
                 for (File lotFile : dateFile.listFiles()) {
@@ -188,7 +190,6 @@ public
                 return dateFile.getName().compareTo(minDate) >= 0;
             }
             catch (NumberFormatException e) {
-                System.out.printf("Warning: skip %s since minDate is %s\n", dateFile.getName(), minDate);
                 return false;
             }
 
@@ -201,7 +202,7 @@ public
 
     public static
         void main(String[] args) {
-        boolean debug = true;
+        boolean debug = false;
         if (args.length == 0) {
             if (!debug) {
                 System.out.println("please set the config file path");
