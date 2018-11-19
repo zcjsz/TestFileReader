@@ -1712,18 +1712,19 @@ public
 //			}
             String fieldValue = node.get(fieldName).toString().trim();
 
-            if (fieldName.isEmpty()) {
+            if (fieldName != null && fieldName.trim().isEmpty()) {
                 continue;
             }
+            fieldName = fieldName.trim();
             if (this.getFormat().getFieldFiters().contains(fieldName)) {
                 continue;
             }
 
             if (!fieldValue.isEmpty()) {
-                if (!this.isFormatField(fieldValue, fieldName, isLog)) {
-                    continue;
-
-                }
+//                if (!this.isFormatField(fieldValue, fieldName, isLog)) {
+//                    continue;
+//
+//                }
                 if (fieldName.equals(FieldType.PinRefPtr)) {
                     String pinName = this.pinRefs.get(fieldValue);
                     if (fieldValue.contains(",")) {
@@ -1743,7 +1744,8 @@ public
                     }
                 }
                 else {
-                    value += "," + fieldName.replace('.', '_') + "=" + fieldValue;
+                    value += this.getFieldKVStr(fieldName, fieldValue);
+//                    value += "," + fieldName.replace('.', '_') + "=" + fieldValue;
 
                 }
             }
@@ -1785,16 +1787,63 @@ public
         return value;
     }
 
+    /**
+     *
+     * @param fieldName
+     * @param fieldValue
+     * @return
+     */
     private
-        String formatField(String field) {
-        int length = field.length();
+        String getFieldKVStr(String fieldName, String fieldValue) {
+        String value = "";
+        if (fieldName.isEmpty() || fieldValue.isEmpty()) {
+            return value;
+        }
+        int length = fieldValue.length();
+        if (length > this.format.getFieldValueLengthLimit()) {
+            if (this.isDebugMode()) {
+                System.out.printf("Too long Field: fieldName=%s, fieldValue=%s\n", fieldName, fieldValue);
+            }
+            return value;
+        }
+        if (fieldName.equals("value")) {
+            try {
+                float numberValue = Float.valueOf(fieldValue);
+                if (Float.isInfinite(numberValue)) {
+                    System.out.printf("Bad Format Field: fieldName=%s, fieldValue=%s\n", fieldName, fieldValue);
+                    return value;
+                }
+            }
+            catch (Exception e) {
+                System.out.printf("Bad Format Field: fieldName=%s, fieldValue=%s\n", fieldName, fieldValue);
+                return value;
+            }
+        }
+        String formatValue = this.formatFieldValue(fieldValue);
+        if (formatValue.isEmpty()) {
+            return value;
+        }
+        return value = "," + fieldName.replace('.', '_').replace('=', ':').replace(',', ';') + "=" + formatValue;
+
+    }
+
+    private
+        String formatFieldValue(String fieldValue) {
+        int length = fieldValue.length();
         String value = "";
         int i = 0;
-        while (i++ != length) {
-            char chr = field.charAt(i);
-            if (chr != ',' && chr != '=' && chr != 32) {
+        while (i != length) {
+            char chr = fieldValue.charAt(i);
+            if (chr == ',') {
+                value += ';';
+            }
+            else if (chr == '=') {
+                value += ':';
+            }
+            else if (chr != 13 && chr != 10) {
                 value += chr;
             }
+            i++;
         }
         return value;
 
