@@ -73,14 +73,6 @@ public
                 for (File kdfFile : dateFile.listFiles()) {
                     if (kdfFile.isFile()) {
                         String fileName = kdfFile.getName();
-                        if (fileName.endsWith(Config.KdfRename.badFormat.name())
-                            || fileName.endsWith(Config.KdfRename.done.name())
-                            || fileName.endsWith(Config.KdfRename.exception.name())
-                            || fileName.endsWith(Config.KdfRename.openErr.name())
-                            || fileName.endsWith(Config.KdfRename.skip.name())) {
-                            continue;
-
-                        }
                         if (!kdfFile.canRead()) {
                             System.out.println("Error: tdni has no permission to read this file");
                             continue;

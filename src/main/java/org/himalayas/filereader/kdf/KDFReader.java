@@ -341,6 +341,7 @@ public
             || this.file.getName().endsWith(Config.KdfRename.exception.name())
             || this.file.getName().endsWith(Config.KdfRename.openErr.name())
             || this.file.getName().endsWith(Config.KdfRename.skip.name())) {
+            System.out.println("Warning: this is a proceeded kdf!");
             return false;
         }
         return true;
