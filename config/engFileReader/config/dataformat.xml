@@ -28,7 +28,9 @@ and open the template in the editor.
     <!--GFDRS_S6310A1AB0PG_P_ATC607_H800S.00_WS1_BBIYG148MVB1_1_-5_180905_051627.kdf.20190909090909-->
     <!--NEVER try to change the SourceType name here-->
     <SourceType name= "EngSORT" enabled = "1" >
-        <LotIndex>eng-sort-lot-*</LotIndex>
+        <DataType>WaferSort</DataType>
+        <LotIndex>sort-lot-*</LotIndex>
+        <TestIndex>sort-test-*</TestIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>1</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
@@ -39,18 +41,18 @@ and open the template in the editor.
             <Start>20180800</Start>
             <End></End>
         </KDFDate>
-       <FileLimit>30</FileLimit>
+        <LatestDays>2</LatestDays>
+	<FileLimit>30</FileLimit>       
         
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
-        <KDFPath>/extend/hygon_source_data/EngSORT/</KDFPath>
+        <KDFPath>EngSORT</KDFPath>
         <!--xml path is to store the generated test item log file-->
-        <XmlPath>/extend/data_log/EngSORT/</XmlPath>
+        <XmlPath>EngSORT</XmlPath>
         <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
-        <MappingPath>/extend/data_mapping/EngSORT/</MappingPath>
+        <MappingPath>EngSORT</MappingPath>
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
-        <KDFArchivePath>/data/data_archive/EngSORT/</KDFArchivePath>
-        <DataType>WaferSort</DataType>
+        <KDFArchivePath>EngSORT</KDFArchivePath>
         
         <!--never trun on debug mode in production mode, default 0-->
         <DebugMode>0</DebugMode>
