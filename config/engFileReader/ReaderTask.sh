@@ -46,7 +46,7 @@ else
     exit 0
 fi
 
-$JAVA -jar $TaskApp $ConfigFile  >> $LogFile 2>&1
+$JAVA -Xms6G -Xmx6G -jar $TaskApp $ConfigFile  >> $LogFile 2>&1
 
 TIME=$(date "+%Y%m%d%H%M%S")
 echo "$TIME: end task"
