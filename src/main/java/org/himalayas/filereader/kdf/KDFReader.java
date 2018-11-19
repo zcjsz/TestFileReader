@@ -992,7 +992,7 @@ public
 
     public
         boolean renameOrArchiveKDF(File destinationFile, Config.KdfRename rename) {
-        if (destinationFile == null) {
+        if ((!Config.renameKDF) && destinationFile == null) {
             return false;
         }
         if (this.getFormat().isProductionMode()) {

@@ -30,10 +30,10 @@ and open the template in the editor.
     <!--es host names of testing only env-->
     <ESHostTest>192.168.52.100</ESHostTest>
     
-    <SourcePath>testdata/extend/hygon_source_data</SourcePath>
-    <DatalogPath>testdata/extend/data_log</DatalogPath>
-    <MappingPath>testdata/extend/data_mapping</MappingPath>
-    <ArchivePath>testdata/data/data_archive</ArchivePath>
+    <SourcePath>/extend/hygon_source_data</SourcePath>
+    <DatalogPath>/extend/data_log</DatalogPath>
+    <MappingPath>/extend/data_mapping</MappingPath>
+    <ArchivePath>/data/data_archive</ArchivePath>
 
 
     <!--HG00058.1.1_6310_H800D0007101504_SLT_AXFNCP_DS2000DBABC01_20180823_052611_suzamdaslt086_006_MAIN.kdf.20180909090909-->
@@ -67,6 +67,7 @@ and open the template in the editor.
         <DebugMode>0</DebugMode>
         
         <!--comma separated filters, case sensitive-->
+        <FilterOut></FilterOut>
         <!--comma separated selectors, case sensitive-->
         <Selector></Selector>
         

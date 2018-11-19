@@ -30,10 +30,10 @@ and open the template in the editor.
     <!--es host names of testing only env-->
     <ESHostTest>192.168.52.100</ESHostTest>
     
-    <SourcePath>testdata/extend/hygon_source_data</SourcePath>
-    <DatalogPath>testdata/extend/data_log</DatalogPath>
-    <MappingPath>testdata/extend/data_mapping</MappingPath>
-    <ArchivePath>testdata/data/data_archive</ArchivePath>
+    <SourcePath>/extend/hygon_source_data</SourcePath>
+    <DatalogPath>/extend/data_log</DatalogPath>
+    <MappingPath>/extend/data_mapping</MappingPath>
+    <ArchivePath>/data/data_archive</ArchivePath>
 
     <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
