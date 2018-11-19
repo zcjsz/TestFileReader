@@ -176,7 +176,9 @@ public
         jobStartTime = System.currentTimeMillis();
         System.out.printf("\n%s: start proceed kdf %s\n", LocalDateTime.now(), file.getName());
         this.init();
-
+        if (!this.preValidate()) {
+            return false;
+        }
         if (!this.validateFile(file)) {
             this.failType = Config.FailureCase.BadFormat;
             this.logBadFormatFileToES();
@@ -329,6 +331,20 @@ public
             + "/" + this.file.getName().split(".kdf")[0] + ".kdf");
 
         return true;
+    }
+
+    protected
+        boolean preValidate() {
+
+        if (this.file.getName().endsWith(Config.KdfRename.badFormat.name())
+            || this.file.getName().endsWith(Config.KdfRename.done.name())
+            || this.file.getName().endsWith(Config.KdfRename.exception.name())
+            || this.file.getName().endsWith(Config.KdfRename.openErr.name())
+            || this.file.getName().endsWith(Config.KdfRename.skip.name())) {
+            return false;
+        }
+        return true;
+
     }
 
     private
@@ -1306,7 +1322,7 @@ public
         while (i < size && i < 128) {
             char chr = binDesc.charAt(i);
 //			if(chr == ',' || chr == '=' || chr == 13 || chr == 10) {
-//				
+//
 //			}
             if ((chr >= 48 && chr <= 57)
                 || (chr >= 65 && chr <= 90)
@@ -1488,11 +1504,11 @@ public
     private
         boolean validateBaseSubClass(String idClass) {
 
-        // slt class filters is in the readTestDesc method, slt TestDesc is different from ate	
+        // slt class filters is in the readTestDesc method, slt TestDesc is different from ate
         if (this.getFormat().getDataType().equals(Config.DataTypes.SLT)) {
             return true;
         }
-        //selector and filters 
+        //selector and filters
 
         String subClassName = this.testDescRefs.get(idClass).getSubClass();
         String baseClassName = this.testDescRefs.get(idClass).getBaseClass();
@@ -2276,23 +2292,23 @@ public
         new Config("config/dataformat.xml");
         KDFReader loader = new KDFReader();
 
-        File stageFile = new File("./testdata/KDF/SORT");
-        for (File file : stageFile.listFiles()) {
-            if (loader.chooseFormat(file)) {
-                loader.loadFile(file);
-            }
-        }
+        for (DataFormat dataFormat : Config.dataFormats.values()) {
+            if (dataFormat.getDataType().equals(Config.DataTypes.ATE)
+                || dataFormat.getDataType().equals(Config.DataTypes.SLT)
+                || dataFormat.getDataType().equals(Config.DataTypes.WaferSort)) {
+                if (!dataFormat.isEnabled()) {
+                    continue;
+                }
 
-        stageFile = new File("./testdata/KDF/SLT");
-        for (File file : stageFile.listFiles()) {
-            if (loader.chooseFormat(file)) {
-                loader.loadFile(file);
-            }
-        }
-        stageFile = new File("./testdata/KDF/FT");
-        for (File file : stageFile.listFiles()) {
-            if (loader.chooseFormat(file)) {
-                loader.loadFile(file);
+                loader.setFormat(dataFormat);
+                dataFormat.setProductionMode(false);
+
+                File stageFile = new File(dataFormat.getKdfPath());
+                for (File file : stageFile.listFiles()) {
+
+                    loader.loadFile(file);
+
+                }
             }
         }
 
