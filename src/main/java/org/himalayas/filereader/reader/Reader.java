@@ -567,14 +567,12 @@ public abstract
             }
             else {
                 if (!destinationFile.getParentFile().exists()) {
-                    if (destinationFile.getParentFile().mkdirs()) {
-                        Files.move(this.file.toPath(), destinationFile.toPath(), ATOMIC_MOVE);
-                    }
-                    else {
+                    if (!destinationFile.getParentFile().mkdirs()) {
                         this.logIoErrorToES("FailMkDIR");
                         return false;
                     }
                 }
+                Files.move(this.file.toPath(), destinationFile.toPath(), ATOMIC_MOVE);
             }
         }
         catch (IOException ex) {
