@@ -601,7 +601,7 @@ public abstract
         return false;
     }
 
-    private
+    public
         void logRepeatFileToES() {
         System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFRepeat,
@@ -627,7 +627,7 @@ public abstract
         );
     }
 
-    private
+    public
         void logIoErrorToES(String error) {
         System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.IOError,
@@ -641,7 +641,7 @@ public abstract
         );
     }
 
-    private
+    public 
         void logFileDoneToES() {
         System.out.printf("%s=%s,%s=%s,%s=%s,%s=%d,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFDone,
@@ -656,7 +656,7 @@ public abstract
         );
     }
 
-    private
+    public
         void logExceptionToES() {
         System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFException,

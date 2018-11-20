@@ -187,7 +187,9 @@ public
         XmlNode operationNode = null;
     private
         XmlNode camLotNode = null;
-
+		
+    private int rptKeepDays = 30;
+    private int logKeepDays = 30;
     public
         DataFormat(Element sourceData) {
         readData(sourceData);
@@ -466,6 +468,12 @@ public
                             this.flowContextFilters.add(filter.trim());
                         }
                         break;
+                    case "RptKeepDays":
+                        this.rptKeepDays = Integer.valueOf(fieldValue);
+                        break;
+                    case "LogKeepDays":
+                        this.logKeepDays = Integer.valueOf(fieldValue);
+                        break;
                     default:
                         System.out.printf("Error: this filed: %s is not supportted!\n", fieldName);
                         System.exit(1);
@@ -544,7 +552,7 @@ public
                 return false;
 
             }
-            return true;
+            return checkArchive();
         }
         else if (this.getSourceType().equalsIgnoreCase(Config.DataTypes.SMAP.name())
             || this.getSourceType().equalsIgnoreCase(Config.DataTypes.WAT.name())) {
@@ -1570,6 +1578,14 @@ public
             date = LocalDate.now().minusDays(this.latestDays).format(DateTimeFormatter.BASIC_ISO_DATE);
         }
         return date;
+    }
+
+    public int getRptKeepDays() {
+        return rptKeepDays;
+    }
+
+    public int getLogKeepDays() {
+        return logKeepDays;
     }
 
 }

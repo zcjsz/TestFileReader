@@ -491,8 +491,8 @@ public
                                 }
                             }
                             if (node.elements("AllowEmpty").size() > 0) {
-                                String notEmpty = node.elementTextTrim("AllowEmpty").trim();
-                                xmlNode.setAllowEmpty(notEmpty.equals("1"));
+                                String allowEmpty = node.elementTextTrim("AllowEmpty").trim();
+                                xmlNode.setAllowEmpty(allowEmpty.equals("Y"));
                             }
                             else {
                                 if (dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)) {
