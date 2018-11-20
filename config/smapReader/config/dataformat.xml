@@ -30,10 +30,10 @@ and open the template in the editor.
     <!--es host names of testing only env-->
     <ESHostTest>192.168.52.100</ESHostTest>
     
-    <SourcePath>testdata/extend/hygon_source_data</SourcePath>
-    <DatalogPath>testdata/extend/data_log</DatalogPath>
-    <MappingPath>testdata/extend/data_mapping</MappingPath>
-    <ArchivePath>testdata/data/data_archive</ArchivePath>
+    <SourcePath>/extend/hygon_source_data</SourcePath>
+    <DatalogPath>/extend/data_log</DatalogPath>
+    <MappingPath>/extend/data_mapping</MappingPath>
+    <ArchivePath>/data/data_archive</ArchivePath>
     
     <SourceType name= "SMAP" enabled = "1" >
         <DataType>SMAP</DataType>
@@ -442,7 +442,7 @@ and open the template in the editor.
         <LogFailOnlyNodeSelector></LogFailOnlyNodeSelector>
         
     </SourceType>
-    <SourceType name= "CAMSTAR" enabled = "1" >
+    <SourceType name= "CAMSTAR" enabled = "0" >
         <LotIndex>cam-lot-*</LotIndex>
         
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
