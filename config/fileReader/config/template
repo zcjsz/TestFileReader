@@ -765,6 +765,22 @@ PUT _template/all-test
             }
           },
           {
+            "byte_9": {
+              "match": "X0",
+              "mapping": {
+                "type": "byte"
+              }
+            }
+          },
+          {
+            "byte_10": {
+              "match": "Y0",
+              "mapping": {
+                "type": "byte"
+              }
+            }
+          },
+          {
             "short_1": {
               "match": "UnitCnt",
               "mapping": {

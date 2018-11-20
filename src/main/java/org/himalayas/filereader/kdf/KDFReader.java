@@ -846,9 +846,7 @@ public
         for (Node unit : units) {
             unitNo++;
             slaveUnitCnt = 0;
-            if (unitNo > 800) {
-                break;
-            }
+
             dataContent.setLength(0);
             format.clearUnitData();
             this.readUnit(unit);
@@ -866,7 +864,7 @@ public
              * unitDocKVString contains the unit start and end timestamper, add
              * kdf file name in the unit level doc for ate only.
              */
-            String unitKVStr = lotHeadStr + format.getUnitDocKVString() + getSlaveNodeKVString();
+            String unitKVStr = lotHeadStr + format.getUnitDocKVString() + getSlaveNodeKVString() + format.getX0Y0KVString();
             String slaveKVStr = this.getSlaveUnitKVString(lotHeadStr + format.getSlaveUnitDocKVString());
 
             if (this.getFormat().isAddFileName()) {
@@ -891,7 +889,7 @@ public
              * <SlaveNodeKVString> which contains the slave die info for the
              * whole part
              */
-            String testItemHeadStr = lotHeadStr + format.getUnitHeadTestKVStr();
+            String testItemHeadStr = lotHeadStr + format.getUnitHeadTestKVStr() + format.getX0Y0KVString();
             if (this.getFormat().isAppendSlaveUnitId2Test()) {
                 testItemHeadStr += getSlaveNodeKVString();
             }

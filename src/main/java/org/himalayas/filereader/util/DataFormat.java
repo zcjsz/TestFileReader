@@ -1067,6 +1067,29 @@ public
 
     }
 
+    public
+        String getX0Y0KVString() {
+        String value = "";
+        String xValue = this.getUnit().getxCoordNode().getXmlValue().trim();
+        String yValue = this.getUnit().getyCoordNode().getXmlValue().trim();
+        if ((!xValue.isEmpty()) && (!yValue.isEmpty())) {
+            try {
+                value += "," + FieldType.X0 + "=" + (7 - Integer.valueOf(xValue));
+                value += "," + FieldType.Y0 + "=" + ((Integer.valueOf(yValue) - 15) / 3);
+            }
+            catch (NumberFormatException e) {
+                System.out.printf("Error: %s = %s, %s = %s, can not convert to integer\n",
+                    this.getUnit().getxCoordNode().getName(),
+                    xValue,
+                    this.getUnit().getyCoordNode().getName(),
+                    yValue);
+                value = "";
+            }
+        }
+        return value;
+
+    }
+
     /**
      * skip all the master die info
      *
