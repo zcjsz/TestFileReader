@@ -572,14 +572,12 @@ public abstract
                         return false;
                     }
                 }
-                Files.move(this.file.toPath(), destinationFile.toPath(), ATOMIC_MOVE);
             }
+            Files.move(this.file.toPath(), destinationFile.toPath(), ATOMIC_MOVE);
         }
         catch (IOException ex) {
             System.out.println("EventType:ArchieveFailure");
-            Logger
-                .getLogger(Reader.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
             return false;
         }
         return true;
