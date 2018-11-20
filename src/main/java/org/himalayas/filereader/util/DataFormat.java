@@ -6,6 +6,8 @@
 package org.himalayas.filereader.util;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,6 +18,15 @@ import org.himalayas.filereader.kdf.Bin;
 
 public
     class DataFormat {
+
+    private
+        int latestDays = 0;
+
+    private
+        String fileOpenTimeFormat = null;
+
+    private
+        boolean lotFile = true;
 
     // add for camstar data type
     private
@@ -174,6 +185,8 @@ public
         XmlNode lotNumberNode = null;
     private
         XmlNode operationNode = null;
+    private
+        XmlNode camLotNode = null;
 
     public
         DataFormat(Element sourceData) {
@@ -201,6 +214,22 @@ public
 
                 switch (fieldName) {
 
+                    case "LatestDays":
+                        try {
+                            this.latestDays = Integer.valueOf(fieldValue);
+                            if (this.latestDays <= 0) {
+                                System.out.println("Fatal Error: LatestDays should be a number grate than 0");
+                                System.exit(1);
+                            }
+                        }
+                        catch (NumberFormatException e) {
+                            System.out.println("Fatal Error: LatestDays should be a number");
+                            System.exit(1);
+                        }
+                        break;
+                    case "FileOpenTimeFormat":
+                        this.fileOpenTimeFormat = fieldValue;
+                        break;
                     case "EnabledComponentHash":
                         this.enabledComponentHash = fieldValue.equals("1");
                         break;
@@ -212,6 +241,9 @@ public
                         break;
                     case "RelcalAll":
                         this.recalAll = fieldValue.equals("1");
+                        break;
+                    case "IsLotFile":
+                        this.lotFile = fieldValue.equals("1");
                         break;
                     case "OperMap":
                         for (String group : fieldValue.split(",")) {
@@ -1484,9 +1516,37 @@ public
     }
 
     public
-    void setProductionMode(boolean productionMode) {
+        void setProductionMode(boolean productionMode) {
         this.productionMode = productionMode;
     }
-    
+
+    public
+        XmlNode getCamLotNode() {
+        return camLotNode;
+    }
+
+    public
+        void setCamLotNode(XmlNode camLotNode) {
+        this.camLotNode = camLotNode;
+    }
+
+    public
+        boolean isLotFile() {
+        return lotFile;
+    }
+
+    public
+        String getFileOpenTimeFormat() {
+        return fileOpenTimeFormat;
+    }
+
+    public
+        String getMinDateString() {
+        String date = "1";
+        if (this.latestDays > 0) {
+            date = LocalDate.now().minusDays(this.latestDays).format(DateTimeFormatter.BASIC_ISO_DATE);
+        }
+        return date;
+    }
 
 }

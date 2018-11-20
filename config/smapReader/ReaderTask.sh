@@ -6,10 +6,10 @@ DATE=`expr substr $TIME 1 8`
 echo "$TIME: start the task"
 
 JAVA="/usr/bin/jdk1.8.0_151/bin/java"
-APP_PATH="/home/tdni/hygon_apps/ftFileReader"
+APP_PATH="/home/tdni/hygon_apps/smapFileReader"
 
 ConfigFile="$APP_PATH/config/dataformat.xml"
-APP_NAME="ftFileReader.jar"
+APP_NAME="smapFileReader.jar"
 TaskApp="$APP_PATH/target/$APP_NAME"
 
 
@@ -46,7 +46,7 @@ else
     exit 0
 fi
 
-$JAVA -Xms6G -Xmx6G -jar $TaskApp $ConfigFile  >> $LogFile 2>&1
+$JAVA -Xms300M -Xmx300M -jar $TaskApp $ConfigFile  >> $LogFile 2>&1
 
 TIME=$(date "+%Y%m%d%H%M%S")
 echo "$TIME: end task"

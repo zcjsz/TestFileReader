@@ -47,10 +47,12 @@ public
         Reader reader = new CamstarReader(Config.camFormat);
         Config.camFormat.setProductionMode(false);
 
-        File testDataFile = new File("./testdata/extend/hygon_source_data/SMAP");
-        for (File lotFile : testDataFile.listFiles()) {
-            for (File file : lotFile.listFiles()) {
-                reader.loadFile(file);
+        File testDataFile = new File("./testdata/extend/hygon_source_data/TransYieldRep");
+        for (File shfitFile : testDataFile.listFiles()) {
+            for (File dateFile : shfitFile.listFiles()) {
+                for (File camFile : dateFile.listFiles()) {
+                    reader.loadFile(camFile);
+                }
             }
         }
 

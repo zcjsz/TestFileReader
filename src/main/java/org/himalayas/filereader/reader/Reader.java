@@ -12,6 +12,7 @@ import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.himalayas.filereader.util.Config;
@@ -105,15 +106,9 @@ public abstract
             this.init();
 
             this.file = file;
-            
-            if (fileName.endsWith(Config.KdfRename.badFormat.name())
-                || fileName.endsWith(Config.KdfRename.done.name())
-                || fileName.endsWith(Config.KdfRename.exception.name())
-                || fileName.endsWith(Config.KdfRename.openErr.name())
-                || fileName.endsWith(Config.KdfRename.skip.name())) {
+            if (!this.preValidate()) {
                 return false;
             }
-            
             if (!this.validateFile()) {
                 this.failType = Config.FailureCase.BadFormat;
                 this.logBadFormatFileToES();
@@ -123,7 +118,7 @@ public abstract
             if (!validateKDFDate()) {
                 return false;
             }
-            
+
             if (this.isRepeatFile()) {
                 this.failType = Config.FailureCase.RepeatKDF;
                 this.logRepeatFileToES();
@@ -168,9 +163,9 @@ public abstract
             return true;
         }
         catch (Exception e) {
+            e.printStackTrace();
             this.logExceptionToES();
             this.renameOrArchiveKDF(this.getExceptionArchiveFile(), Config.KdfRename.exception);
-            e.printStackTrace();
             return false;
         }
     }
@@ -203,6 +198,9 @@ public abstract
         else if (this.getFormat().getDataType().equals(Config.DataTypes.WAT)) {
             names = fileName.split("dis.");
         }
+        else if (this.getFormat().getDataType().equals(Config.DataTypes.CAMSTAR)) {
+            names = fileName.split("xls.");
+        }
         else {
             System.err.println("Fatal Error: bad Data Type found: " + this.getFormat().getDataType().toString());
             System.exit(1);
@@ -219,27 +217,6 @@ public abstract
 
         this.fileName = fileName.substring(0, fileName.length() - 15);
 
-        boolean skip = false;
-        for (String filter : this.getFormat().getFilters()) {
-            if (fileName.contains(filter)) {
-                skip = true;
-                break;
-            }
-        }
-        if (skip) {
-            return false;
-        }
-
-        for (String selector : this.getFormat().getSelectors()) {
-            if (!fileName.contains(selector)) {
-                skip = true;
-                break;
-            }
-        }
-        if (skip) {
-            return false;
-        }
-
         names = fileName.split("_");
         if (names.length != this.getFormat().getUnderLineCnt()) {
             System.out.println("Skip this kdf since underline cnt is not " + this.getFormat().getUnderLineCnt());
@@ -250,38 +227,38 @@ public abstract
             System.out.println("Skip since bad Format of KDF date");
             return false;
         }
-
-        this.lotNumber = names[format.getLotNumberIndex()];
-
+        if (this.format.isLotFile()) {
+            this.lotNumber = names[format.getLotNumberIndex()];
+        }
         // archive file
         this.doneArchiveFile = new File(this.getFormat().getDoneArchivePath()
             + "/" + this.kdfDate
-            + "/" + lotNumber
+            + (this.format.isLotFile() ? ("/" + lotNumber) : "")
             + "/" + this.file.getName());
 
         this.badFormatArchiveFile = new File(this.getFormat().getBadFormatArchivePath()
             + "/" + this.kdfDate
-            + "/" + lotNumber
+            + (this.format.isLotFile() ? ("/" + lotNumber) : "")
             + "/" + this.file.getName());
 
         this.openErrorArchiveFile = new File(this.getFormat().getOpenErrorArchivePath()
             + "/" + this.kdfDate
-            + "/" + lotNumber
+            + (this.format.isLotFile() ? ("/" + lotNumber) : "")
             + "/" + this.file.getName());
 
         this.repeatArchiveFile = new File(this.getFormat().getRepeatArchivePath()
             + "/" + this.kdfDate
-            + "/" + lotNumber
+            + (this.format.isLotFile() ? ("/" + lotNumber) : "")
             + "/" + this.file.getName());
         this.exceptionArchiveFile = new File(this.getFormat().getExceptionArchivePath()
             + "/" + this.kdfDate
-            + "/" + lotNumber
+            + (this.format.isLotFile() ? ("/" + lotNumber) : "")
             + "/" + this.file.getName());
 
         // mapping file
         this.mappingFile = new File(this.getFormat().getMappingPath()
             + "/" + this.kdfDate
-            + "/" + lotNumber
+            + (this.format.isLotFile() ? ("/" + lotNumber) : "")
             + "/" + this.fileName);
 
         return true;
@@ -305,6 +282,33 @@ public abstract
     private
         boolean setFileDate() {
         String[] names = this.file.getName().split("_");
+
+        if (this.format.getFileOpenTimeFormat() != null) {
+            String tempDate = "";
+            for (int index : format.getFileOpenTimeIndex()) {
+                if (names[index].contains(".")) {
+                    names[index] = names[index].substring(0, names[index].indexOf('.'));
+                }
+                tempDate += names[index];
+            }
+            if (tempDate.length() >= this.getFormat().getFileOpenTimeFormat().length()) {
+                try {
+                    LocalDateTime dateTime = LocalDateTime.parse(tempDate.subSequence(0, this.getFormat().getFileOpenTimeFormat().length()), DateTimeFormatter.ofPattern(this.getFormat().getFileOpenTimeFormat()));
+                    this.kdfMonth = dateTime.format(DateTimeFormatter.ofPattern("uuuuMMdd"));
+                    this.fileOpenTime = dateTime.format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss"));
+                    this.kdfDate = this.kdfMonth.substring(0, 8);
+                    return true;
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+
         this.kdfMonth = names[format.getKdfMonthIndex()];
         if (this.kdfMonth.length() == 4) {
             //0604
@@ -340,6 +344,48 @@ public abstract
         return true;
     }
 
+    protected
+        boolean preValidate() {
+
+        if (this.file.getName().endsWith(Config.KdfRename.badFormat.name())
+            || this.file.getName().endsWith(Config.KdfRename.done.name())
+            || this.file.getName().endsWith(Config.KdfRename.exception.name())
+            || this.file.getName().endsWith(Config.KdfRename.openErr.name())
+            || this.file.getName().endsWith(Config.KdfRename.skip.name())) {
+            return false;
+        }
+
+        boolean skip = false;
+        for (String filter : this.getFormat().getFilters()) {
+            if (this.getFile().getName().contains(filter)) {
+                skip = true;
+                break;
+            }
+        }
+        if (skip) {
+            return false;
+        }
+
+        for (String selector : this.getFormat().getSelectors()) {
+            if (!this.getFile().getName().contains(selector)) {
+                skip = true;
+                break;
+            }
+        }
+        if (skip) {
+            return false;
+        }
+        return true;
+
+    }
+
+    /**
+     * return the local datatime with offset this input time string format must
+     * be 'uuuuMMddhhmmss'
+     *
+     * @param timeStr
+     * @return
+     */
     private
         String formatTimeStr(String timeStr) {
         return timeStr.substring(0, 4) + "-" + timeStr.substring(4, 6) + "-" + timeStr.substring(6, 8)
@@ -594,7 +640,7 @@ public abstract
             FieldType.KdfMonth, this.kdfMonth,
             FieldType.KdfDate, this.kdfDate,
             FieldType.TransferTime, this.transferTime,
-            FieldType.KdfName, this.fileName,
+            FieldType.KdfName, this.file.getName(),
             FieldType.DataType, this.getFormat().getDataType()
         );
     }
@@ -641,7 +687,6 @@ public abstract
                 i++;
             }
         }
-        value += "," + this.getFormat().getUnit().getWaferNumberNode().getName() + "=" + names[this.getFormat().getWaferNumberIndex()];
         value += "," + FieldType.FileTime + "=" + this.formatTimeStr(this.fileOpenTime);
         if (this.getFormat().isAddFileName()) {
             value += "," + FieldType.FileName + "=" + this.fileName;

@@ -12,7 +12,7 @@ and open the template in the editor.
 <!--please NEVER edit the configuration unless you are FULLY UNDERSTAND to the setttings-->
 
 <root>
-    <LockFilePath>/home/tdni/hygon_apps/fileReader</LockFilePath>
+    <LockFilePath>./testdata</LockFilePath>
     
     <!--convert the long time to human readable date time stamper-->
     <ConvertTime>1</ConvertTime>
@@ -25,10 +25,22 @@ and open the template in the editor.
     <SubClass>subClass</SubClass>
     <BaseClass>baseClass</BaseClass>
     
+    <!--es host names of production env-->
+    <ESHostProduction>10.72.1.237,10.72.1.238,10.72.1.239</ESHostProduction>
+    <!--es host names of testing only env-->
+    <ESHostTest>192.168.52.100</ESHostTest>
+    
+    <SourcePath>/extend/hygon_source_data</SourcePath>
+    <DatalogPath>/extend/data_log</DatalogPath>
+    <MappingPath>/extend/data_mapping</MappingPath>
+    <ArchivePath>/data/data_archive</ArchivePath>
+    
     <!--GFDRS_S6310A1AB0PG_P_ATC607_H800S.00_WS1_BBIYG148MVB1_1_-5_180905_051627.kdf.20190909090909-->
     <!--NEVER try to change the SourceType name here-->
     <SourceType name= "EngSORT" enabled = "1" >
-        <LotIndex>eng-sort-lot-*</LotIndex>
+        <DataType>WaferSort</DataType>
+        <LotIndex>sort-lot-*</LotIndex>
+        <TestIndex>sort-test-*</TestIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>1</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
@@ -39,18 +51,18 @@ and open the template in the editor.
             <Start>20180800</Start>
             <End></End>
         </KDFDate>
-       <FileLimit>30</FileLimit>
+        <LatestDays>2</LatestDays>
+	<FileLimit>30</FileLimit>       
         
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
-        <KDFPath>/extend/hygon_source_data/EngSORT/</KDFPath>
+        <KDFPath>EngSORT</KDFPath>
         <!--xml path is to store the generated test item log file-->
-        <XmlPath>/extend/data_log/EngSORT/</XmlPath>
+        <XmlPath>EngSORT</XmlPath>
         <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
-        <MappingPath>/extend/data_mapping/EngSORT/</MappingPath>
+        <MappingPath>EngSORT</MappingPath>
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
-        <KDFArchivePath>/data/data_archive/EngSORT/</KDFArchivePath>
-        <DataType>WaferSort</DataType>
+        <KDFArchivePath>EngSORT</KDFArchivePath>
         
         <!--never trun on debug mode in production mode, default 0-->
         <DebugMode>0</DebugMode>
@@ -95,7 +107,7 @@ and open the template in the editor.
         <SubClasSelector></SubClasSelector>
         <!--comma separated Node Type filters, case sensitive-->
         <!--PinMeasure,StructureMeasure,Flow,Test,Evaluation,BitString,PatternFailInfo,PatternPinFail,PatternResult,BistFailArray-->
-        <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
+        <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer,ULSD</NodeTypeFilter>
         <!--comma separated Node Type selectors, case sensitive-->
         <NodeTypeSelector></NodeTypeSelector>
         
@@ -147,13 +159,13 @@ and open the template in the editor.
         <Customer>AMD</Customer>
         <Factory>Suzhou</Factory>
         
-        <KDFPath>/extend/hygon_source_data/FT/</KDFPath>
+        <KDFPath>FT</KDFPath>
         <!--xml path is to store the generated test item log file-->
-        <XmlPath>/extend/data_log/FT/</XmlPath>
+        <XmlPath>FT</XmlPath>
         <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
-        <MappingPath>/extend/data_mapping/FT/</MappingPath>
+        <MappingPath>FT</MappingPath>
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
-        <KDFArchivePath>/data/data_archive/FT/</KDFArchivePath>
+        <KDFArchivePath>FT</KDFArchivePath>
         <DataType>ATE</DataType>
         <DebugMode>0</DebugMode>
         
@@ -247,13 +259,13 @@ and open the template in the editor.
         
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
-        <KDFPath>/extend/hygon_source_data/SORT/</KDFPath>
+        <KDFPath>SORT</KDFPath>
         <!--xml path is to store the generated test item log file-->
-        <XmlPath>/extend/data_log/SORT/</XmlPath>
+        <XmlPath>SORT</XmlPath>
         <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
-        <MappingPath>/extend/data_mapping/SORT/</MappingPath>
+        <MappingPath>SORT</MappingPath>
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
-        <KDFArchivePath>/data/data_archive/SORT/</KDFArchivePath>
+        <KDFArchivePath>SORT</KDFArchivePath>
         <DataType>WaferSort</DataType>
         
         <!--never trun on debug mode in production mode, default 0-->
@@ -347,13 +359,13 @@ and open the template in the editor.
         
         <Customer>Hygon</Customer>
         <Factory>Suzhou</Factory>
-        <KDFPath>/extend/hygon_source_data/SLT/</KDFPath>
+        <KDFPath>SLT/</KDFPath>
         <!--xml path is to store the generated test item log file-->
-        <XmlPath>/extend/data_log/SLT/</XmlPath>
+        <XmlPath>SLT</XmlPath>
         <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
-        <MappingPath>/extend/data_mapping/SLT/</MappingPath>
+        <MappingPath>SLT</MappingPath>
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
-        <KDFArchivePath>/data/data_archive/SLT/</KDFArchivePath>
+        <KDFArchivePath>SLT</KDFArchivePath>
         <DataType>SLT</DataType>
         <DebugMode>0</DebugMode>
         
@@ -438,13 +450,13 @@ and open the template in the editor.
         
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
-        <KDFPath>/extend/hygon_source_data/WAT</KDFPath>
+        <KDFPath>WAT</KDFPath>
         <!--xml path is to store the generated test item log file-->
-        <XmlPath>/extend/data_log/WAT/</XmlPath>
+        <XmlPath>WAT/</XmlPath>
         <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
-        <MappingPath>/extend/data_mapping/WAT</MappingPath>
+        <MappingPath>WAT</MappingPath>
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
-        <KDFArchivePath>/data/data_archive/wAT/</KDFArchivePath>
+        <KDFArchivePath>WAT/</KDFArchivePath>
         
         <!--never trun on debug mode in production mode, default 0-->
         <DebugMode>0</DebugMode>
@@ -494,13 +506,13 @@ and open the template in the editor.
         
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
-        <KDFPath>/extend/hygon_source_data/SMAP</KDFPath>
+        <KDFPath>SMAP</KDFPath>
         <!--xml path is to store the generated test item log file-->
-        <XmlPath>/extend/data_log/SMAP/</XmlPath>
+        <XmlPath>SMAP</XmlPath>
         <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
-        <MappingPath>/extend/data_mapping/SMAP</MappingPath>
+        <MappingPath>SMAP</MappingPath>
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
-        <KDFArchivePath>data/data_archive/SMAP/</KDFArchivePath>
+        <KDFArchivePath>SMAP</KDFArchivePath>
         
         <!--never trun on debug mode in production mode, default 0-->
         <DebugMode>0</DebugMode>

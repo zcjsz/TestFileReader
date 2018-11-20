@@ -176,7 +176,9 @@ public
         jobStartTime = System.currentTimeMillis();
         System.out.printf("\n%s: start proceed kdf %s\n", LocalDateTime.now(), file.getName());
         this.init();
-
+        if (!this.preValidate()) {
+            return false;
+        }
         if (!this.validateFile(file)) {
             this.failType = Config.FailureCase.BadFormat;
             this.logBadFormatFileToES();
@@ -329,6 +331,21 @@ public
             + "/" + this.file.getName().split(".kdf")[0] + ".kdf");
 
         return true;
+    }
+
+    protected
+        boolean preValidate() {
+
+        if (this.file.getName().endsWith(Config.KdfRename.badFormat.name())
+            || this.file.getName().endsWith(Config.KdfRename.done.name())
+            || this.file.getName().endsWith(Config.KdfRename.exception.name())
+            || this.file.getName().endsWith(Config.KdfRename.openErr.name())
+            || this.file.getName().endsWith(Config.KdfRename.skip.name())) {
+            System.out.println("Warning: this is a proceeded kdf!");
+            return false;
+        }
+        return true;
+
     }
 
     private
@@ -975,7 +992,7 @@ public
 
     public
         boolean renameOrArchiveKDF(File destinationFile, Config.KdfRename rename) {
-        if (destinationFile == null) {
+        if ((!Config.renameKDF) && destinationFile == null) {
             return false;
         }
         if (this.getFormat().isProductionMode()) {
@@ -1306,7 +1323,7 @@ public
         while (i < size && i < 128) {
             char chr = binDesc.charAt(i);
 //			if(chr == ',' || chr == '=' || chr == 13 || chr == 10) {
-//				
+//
 //			}
             if ((chr >= 48 && chr <= 57)
                 || (chr >= 65 && chr <= 90)
@@ -1488,11 +1505,11 @@ public
     private
         boolean validateBaseSubClass(String idClass) {
 
-        // slt class filters is in the readTestDesc method, slt TestDesc is different from ate	
+        // slt class filters is in the readTestDesc method, slt TestDesc is different from ate
         if (this.getFormat().getDataType().equals(Config.DataTypes.SLT)) {
             return true;
         }
-        //selector and filters 
+        //selector and filters
 
         String subClassName = this.testDescRefs.get(idClass).getSubClass();
         String baseClassName = this.testDescRefs.get(idClass).getBaseClass();
@@ -1696,18 +1713,19 @@ public
 //			}
             String fieldValue = node.get(fieldName).toString().trim();
 
-            if (fieldName.isEmpty()) {
+            if (fieldName != null && fieldName.trim().isEmpty()) {
                 continue;
             }
+            fieldName = fieldName.trim();
             if (this.getFormat().getFieldFiters().contains(fieldName)) {
                 continue;
             }
 
             if (!fieldValue.isEmpty()) {
-                if (!this.isFormatField(fieldValue, fieldName, isLog)) {
-                    continue;
-
-                }
+//                if (!this.isFormatField(fieldValue, fieldName, isLog)) {
+//                    continue;
+//
+//                }
                 if (fieldName.equals(FieldType.PinRefPtr)) {
                     String pinName = this.pinRefs.get(fieldValue);
                     if (fieldValue.contains(",")) {
@@ -1727,7 +1745,8 @@ public
                     }
                 }
                 else {
-                    value += "," + fieldName.replace('.', '_') + "=" + fieldValue;
+                    value += this.getFieldKVStr(fieldName, fieldValue);
+//                    value += "," + fieldName.replace('.', '_') + "=" + fieldValue;
 
                 }
             }
@@ -1769,16 +1788,63 @@ public
         return value;
     }
 
+    /**
+     *
+     * @param fieldName
+     * @param fieldValue
+     * @return
+     */
     private
-        String formatField(String field) {
-        int length = field.length();
+        String getFieldKVStr(String fieldName, String fieldValue) {
+        String value = "";
+        if (fieldName.isEmpty() || fieldValue.isEmpty()) {
+            return value;
+        }
+        int length = fieldValue.length();
+        if (length > this.format.getFieldValueLengthLimit()) {
+            if (this.isDebugMode()) {
+                System.out.printf("Too long Field: fieldName=%s, fieldValue=%s\n", fieldName, fieldValue);
+            }
+            return value;
+        }
+        if (fieldName.equals("value")) {
+            try {
+                float numberValue = Float.valueOf(fieldValue);
+                if (Float.isInfinite(numberValue)) {
+                    System.out.printf("Bad Format Field: fieldName=%s, fieldValue=%s\n", fieldName, fieldValue);
+                    return value;
+                }
+            }
+            catch (Exception e) {
+                System.out.printf("Bad Format Field: fieldName=%s, fieldValue=%s\n", fieldName, fieldValue);
+                return value;
+            }
+        }
+        String formatValue = this.formatFieldValue(fieldValue);
+        if (formatValue.isEmpty()) {
+            return value;
+        }
+        return value = "," + fieldName.replace('.', '_').replace('=', ':').replace(',', ';') + "=" + formatValue;
+
+    }
+
+    private
+        String formatFieldValue(String fieldValue) {
+        int length = fieldValue.length();
         String value = "";
         int i = 0;
-        while (i++ != length) {
-            char chr = field.charAt(i);
-            if (chr != ',' && chr != '=' && chr != 32) {
+        while (i != length) {
+            char chr = fieldValue.charAt(i);
+            if (chr == ',') {
+                value += ';';
+            }
+            else if (chr == '=') {
+                value += ':';
+            }
+            else if (chr != 13 && chr != 10) {
                 value += chr;
             }
+            i++;
         }
         return value;
 
@@ -2276,23 +2342,23 @@ public
         new Config("config/dataformat.xml");
         KDFReader loader = new KDFReader();
 
-        File stageFile = new File("./testdata/KDF/SORT");
-        for (File file : stageFile.listFiles()) {
-            if (loader.chooseFormat(file)) {
-                loader.loadFile(file);
-            }
-        }
+        for (DataFormat dataFormat : Config.dataFormats.values()) {
+            if (dataFormat.getDataType().equals(Config.DataTypes.ATE)
+                || dataFormat.getDataType().equals(Config.DataTypes.SLT)
+                || dataFormat.getDataType().equals(Config.DataTypes.WaferSort)) {
+                if (!dataFormat.isEnabled()) {
+                    continue;
+                }
 
-        stageFile = new File("./testdata/KDF/SLT");
-        for (File file : stageFile.listFiles()) {
-            if (loader.chooseFormat(file)) {
-                loader.loadFile(file);
-            }
-        }
-        stageFile = new File("./testdata/KDF/FT");
-        for (File file : stageFile.listFiles()) {
-            if (loader.chooseFormat(file)) {
-                loader.loadFile(file);
+                loader.setFormat(dataFormat);
+                dataFormat.setProductionMode(false);
+
+                File stageFile = new File(dataFormat.getKdfPath());
+                for (File file : stageFile.listFiles()) {
+
+                    loader.loadFile(file);
+
+                }
             }
         }
 

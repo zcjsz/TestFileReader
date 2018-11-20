@@ -567,7 +567,7 @@ decrypt_extract()
 
         # get the hourDir
         second=$(date "+%Y%m%d%H%M%S")
-        hour=`expr substr $second 1 10`
+        hour=`expr substr $second 1 8`
 
         gpg_backup_hourFile="$1/$hour"
         kdfHourFile="$2/$hour";

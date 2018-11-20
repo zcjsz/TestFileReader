@@ -1041,11 +1041,11 @@ PUT _ingest/pipeline/slt-test
           "field": "message",
           "field_split": ",",
           "value_split": "=",
-          "on_failure" : [
+          "on_failure": [
             {
-              "set" : {
-                "field" : "FileTime",
-                "value" : "2017-01-01T01:01:01.00+08:00"
+              "set": {
+                "field": "FileTime",
+                "value": "2017-01-01T01:01:01.00+08:00"
               }
             }
           ]
@@ -1065,16 +1065,18 @@ PUT _ingest/pipeline/slt-test
         "date_index_name": {
           "field": "FileTime",
           "index_name_prefix": "slt-test-",
-          "date_rounding": "M"
+          "date_rounding": "y"
         }
       }
     ],
-    "on_failure" : [{
-      "set" : {
-        "field" : "error.message",
-        "value" : "{{ _ingest.on_failure_message }}"
+    "on_failure": [
+      {
+        "set": {
+          "field": "error.message",
+          "value": "{{ _ingest.on_failure_message }}"
+        }
       }
-    }]
+    ]
   
 }
 PUT _ingest/pipeline/smap-test

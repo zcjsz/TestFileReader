@@ -66,25 +66,14 @@ public
 
             kdfReader.setFormat(format);
             for (File dateFile : new File(format.getKdfPath()).listFiles()) {
-                if (dateFile.isDirectory()
-                    && (dateFile.getName().length() == 8 || dateFile.getName().length() == 10)) {
-
-                }
-                else {
+                if (!this.checkDateFile(dateFile, format.getMinDateString())) {
+                    System.out.printf("Warning: skip %s since minDate is %s\n", dateFile.getName(), format.getMinDateString());
                     continue;
                 }
 
                 for (File kdfFile : dateFile.listFiles()) {
                     if (kdfFile.isFile()) {
                         String fileName = kdfFile.getName();
-                        if (fileName.endsWith(Config.KdfRename.badFormat.name())
-                            || fileName.endsWith(Config.KdfRename.done.name())
-                            || fileName.endsWith(Config.KdfRename.exception.name())
-                            || fileName.endsWith(Config.KdfRename.openErr.name())
-                            || fileName.endsWith(Config.KdfRename.skip.name())) {
-                            continue;
-
-                        }
                         if (!kdfFile.canRead()) {
                             System.out.println("Error: tdni has no permission to read this file");
                             continue;
@@ -133,11 +122,8 @@ public
             System.out.println("*****************************************************************");
             File rootFile = new File(Config.smapFormat.getKdfPath());
             for (File dateFile : rootFile.listFiles()) {
-                if (dateFile.isDirectory()
-                    && (dateFile.getName().length() == 8 || dateFile.getName().length() == 10)) {
-
-                }
-                else {
+                if (!this.checkDateFile(dateFile, Config.smapFormat.getMinDateString())) {
+                    System.out.printf("Warning: skip %s since minDate is %s\n", dateFile.getName(), Config.smapFormat.getMinDateString());
                     continue;
                 }
                 for (File lotFile : dateFile.listFiles()) {
@@ -193,9 +179,30 @@ public
         System.out.println(LocalDateTime.now().toString() + ": All task completed,total time = " + (System.currentTimeMillis() - startTime));
     }
 
+    public
+        boolean checkDateFile(File dateFile, String minDate) {
+
+        if (dateFile.isDirectory()
+            && (dateFile.getName().length() == 8 || dateFile.getName().length() == 10)
+            && dateFile.getName().startsWith("20")) {
+            try {
+                int temp = Integer.valueOf(dateFile.getName());
+                return dateFile.getName().compareTo(minDate) >= 0;
+            }
+            catch (NumberFormatException e) {
+                return false;
+            }
+
+        }
+        else {
+            return false;
+        }
+
+    }
+
     public static
         void main(String[] args) {
-        boolean debug = true;
+        boolean debug = false;
         if (args.length == 0) {
             if (!debug) {
                 System.out.println("please set the config file path");
