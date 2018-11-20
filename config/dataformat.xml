@@ -332,7 +332,7 @@ and open the template in the editor.
         <!--slave unit id will append to test level doc if enabled, default false-->
         <AppendSlaveUnitId2Test>1</AppendSlaveUnitId2Test>
     </SourceType>
-    <SourceType name= "WAT" enabled = "0" >
+    <SourceType name= "WAT" enabled = "1" >
         <TestIndex>wat-test-*</TestIndex>
         <FileType>.dis</FileType>
         <DataType>WAT</DataType>
@@ -359,27 +359,26 @@ and open the template in the editor.
         <KDFArchivePath>WAT</KDFArchivePath>
         
         <!--never trun on debug mode in production mode, default 0-->
-        <DebugMode>0</DebugMode>
+        <DebugMode>1</DebugMode>
         
         <!--comma separated filters, case sensitive-->
         <FilterOut></FilterOut><!--filter out kdf whose name contains sbo-->
         <!--comma separated selectors, case sensitive-->
-        <Selector>GF</Selector> <!--select kdf whose name contains GFDRS-->
+        <Selector>data</Selector> <!--select kdf whose name contains GFDRS-->
         
         
         <!--list length while kdf name is split by underline-->
-        <UnderLineCnt>8</UnderLineCnt>
+        <UnderLineCnt>10</UnderLineCnt>
         <!--below params are filed name index in the kdf name-->
-        <LotNumberIndex>4</LotNumberIndex>
-        <TesterNumberIndex>3</TesterNumberIndex>
-        <MfgStepIndex>5</MfgStepIndex>
+        <LotNumberIndex>2</LotNumberIndex>
+        <MfgStepIndex>6</MfgStepIndex>
         <TestCodeIndex></TestCodeIndex>
-        <WaferNumberIndex>7</WaferNumberIndex>
+        <WaferNumberIndex>3</WaferNumberIndex>
         <SiteIndex></SiteIndex>
-        <KDFMonthIndex>9</KDFMonthIndex>
+        <KDFMonthIndex>8</KDFMonthIndex>
         <SourceTypeIndex>0</SourceTypeIndex>
         <!--comma separated file open time indices -->
-        <FileOpenTimeIndex>9,10</FileOpenTimeIndex>
+        <FileOpenTimeIndex>8,9</FileOpenTimeIndex>
         
         <!--if enabled, the file name will be added in the unit level doc, default 0-->
         <AddFileNameInUnit>1</AddFileNameInUnit>
@@ -393,7 +392,7 @@ and open the template in the editor.
         <FileType>smap.</FileType>
         <TestIndex>smap-test-*</TestIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
-        <ProductionMode>1</ProductionMode>
+        <ProductionMode>0</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
@@ -1010,7 +1009,7 @@ and open the template in the editor.
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "WAT" enabled = "1" >
+            <SourceType name= "WAT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
                 <Index>1</Index>
             </SourceType>
