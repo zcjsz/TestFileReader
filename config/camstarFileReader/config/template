@@ -1,0 +1,893 @@
+PUT _template/cam-data
+{
+  "order": 0,
+    "version": 1001,
+    "index_patterns": [
+      "camstar-data-*",
+      "test-camstar-data"
+    ],
+    "settings": {
+      "index": {
+        "number_of_shards": "5",
+        "number_of_replicas": "2",
+        "refresh_interval": "30s"
+      }
+    },
+    "mappings": {
+      "doc": {
+        "date_detection": false,
+        "numeric_detection": true,
+        "dynamic": true,
+        "properties": {
+          "@timestamp": {
+            "type": "date"
+          },
+          "@version": {
+            "type": "keyword"
+          }
+        },
+        "dynamic_templates": [
+         {
+          "cam_date_1": {
+            "match": "Date",
+            "mapping": {
+              "type": "date"
+            }
+          }
+         },
+         {
+          "cam_date_2": {
+            "match": "FileTime",
+            "mapping": {
+              "type": "date"
+            }
+          }
+         },
+		 
+         {
+          "cam_key_word_1": {
+            "match": "AV",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_2": {
+            "match": "Aspen",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_3": {
+            "match": "Aspen_Rev",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_4": {
+            "match": "Assembly_Part",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_5": {
+            "match": "Datecode",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_6": {
+            "match": "Device",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_7": {
+            "match": "Fablotnumber",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_8": {
+            "match": "Handler",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_9": {
+            "match": "Lot",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_10": {
+            "match": "Mother",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_11": {
+            "match": "Mtype",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_12": {
+            "match": "Oper",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_13": {
+            "match": "Package",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_14": {
+            "match": "Pline",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_15": {
+            "match": "TEST PHASE",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_16": {
+            "match": "Tcode",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_17": {
+            "match": "Temp",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_18": {
+            "match": "Tester",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_19": {
+            "match": "Tprog",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_20": {
+            "match": "Trev",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_21": {
+            "match": "Type",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_22": {
+            "match": "owner",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_23": {
+            "match": "IsLotMatched",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_24": {
+            "match": "IsLotCal",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+         {
+          "cam_key_word_25": {
+            "match": "CamKey",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+         },
+		 
+		 
+         {
+          "cam_integer_1": {
+            "match": "Insert",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_2": {
+            "match": "B1",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_3": {
+            "match": "B2",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_4": {
+            "match": "B3",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_5": {
+            "match": "B4",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_6": {
+            "match": "B5",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_7": {
+            "match": "B6",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_8": {
+            "match": "B7",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_9": {
+            "match": "B8",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_10": {
+            "match": "B9",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_11": {
+            "match": "B10",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_12": {
+            "match": "B11",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_13": {
+            "match": "B12",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_14": {
+            "match": "B13",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_15": {
+            "match": "B14",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_16": {
+            "match": "B15",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_17": {
+            "match": "B16",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_18": {
+            "match": "NR1",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_19": {
+            "match": "NR2",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_20": {
+            "match": "NR3",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_21": {
+            "match": "NR4",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_22": {
+            "match": "NR5",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_23": {
+            "match": "NR6",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_24": {
+            "match": "NR7",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_25": {
+            "match": "NR8",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_26": {
+            "match": "NR9",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_27": {
+            "match": "NR10",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_28": {
+            "match": "NR11",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_29": {
+            "match": "NR12",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_30": {
+            "match": "NR13",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_31": {
+            "match": "NR14",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_32": {
+            "match": "NR15",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_33": {
+            "match": "NR16",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_34": {
+            "match": "RC1",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_35": {
+            "match": "RC2",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_36": {
+            "match": "RC3",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_37": {
+            "match": "RC4",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_38": {
+            "match": "RC5",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_39": {
+            "match": "RC6",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_40": {
+            "match": "RC7",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_41": {
+            "match": "RC8",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_42": {
+            "match": "RC9",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_43": {
+            "match": "RC10",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_44": {
+            "match": "RC11",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_45": {
+            "match": "RC12",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_46": {
+            "match": "RC13",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_47": {
+            "match": "RC14",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_48": {
+            "match": "RC15",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_49": {
+            "match": "RC16",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_50": {
+            "match": "Rej1",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_51": {
+            "match": "Rej2",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_52": {
+            "match": "Rej3",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_53": {
+            "match": "Rej4",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_54": {
+            "match": "Rej5",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_55": {
+            "match": "Rej6",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_56": {
+            "match": "Rej7",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_57": {
+            "match": "Rej8",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_58": {
+            "match": "Rej9",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_59": {
+            "match": "Rej10",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_60": {
+            "match": "Rej11",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_61": {
+            "match": "Rej12",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_62": {
+            "match": "Rej13",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_63": {
+            "match": "Rej14",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_64": {
+            "match": "Rej15",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_65": {
+            "match": "Rej16",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_66": {
+            "match": "VM1",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },		 
+         {
+          "cam_integer_67": {
+            "match": "VM2",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_68": {
+            "match": "VM3",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_69": {
+            "match": "VM4",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_70": {
+            "match": "VM5",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_71": {
+            "match": "VM6",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_72": {
+            "match": "QtyIn",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_73": {
+            "match": "Qtyout",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+         {
+          "cam_integer_74": {
+            "match": "ReclaimCount",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+         },
+		 
+		 
+         {
+          "cam_float_1": {
+            "match": "Yield",
+            "mapping": {
+              "type": "float"
+            }
+          }
+         },
+		 
+
+         {
+          "cam_text_1": {
+            "match": "FileName",
+            "mapping": {
+              "type": "text"
+            }
+          }
+         },		 
+
+
+         {
+          "integers": {
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "text"
+            }
+          }
+         },
+         {
+          "float": {
+            "match_mapping_type": "double",
+            "mapping": {
+              "type": "float"
+            }
+          }
+         },
+         {
+            "string_fields": {
+              "match_mapping_type": "string",
+              "mapping": {
+                "type": "text"
+              }
+            }
+          }
+         
+        ]
+      }
+    },
+    "aliases": {}
+  }
+
