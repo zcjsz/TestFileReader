@@ -23,7 +23,7 @@ public class ParameterDesc {
         this.paramName = paramName;
         this.group = group;
         this.LSL = LSL;
-        this.unit = USL;
+        this.USL = USL;
         this.unit = unit;
     }
 
