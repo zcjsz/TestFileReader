@@ -282,7 +282,7 @@ public
         // source unit_id, bin_type
         String lotNumberName = this.dataFormat.getLotNumberNode().getName();
         String operationName = this.dataFormat.getOperationNode().getName();
-        String camLotName = this.dataFormat.getCamLotNode().getName();
+        String camLotName = Config.camFormat.getLotNumberNode().getName();
 
         String[] includeFields = new String[]{lotNumberName, operationName, camLotName};
         String[] excludeFields = new String[]{"_type"};
@@ -517,7 +517,7 @@ public
 
             String lotNumber = (String) sourceAsMap.get(this.dataFormat.getLotNumberNode().getName());
             String operation = (String) sourceAsMap.get(this.dataFormat.getOperationNode().getName());
-            String camLot = (String) sourceAsMap.get(this.dataFormat.getCamLotNode().getName());
+            String camLot = (String) sourceAsMap.get(Config.camFormat.getLotNumberNode().getName());
 
             // missmatch camstar lot case here
             if (camLot == null || camLot.isEmpty() || camLot.equalsIgnoreCase("null")) {

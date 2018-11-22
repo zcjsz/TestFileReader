@@ -186,10 +186,8 @@ public
     private
         XmlNode operationNode = null;
     private
-        XmlNode camLotNode = null;
-		
-    private int rptKeepDays = 30;
-    private int logKeepDays = 30;
+        XmlNode camDateNode = null;
+
     public
         DataFormat(Element sourceData) {
         readData(sourceData);
@@ -468,12 +466,6 @@ public
                             this.flowContextFilters.add(filter.trim());
                         }
                         break;
-                    case "RptKeepDays":
-                        this.rptKeepDays = Integer.valueOf(fieldValue);
-                        break;
-                    case "LogKeepDays":
-                        this.logKeepDays = Integer.valueOf(fieldValue);
-                        break;
                     default:
                         System.out.printf("Error: this filed: %s is not supportted!\n", fieldName);
                         System.exit(1);
@@ -525,6 +517,10 @@ public
         boolean validate() {
         System.out.printf("%s=%s, validation....\n", this.getSourceType(), this.isEnabled());
         if (this.getDataType().equals(Config.DataTypes.CAMSTAR)) {
+            if (this.getCamDateNode() == null) {
+                System.out.println("camstart date node can not be null");
+                return false;
+            }
             if (this.getDataType() == null) {
                 System.out.println("DateType can not be null");
                 return false;
@@ -551,6 +547,14 @@ public
                 System.out.println("kdfArchivePath can not be " + this.kdfArchivePath);
                 return false;
 
+            }
+            if (this.getLotNumberNode() == null) {
+                System.out.println("LotNumberNode can not be null");
+                return false;
+            }
+            if (this.getOperationNode() == null) {
+                System.out.println("OperationNode can not be null");
+                return false;
             }
             return checkArchive();
         }
@@ -1552,16 +1556,6 @@ public
     }
 
     public
-        XmlNode getCamLotNode() {
-        return camLotNode;
-    }
-
-    public
-        void setCamLotNode(XmlNode camLotNode) {
-        this.camLotNode = camLotNode;
-    }
-
-    public
         boolean isLotFile() {
         return lotFile;
     }
@@ -1580,12 +1574,14 @@ public
         return date;
     }
 
-    public int getRptKeepDays() {
-        return rptKeepDays;
+    public
+        XmlNode getCamDateNode() {
+        return camDateNode;
     }
 
-    public int getLogKeepDays() {
-        return logKeepDays;
+    public
+        void setCamDateNode(XmlNode camDateNode) {
+        this.camDateNode = camDateNode;
     }
 
 }

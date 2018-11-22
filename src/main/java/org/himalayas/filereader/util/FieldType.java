@@ -28,15 +28,17 @@ public
     public final static
         String UnitCnt = "UnitCnt";
     public final static
-        String CamGoodCnt = "CamGoodCnt";
+        String CamGoodCnt = "CamGoodLotCnt";
     public final static
-        String CamBadCnt = "CamBadCnt";
+        String CamBadCnt = "CamBadLotCnt";
     public final static
         String KdfMonth = "KDFMonth";
     public final static
         String TransferTime = "TransferTime";
     public final static
         String DataType = "DataType";
+    public final static
+        String SourceType = "SourceType";
     public final static
         String EventType = "EventType";
     public final static
@@ -149,5 +151,9 @@ public
         String X0 = "X0";
     public final static
         String Y0 = "Y0";
+    public static
+        String CamDate = "camDate";
+    public static
+        String CamMonth = "camMonth";
 
 }

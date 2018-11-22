@@ -107,6 +107,7 @@ public abstract
 
             this.file = file;
             if (!this.preValidate()) {
+                System.out.println("Warning: this file is skipped since pre-validate failed.");
                 return false;
             }
             if (!this.validateFile()) {
@@ -268,12 +269,12 @@ public abstract
         boolean validateKDFDate() {
         if (this.getFormat().getKdfStartDate() != null
             && this.kdfDate.compareTo(this.getFormat().getKdfStartDate()) < 0) {
-            System.out.printf("Warnning: this kdf file is skipped, KDFDate = %s since KDFDate Start Date filter = %s\n", this.kdfDate, this.getFormat().getKdfStartDate());
+            System.out.printf("Warnning: this file is skipped, KDFDate = %s since KDFDate Start Date filter = %s\n", this.kdfDate, this.getFormat().getKdfStartDate());
             return false;
         }
         if (this.getFormat().getKdfEndData() != null
             && this.getFormat().getKdfEndData().compareTo(this.kdfDate) < 0) {
-            System.out.printf("Warnning: this kdf file is skipped, KDFDate = %s since KDFDate End Date filter = %s\n", this.kdfDate, this.getFormat().getKdfEndData());
+            System.out.printf("Warnning: this file is skipped, KDFDate = %s since KDFDate End Date filter = %s\n", this.kdfDate, this.getFormat().getKdfEndData());
             return false;
         }
         return true;
@@ -294,9 +295,9 @@ public abstract
             if (tempDate.length() >= this.getFormat().getFileOpenTimeFormat().length()) {
                 try {
                     LocalDateTime dateTime = LocalDateTime.parse(tempDate.subSequence(0, this.getFormat().getFileOpenTimeFormat().length()), DateTimeFormatter.ofPattern(this.getFormat().getFileOpenTimeFormat()));
-                    this.kdfMonth = dateTime.format(DateTimeFormatter.ofPattern("uuuuMMdd"));
                     this.fileOpenTime = dateTime.format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss"));
-                    this.kdfDate = this.kdfMonth.substring(0, 8);
+                    this.kdfMonth = this.fileOpenTime.substring(0, 6);
+                    this.kdfDate = this.fileOpenTime.substring(0, 8);
                     return true;
                 }
                 catch (Exception e) {
@@ -585,10 +586,11 @@ public abstract
 
     private
         void logBadFormatFileToES() {
-        System.out.printf("%s=%s,%s=%s,%s=%s\n",
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFBadFormat,
-            FieldType.FileName, this.file.getName(),
-            FieldType.DataType, this.getFormat().getDataType()
+            FieldType.KdfName, this.file.getName(),
+            FieldType.DataType, this.getFormat().getDataType(),
+            FieldType.SourceType, this.getFormat().getSourceType()
         );
     }
 
@@ -603,47 +605,50 @@ public abstract
 
     public
         void logRepeatFileToES() {
-        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFRepeat,
             this.getFormat().getLotNumberNode().getName(), this.lotNumber,
             FieldType.KdfMonth, this.kdfMonth,
             FieldType.KdfDate, this.kdfDate,
             FieldType.TransferTime, this.transferTime,
             FieldType.KdfName, this.fileName,
-            FieldType.DataType, this.getFormat().getDataType()
+            FieldType.DataType, this.getFormat().getDataType(),
+            FieldType.SourceType, this.getFormat().getSourceType()
         );
     }
 
     public
         void logOpenFailureToES() {
-        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFOpenFailure,
             this.getFormat().getLotNumberNode().getName(), this.lotNumber,
             FieldType.KdfMonth, this.kdfMonth,
             FieldType.KdfDate, this.kdfDate,
             FieldType.TransferTime, this.transferTime,
             FieldType.KdfName, this.fileName,
-            FieldType.DataType, this.getFormat().getDataType()
+            FieldType.DataType, this.getFormat().getDataType(),
+            FieldType.SourceType, this.getFormat().getSourceType()
         );
     }
 
     public
         void logIoErrorToES(String error) {
-        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.IOError,
             FieldType.Failure, error,
             this.getFormat().getLotNumberNode().getName(), this.lotNumber,
             FieldType.KdfMonth, this.kdfMonth,
             FieldType.KdfDate, this.kdfDate,
             FieldType.TransferTime, this.transferTime,
-            FieldType.KdfName, this.file.getName(),
-            FieldType.DataType, this.getFormat().getDataType()
+            FieldType.KdfName, this.fileName,
+            FieldType.DataType, this.getFormat().getDataType(),
+            FieldType.SourceType, this.getFormat().getSourceType()
         );
     }
 
-    public 
+    public
         void logFileDoneToES() {
-        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%d,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%d,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFDone,
             FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
             FieldType.KdfName, this.fileName,
@@ -652,20 +657,22 @@ public abstract
             FieldType.KdfMonth, this.kdfMonth,
             FieldType.KdfDate, this.kdfDate,
             FieldType.TransferTime, this.transferTime,
-            FieldType.DataType, this.getFormat().getDataType()
+            FieldType.DataType, this.getFormat().getDataType(),
+            FieldType.SourceType, this.getFormat().getSourceType()
         );
     }
 
     public
         void logExceptionToES() {
-        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFException,
             this.getFormat().getLotNumberNode().getName(), this.lotNumber,
             FieldType.KdfMonth, this.kdfMonth,
             FieldType.KdfDate, this.kdfDate,
             FieldType.TransferTime, this.transferTime,
             FieldType.KdfName, this.fileName,
-            FieldType.DataType, this.getFormat().getDataType()
+            FieldType.DataType, this.getFormat().getDataType(),
+            FieldType.SourceType, this.getFormat().getSourceType()
         );
     }
 
@@ -676,11 +683,24 @@ public abstract
         int i = 0;
         for (XmlNode node : this.getFormat().getLotHead().values()) {
             if (node.isEnabled() && node.isEnabledLog()) {
-                if (i != 0) {
-                    value += ",";
+                if (node.getIndex() >= 0 && node.getIndex() < names.length) {
+                    if (i != 0) {
+                        value += ",";
+                    }
+                    value += node.getName() + "=" + names[node.getIndex()];
+                    i++;
                 }
-                value += node.getName() + "=" + names[node.getIndex()];
-                i++;
+                else {
+                    // must have the name and value can not be empty
+                    String nodeKVString = node.toKVString();
+                    if (!nodeKVString.isEmpty()) {
+                        if (i != 0) {
+                            value += ",";
+                        }
+                        value += nodeKVString;
+                        i++;
+                    }
+                }
             }
         }
         value += "," + FieldType.FileTime + "=" + this.formatTimeStr(this.fileOpenTime);
@@ -700,7 +720,6 @@ public abstract
         if (this.getFormat().isLogToFile()) {
             try {
                 Files.write(testLogFile.toPath(), dataContent.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-
             }
             catch (IOException ex) {
                 Logger.getLogger(Reader.class
