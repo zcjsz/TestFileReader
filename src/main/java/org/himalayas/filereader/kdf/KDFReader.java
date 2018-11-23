@@ -1799,11 +1799,13 @@ public
             return value;
         }
         int length = fieldValue.length();
-        if (length > this.format.getFieldValueLengthLimit()) {
-            if (this.isDebugMode()) {
-                System.out.printf("Too long Field: fieldName=%s, fieldValue=%s\n", fieldName, fieldValue);
+        if (!fieldName.equals("bitValues")) {
+            if (length > this.format.getFieldValueLengthLimit()) {
+                if (this.isDebugMode()) {
+                    System.out.printf("Too long Field: fieldName=%s, fieldValue=%s\n", fieldName, fieldValue);
+                }
+                return value;
             }
-            return value;
         }
         if (fieldName.equals("value")) {
             try {
@@ -1813,8 +1815,8 @@ public
                     return value;
                 }
             }
-            catch (Exception e) {
-                System.out.printf("Bad Format Field: fieldName=%s, fieldValue=%s\n", fieldName, fieldValue);
+            catch (NumberFormatException e) {
+                System.out.printf("Bad Format Field: value should be float, fieldName=%s, fieldValue=%s\n", fieldName, fieldValue);
                 return value;
             }
         }
@@ -1822,7 +1824,8 @@ public
         if (formatValue.isEmpty()) {
             return value;
         }
-        return value = "," + fieldName.replace('.', '_').replace('=', ':').replace(',', ';') + "=" + formatValue;
+        value = "," + fieldName.replace('.', '_').replace('=', ':').replace(',', ';') + "=" + formatValue;
+        return value;
 
     }
 
@@ -2360,7 +2363,6 @@ public
 
         //System.out.println(loader.allFields.toString());
         System.out.println("total time = " + (System.currentTimeMillis() - startTime));
-        startTime = System.currentTimeMillis();
     }
 
 }
