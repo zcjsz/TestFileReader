@@ -19,7 +19,7 @@ and open the template in the editor.
     
     <!--rename kdf, append .done to kdf file-->
     <!-- if rename is disabled in prod mode, then file will be archived-->
-    <RenameKDF>0</RenameKDF>
+    <RenameKDF>1</RenameKDF>
     <TestDescId>testDescId</TestDescId>
     
     <SubClass>subClass</SubClass>
@@ -46,7 +46,7 @@ and open the template in the editor.
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
-        <GenerateMappingFile>0</GenerateMappingFile>
+        <GenerateMappingFile>1</GenerateMappingFile>
         
         <KDFDate>
             <Start>20180401</Start>
@@ -151,7 +151,7 @@ and open the template in the editor.
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
-        <GenerateMappingFile>0</GenerateMappingFile>
+        <GenerateMappingFile>1</GenerateMappingFile>
         <KDFDate>
             <Start></Start>
             <End>201805</End>
@@ -254,7 +254,7 @@ and open the template in the editor.
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
-        <GenerateMappingFile>0</GenerateMappingFile>
+        <GenerateMappingFile>1</GenerateMappingFile>
         <KDFDate>
             <Start></Start>
             <End></End>
@@ -393,7 +393,7 @@ and open the template in the editor.
         <LogFailOnlyNodeSelector></LogFailOnlyNodeSelector>
         
     </SourceType>
-    <SourceType name= "SMAP" enabled = "0" >
+    <SourceType name= "SMAP" enabled = "1" >
         <DataType>SMAP</DataType>
         <FileType>smap.</FileType>
         <TestIndex>smap-test-*</TestIndex>
@@ -402,7 +402,7 @@ and open the template in the editor.
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
-        <GenerateMappingFile>0</GenerateMappingFile>
+        <GenerateMappingFile>1</GenerateMappingFile>
         <KDFDate>
             <Start></Start>
             <End></End>
@@ -446,14 +446,14 @@ and open the template in the editor.
         <LotIndex>cam-lot-*</LotIndex>
         
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
-        <ProductionMode>0</ProductionMode>
+        <ProductionMode>1</ProductionMode>
         <DataType>CAMSTAR</DataType>
         <DebugMode>0</DebugMode>
         
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
-        <GenerateMappingFile>0</GenerateMappingFile>
+        <GenerateMappingFile>1</GenerateMappingFile>
         <!--if this a lot file, the mapping path is date/lot/file, else is just use date/file-->
         <IsLotFile>0</IsLotFile>
         
