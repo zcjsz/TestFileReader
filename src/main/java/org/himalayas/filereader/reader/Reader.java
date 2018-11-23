@@ -191,16 +191,16 @@ public abstract
             return false;
         }
         String names[] = null;
-        String fileName = this.file.getName();
+        String logFileName = this.file.getName();
         // here please add the split word in the config file....
         if (this.getFormat().getDataType().equals(Config.DataTypes.SMAP)) {
-            names = fileName.split("smap.");
+            names = logFileName.split("smap.");
         }
         else if (this.getFormat().getDataType().equals(Config.DataTypes.WAT)) {
-            names = fileName.split("dis.");
+            names = logFileName.split("dis.");
         }
         else if (this.getFormat().getDataType().equals(Config.DataTypes.CAMSTAR)) {
-            names = fileName.split("xls.");
+            names = logFileName.split("xls.");
         }
         else {
             System.err.println("Fatal Error: bad Data Type found: " + this.getFormat().getDataType().toString());
@@ -216,9 +216,9 @@ public abstract
         }
         this.transferTime = this.formatTimeStr(names[1]);
 
-        this.fileName = fileName.substring(0, fileName.length() - 15);
+        this.fileName = logFileName.substring(0, logFileName.length() - 15);
 
-        names = fileName.split("_");
+        names = logFileName.split("_");
         if (names.length != this.getFormat().getUnderLineCnt()) {
             System.out.println("Skip this kdf since underline cnt is not " + this.getFormat().getUnderLineCnt());
             return false;
