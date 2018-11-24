@@ -1074,6 +1074,10 @@ public
         value += "," + FieldType.HardBinDesc + "=" + this.getUnit().getHardBinDescValue();
         value += "," + FieldType.BinType + "=" + this.getUnit().getFlagIntValue();
         value += "," + FieldType.DieType + "=" + FieldType.MasterDie;
+        if((this.getDataType().equals(Config.DataTypes.ATE) || this.getDataType().equals(Config.DataTypes.SLT)) 
+                &&(!this.getUnit().getUnitIdNode().getXmlValue().isEmpty())){
+            value += "," + FieldType.MasterDieId + "=" + this.getUnit().getUnitIdNode().getValue();
+        }
 
         return value;
 
@@ -1135,6 +1139,10 @@ public
         value += "," + FieldType.SoftBinDesc + "=" + this.getUnit().getSoftBinDescValue();
         value += "," + FieldType.HardBinDesc + "=" + this.getUnit().getHardBinDescValue();
         value += "," + FieldType.BinType + "=" + this.getUnit().getFlagIntValue();
+        if((this.getDataType().equals(Config.DataTypes.ATE) || this.getDataType().equals(Config.DataTypes.SLT)) 
+                &&(!this.getUnit().getUnitIdNode().getXmlValue().isEmpty())){
+            value += "," + FieldType.MasterDieId + "=" + this.getUnit().getUnitIdNode().getValue();
+        }
 
         return value;
 

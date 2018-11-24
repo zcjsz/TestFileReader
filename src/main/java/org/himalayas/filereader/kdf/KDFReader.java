@@ -1976,10 +1976,10 @@ public
                     tempStr += "," + this.getFormat().getUnit().getUnitIdNode().getName() + "=" + slaveUnit.getUnitId();
                     tempStr += "," + FieldType.FileName + "=" + this.file.getName();
                     tempStr += "," + FieldType.DieType + "=" + componentHash.getComName();
-                    String masterDieId = this.getFormat().getUnit().getUnitIdNode().getValue();
-                    if (!masterDieId.isEmpty()) {
-                        tempStr += "," + FieldType.MasterDieId + "=" + this.getFormat().getUnit().getUnitIdNode().getValue();
-                    }
+                    String masterDieId = this.getFormat().getUnit().getUnitIdNode().getXmlValue();
+//                    if (!masterDieId.isEmpty()) {
+//                        tempStr += "," + FieldType.MasterDieId + "=" + this.getFormat().getUnit().getUnitIdNode().getValue();
+//                    }
 
                     if (slaveUnit.getUnitId().length() > this.getFormat().getUnit().getyCoordNode().getEndIndex()) {
                         tempStr += "," + waferNumberNode.getName() + "="
