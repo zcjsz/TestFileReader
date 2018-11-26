@@ -619,11 +619,23 @@ public
                 return false;
             }
             for (XmlNode xmlNode : this.lotHead.values()) {
-                if (xmlNode.isEnabled() && xmlNode.isEnabledLog() && (xmlNode.getIndex() == -1 || xmlNode.getIndex() >= this.getUnderLineCnt())) {
-//                    System.out.printf("please setup a correct index for head node %s in %s\n", xmlNode.getName(), this.getSourceType());
-//                    return false;
+                if (this.getDataType().equals(Config.DataTypes.SMAP)) {
+                    if (xmlNode.isEnabled() && xmlNode.isEnabledLog() && (xmlNode.getIndex() == -1 || xmlNode.getIndex() >= this.getUnderLineCnt())) {
+                        System.out.printf("please setup a correct index for head node %s in %s\n", xmlNode.getName(), this.getSourceType());
+                        return false;
+                    }
                 }
+                else {
+                    if (xmlNode.isEnabled() && xmlNode.isEnabledLog()) {
+                        if (xmlNode.getCamColumnName() == null
+                            && ((xmlNode.getIndex() == -1)
+                            || (xmlNode.getIndex() >= this.getUnderLineCnt()))) {
+                            System.out.printf("please setup a correct index or name for head node %s in %s\n", xmlNode.getName(), this.getSourceType());
+                            return false;
+                        }
 
+                    }
+                }
             }
 
             return checkArchive();
