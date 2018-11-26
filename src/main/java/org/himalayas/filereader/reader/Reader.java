@@ -683,7 +683,12 @@ public abstract
                 if (i != 0) {
                     value += ",";
                 }
-                value += node.getName() + "=" + names[node.getIndex()];
+                if (node.getIndex() != -1) {
+                    value += node.getName() + "=" + names[node.getIndex()];
+                }
+                else {
+                    value += node.getName() + "=" + node.getValue();
+                }
                 i++;
             }
         }

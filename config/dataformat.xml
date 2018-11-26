@@ -363,12 +363,12 @@ and open the template in the editor.
         <KDFArchivePath>WAT</KDFArchivePath>
         
         <!--never trun on debug mode in production mode, default 0-->
-        <DebugMode>1</DebugMode>
+        <DebugMode>0</DebugMode>
         
         <!--comma separated filters, case sensitive-->
         <FilterOut></FilterOut><!--filter out kdf whose name contains sbo-->
         <!--comma separated selectors, case sensitive-->
-        <Selector>data</Selector> <!--select kdf whose name contains GFDRS-->
+        <Selector>limit</Selector> <!--select kdf whose name contains GFDRS-->
         
         
         <!--list length while kdf name is split by underline-->
@@ -1025,9 +1025,11 @@ and open the template in the editor.
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "WAT" enabled = "0" >
+            <SourceType name= "WAT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>1</Index>
+                <Name>STATION</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
@@ -1083,8 +1085,11 @@ and open the template in the editor.
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "WAT" enabled = "0" >
+            <SourceType name= "WAT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
+                <Name>PROBECARD</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>

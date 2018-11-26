@@ -608,8 +608,8 @@ public
             }
             for (XmlNode xmlNode : this.lotHead.values()) {
                 if (xmlNode.isEnabled() && xmlNode.isEnabledLog() && (xmlNode.getIndex() == -1 || xmlNode.getIndex() >= this.getUnderLineCnt())) {
-                    System.out.printf("please setup a correct index for head node %s in %s\n", xmlNode.getName(), this.getSourceType());
-                    return false;
+//                    System.out.printf("please setup a correct index for head node %s in %s\n", xmlNode.getName(), this.getSourceType());
+//                    return false;
                 }
 
             }
@@ -1549,4 +1549,12 @@ public
         return date;
     }
 
+    public
+        ArrayList<XmlNode> getWatFieldNode() {
+        ArrayList<XmlNode> watNode = new ArrayList();
+        this.getLotHead().values().stream().filter((xmlNode) -> (xmlNode.getCamColumnName() != null)).forEachOrdered((xmlNode) -> {
+            watNode.add(xmlNode);
+        });
+        return watNode;
+    }
 }

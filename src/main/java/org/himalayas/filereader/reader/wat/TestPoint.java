@@ -13,24 +13,31 @@ import java.util.HashMap;
  */
 public class TestPoint {
 
-    private int x = 0;
-    private int y = 0;
+    private int x0 = 0;
+    private int y0 = 0;
     private int seq = 0;
     private HashMap<Integer, ParameterValue> paramVals;
 
     public TestPoint(int x, int y, int seq) {
-        this.x = x;
-        this.y = y;
+        this.x0 = x;
+        this.y0 = y;
         this.seq = seq;
         this.paramVals = new HashMap<>();
     }
 
-    public int getX() {
-        return x;
+    public TestPoint(TestPoint tp) {
+        this.x0 = tp.getX0();
+        this.y0 = tp.getY0();
+        this.seq = tp.getSeq();
+        this.paramVals = tp.getParamVals();
     }
 
-    public int getY() {
-        return y;
+    public int getX0() {
+        return x0;
+    }
+
+    public int getY0() {
+        return y0;
     }
 
     public int getSeq() {
@@ -45,7 +52,7 @@ public class TestPoint {
         }
 
     }
-    
+
     public HashMap<Integer, ParameterValue> getParamVals() {
         return paramVals;
     }
