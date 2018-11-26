@@ -23,9 +23,6 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
 import org.himalayas.filereader.util.Config;
 import org.himalayas.filereader.util.DataFormat;
 import org.himalayas.filereader.util.FieldType;
@@ -46,10 +43,10 @@ public
         KDFInstanceTree tree;
     private
         DataFormat format = null;
-    private final
-        Document document = DocumentHelper.createDocument();
-    private
-        Element root = document.addElement("UnitData");
+//    private final
+//        Document document = DocumentHelper.createDocument();
+//    private
+//        Element root = document.addElement("UnitData");
     private
         Config.FailureCase failType = null;
     private
@@ -61,13 +58,13 @@ public
         String nodeHead = null;
 
     //add pinRefs
-    private
+    private final
         HashMap<String, String> pinRefs = new HashMap();
-    private
+    private final
         HashMap<String, String> patternRefs = new HashMap();
-    private
+    private final
         HashMap<String, TestDesc> testDescRefs = new HashMap();
-    private
+    private final
         HashMap<String, ComponentHash> comHashRefs = new HashMap();
 
     private
@@ -497,7 +494,7 @@ public
                 }
             }
             if (this.isDebugMode()) {
-                System.out.printf("reading %s time is : %d\n", root.getName(), (System.currentTimeMillis() - startTime));
+                System.out.printf("reading %s time is : %d\n", "roots", (System.currentTimeMillis() - startTime));
             }
         }
     }
@@ -2042,19 +2039,18 @@ public
      *
      * }
      */
-    private
-        void writeUnitData() {
-        Element unit = root.addElement("Unit");
-        for (XmlNode node : format.getUnit().getNodes().values()) {
-            unit.addElement(node.getName()).setText(node.getXmlValue());
-        }
-        //add binDesc
-        unit.addElement("soft_bin_desc").setText(format.getUnit().getSoftBinDescValue());
-        unit.addElement("hard_bin_desc").setText(format.getUnit().getHardBinDescValue());
-        unit.addElement("test_result").setText(format.getUnit().getFlagValue());
-
-    }
-
+ /*
+     * private void writeUnitData() { Element unit = root.addElement("Unit");
+     * for (XmlNode node : format.getUnit().getNodes().values()) {
+     * unit.addElement(node.getName()).setText(node.getXmlValue()); } //add
+     * binDesc
+     * unit.addElement("soft_bin_desc").setText(format.getUnit().getSoftBinDescValue());
+     * unit.addElement("hard_bin_desc").setText(format.getUnit().getHardBinDescValue());
+     * unit.addElement("test_result").setText(format.getUnit().getFlagValue());
+     *
+     * }
+     *
+     */
     private
         String getLotDate() {
         String[] names = this.file.getName().split("_");
