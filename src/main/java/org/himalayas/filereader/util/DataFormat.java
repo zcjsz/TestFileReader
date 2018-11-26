@@ -33,10 +33,10 @@ public
         boolean recalAll = false;
     private
         boolean reloadAll = false;
-    private
+    private final
         HashMap<String, String> camstarOperMappings = new HashMap();
 
-    private
+    private final
         ArrayList<String> lotOpertions = new ArrayList();
     private
         String fileType = null;
@@ -67,15 +67,15 @@ public
 
     private
         boolean appendSlaveUnitId2Test = false;
-    private
+    private final
         ArrayList<String> logFailOnlyBaseClasses = new ArrayList();
-    private
+    private final
         ArrayList<String> logOnlyFailNodes = new ArrayList();
-    private
+    private final
         ArrayList<String> testDescFieldFilters = new ArrayList();
-    private
+    private final
         ArrayList<String> testDescFieldSelectors = new ArrayList();
-    private
+    private final
         ArrayList<String> flowContextFilters = new ArrayList();
 
     private
@@ -179,14 +179,14 @@ public
         ArrayList<String> nodeTypeFilters = new ArrayList();
     private final
         ArrayList<String> nodeTypeSelectors = new ArrayList();
-    private
+    private final
         ArrayList<String> fieldFiters = new ArrayList();
     private
         XmlNode lotNumberNode = null;
     private
         XmlNode operationNode = null;
     private
-        XmlNode camLotNode = null;
+        XmlNode camDateNode = null;
 
     public
         DataFormat(Element sourceData) {
@@ -517,6 +517,10 @@ public
         boolean validate() {
         System.out.printf("%s=%s, validation....\n", this.getSourceType(), this.isEnabled());
         if (this.getDataType().equals(Config.DataTypes.CAMSTAR)) {
+            if (this.getCamDateNode() == null) {
+                System.out.println("camstart date node can not be null");
+                return false;
+            }
             if (this.getDataType() == null) {
                 System.out.println("DateType can not be null");
                 return false;
@@ -544,7 +548,15 @@ public
                 return false;
 
             }
-            return true;
+            if (this.getLotNumberNode() == null) {
+                System.out.println("LotNumberNode can not be null");
+                return false;
+            }
+            if (this.getOperationNode() == null) {
+                System.out.println("OperationNode can not be null");
+                return false;
+            }
+            return checkArchive();
         }
         else if (this.getSourceType().equalsIgnoreCase(Config.DataTypes.SMAP.name())
             || this.getSourceType().equalsIgnoreCase(Config.DataTypes.WAT.name())) {
@@ -1062,7 +1074,34 @@ public
         value += "," + FieldType.HardBinDesc + "=" + this.getUnit().getHardBinDescValue();
         value += "," + FieldType.BinType + "=" + this.getUnit().getFlagIntValue();
         value += "," + FieldType.DieType + "=" + FieldType.MasterDie;
+        if ((this.getDataType().equals(Config.DataTypes.ATE) || this.getDataType().equals(Config.DataTypes.SLT))
+            && (!this.getUnit().getUnitIdNode().getXmlValue().isEmpty())) {
+            value += "," + FieldType.MasterDieId + "=" + this.getUnit().getUnitIdNode().getValue();
+        }
 
+        return value;
+
+    }
+
+    public
+        String getX0Y0KVString() {
+        String value = "";
+        String xValue = this.getUnit().getxCoordNode().getXmlValue().trim();
+        String yValue = this.getUnit().getyCoordNode().getXmlValue().trim();
+        if ((!xValue.isEmpty()) && (!yValue.isEmpty())) {
+            try {
+                value += "," + FieldType.X0 + "=" + (7 - Integer.valueOf(xValue));
+                value += "," + FieldType.Y0 + "=" + ((Integer.valueOf(yValue) - 15) / 3);
+            }
+            catch (NumberFormatException e) {
+                System.out.printf("Error: %s = %s, %s = %s, can not convert to integer\n",
+                    this.getUnit().getxCoordNode().getName(),
+                    xValue,
+                    this.getUnit().getyCoordNode().getName(),
+                    yValue);
+                value = "";
+            }
+        }
         return value;
 
     }
@@ -1100,6 +1139,10 @@ public
         value += "," + FieldType.SoftBinDesc + "=" + this.getUnit().getSoftBinDescValue();
         value += "," + FieldType.HardBinDesc + "=" + this.getUnit().getHardBinDescValue();
         value += "," + FieldType.BinType + "=" + this.getUnit().getFlagIntValue();
+        if ((this.getDataType().equals(Config.DataTypes.ATE) || this.getDataType().equals(Config.DataTypes.SLT))
+            && (!this.getUnit().getUnitIdNode().getXmlValue().isEmpty())) {
+            value += "," + FieldType.MasterDieId + "=" + this.getUnit().getUnitIdNode().getValue();
+        }
 
         return value;
 
@@ -1521,16 +1564,6 @@ public
     }
 
     public
-        XmlNode getCamLotNode() {
-        return camLotNode;
-    }
-
-    public
-        void setCamLotNode(XmlNode camLotNode) {
-        this.camLotNode = camLotNode;
-    }
-
-    public
         boolean isLotFile() {
         return lotFile;
     }
@@ -1557,4 +1590,15 @@ public
         });
         return watNode;
     }
+
+    public
+        XmlNode getCamDateNode() {
+        return camDateNode;
+    }
+
+    public
+        void setCamDateNode(XmlNode camDateNode) {
+        this.camDateNode = camDateNode;
+    }
+
 }

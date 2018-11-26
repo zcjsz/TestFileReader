@@ -28,11 +28,17 @@ public
     public final static
         String UnitCnt = "UnitCnt";
     public final static
+        String CamGoodCnt = "CamGoodLotCnt";
+    public final static
+        String CamBadCnt = "CamBadLotCnt";
+    public final static
         String KdfMonth = "KDFMonth";
     public final static
         String TransferTime = "TransferTime";
     public final static
         String DataType = "DataType";
+    public final static
+        String SourceType = "SourceType";
     public final static
         String EventType = "EventType";
     public final static
@@ -49,6 +55,10 @@ public
         String Type = "Type";
     public final static
         String File = "File";
+    public final static
+        String FileMonth = "FileMonth";
+    public final static
+        String FileDate = "FileDate";
     public final static
         String FileTime = "FileTime";
     public final static
@@ -137,5 +147,13 @@ public
         String Lot_LotEndTime = "LotEndTime";
     public final static
         byte Date = 35;
+    public final static
+        String X0 = "X0";
+    public final static
+        String Y0 = "Y0";
+    public static
+        String CamDate = "camDate";
+    public static
+        String CamMonth = "camMonth";
 
 }

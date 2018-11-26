@@ -407,7 +407,6 @@ public
             int index = -1;
             boolean isLotNumber = false;
             boolean isOperation = false;
-            boolean isCamLot = false;
 
             for (Element node : nodes) {
                 String nodeName = node.getName().trim().toLowerCase();
@@ -419,9 +418,6 @@ public
                 switch (nodeName) {
                     case "lotnumber":
                         isLotNumber = value.equals("1");
-                        break;
-                    case "Iscamlot":
-                        isCamLot = value.equals("1");
                         break;
                     case "operation":
                         isOperation = value.equals("1");
@@ -483,6 +479,10 @@ public
                             if (node.elements("Name").size() > 0) {
                                 String aliasName = node.elementTextTrim("Name").trim();
                                 xmlNode.setCamColumnName(aliasName);
+                                if (xmlNode.getIndex() > 0) {
+                                    System.out.println("Fatal Error: please either set the index or the name for this xml node: " + xmlNode.getName());
+                                    System.exit(1);
+                                }
                             }
                             else {
                                 if (dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)) {
@@ -491,8 +491,8 @@ public
                                 }
                             }
                             if (node.elements("AllowEmpty").size() > 0) {
-                                String notEmpty = node.elementTextTrim("AllowEmpty").trim();
-                                xmlNode.setAllowEmpty(notEmpty.equals("1"));
+                                String allowEmpty = node.elementTextTrim("AllowEmpty").trim();
+                                xmlNode.setAllowEmpty(allowEmpty.equals("Y") || allowEmpty.equals("1"));
                             }
                             else {
                                 if (dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)) {
@@ -510,12 +510,12 @@ public
                                     case "integer":
                                         xmlNode.setCamColumnType(KDFFieldData.INT);
                                         break;
-                                    case "long":
-                                        xmlNode.setCamColumnType(KDFFieldData.LONG);
-                                        break;
-                                    case "double":
-                                        xmlNode.setCamColumnType(KDFFieldData.DOUBLE);
-                                        break;
+//                                    case "long":
+//                                        xmlNode.setCamColumnType(KDFFieldData.LONG);
+//                                        break;
+//                                    case "double":
+//                                        xmlNode.setCamColumnType(KDFFieldData.DOUBLE);
+//                                        break;
                                     case "float":
                                         xmlNode.setCamColumnType(KDFFieldData.FLOAT);
                                         break;
@@ -578,10 +578,9 @@ public
                     if (isOperation) {
                         dataFormat.setOperationNode(xmlNode);
                     }
-                    if (isCamLot) {
-                        dataFormat.setCamLotNode(xmlNode);
+                    if (isTime && dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)) {
+                        dataFormat.setCamDateNode(xmlNode);
                     }
-
                 }
                 else {
                     dataFormat.getLotHead().remove(xmlNodeName);

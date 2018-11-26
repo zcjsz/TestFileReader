@@ -21,13 +21,6 @@
 
 /dist/
 /target/
-<<<<<<< HEAD
-/testdata/extend/data_log/
-/testdata/extend/data_mapping/
-/testdata/data/
-
-=======
 /testdata/extend/data_mapping/
 /testdata/extend/data_log/
 /testdata/data/
->>>>>>> master

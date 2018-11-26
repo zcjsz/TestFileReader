@@ -19,71 +19,22 @@ and open the template in the editor.
     
     <!--rename kdf, append .done to kdf file-->
     <!-- if rename is disabled in prod mode, then file will be archived-->
-    <RenameKDF>1</RenameKDF>
+    <RenameKDF>0</RenameKDF>
     <TestDescId>testDescId</TestDescId>
     
     <SubClass>subClass</SubClass>
     <BaseClass>baseClass</BaseClass>
     
     <!--es host names of production env-->
-    <ESHostProduction>10.72.1.237,10.72.1.238,10.72.1.239</ESHostProduction>
+    <!--<ESHostProduction>10.72.1.237,10.72.1.238,10.72.1.239</ESHostProduction>-->
+    <ESHostProduction>localhost</ESHostProduction>
     <!--es host names of testing only env-->
     <ESHostTest>192.168.52.100</ESHostTest>
     
-    <SourcePath>/extend/hygon_source_data</SourcePath>
-    <DatalogPath>/extend/data_log</DatalogPath>
-    <MappingPath>/extend/data_mapping</MappingPath>
-    <ArchivePath>/data/data_archive</ArchivePath>
-    
-    <SourceType name= "SMAP" enabled = "1" >
-        <DataType>SMAP</DataType>
-        <FileType>smap.</FileType>
-        <TestIndex>smap-test-*</TestIndex>
-        <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
-        <ProductionMode>1</ProductionMode>
-        <!--LogToFile means save the kdf raw data in the log file, default 1-->
-        <LogToFile>1</LogToFile>
-        <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
-        <GenerateMappingFile>1</GenerateMappingFile>
-        <KDFDate>
-            <Start></Start>
-            <End></End>
-        </KDFDate>
-        <LatestDays>2</LatestDays>
-        <FileLimit>5000</FileLimit>
-        
-        <Customer>Hygon</Customer>
-        <Factory>GFDRS</Factory>
-        <KDFPath>SMAP</KDFPath>
-        <!--xml path is to store the generated test item log file-->
-        <XmlPath>SMAP</XmlPath>
-        <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
-        <MappingPath>SMAP</MappingPath>
-        <!--kdf archive file is to store the kdf file which has been parsed successfully-->
-        <KDFArchivePath>SMAP</KDFArchivePath>
-        
-        <!--never trun on debug mode in production mode, default 0-->
-        <DebugMode>0</DebugMode>
-        
-        <!--comma separated filters, case sensitive-->
-        <FilterOut></FilterOut><!--filter out kdf whose name contains sbo-->
-        <!--comma separated selectors, case sensitive-->
-        <Selector></Selector> <!--select kdf whose name contains GFDRS-->
-        
-        <!--list length while kdf name is split by underline-->
-        <UnderLineCnt>8</UnderLineCnt>
-        <!--below params are filed name index in the kdf name-->
-        <LotNumberIndex>2</LotNumberIndex>
-        <WaferNumberIndex>4</WaferNumberIndex>
-        
-        <KDFMonthIndex>6</KDFMonthIndex>
-        <!--comma separated file open time indices -->
-        <FileOpenTimeIndex>6,7</FileOpenTimeIndex>
-        
-        <!--if enabled, the file name will be added in the unit level doc, default 0-->
-        <AddFileNameInUnit>1</AddFileNameInUnit>
-        
-    </SourceType>
+    <SourcePath>testdata/extend/hygon_source_data</SourcePath>
+    <DatalogPath>testdata/extend/data_log</DatalogPath>
+    <MappingPath>testdata/extend/data_mapping</MappingPath>
+    <ArchivePath>testdata/data/data_archive</ArchivePath>
 
     <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
@@ -101,7 +52,6 @@ and open the template in the editor.
             <Start>20180401</Start>
             <End>20181001</End>
         </KDFDate>
-        <LatestDays>2</LatestDays>
         <FileLimit>100</FileLimit>
         
         <Customer>AMD</Customer>
@@ -205,7 +155,6 @@ and open the template in the editor.
             <Start></Start>
             <End>201805</End>
         </KDFDate>
-        <LatestDays>2</LatestDays>
         <FileLimit>100</FileLimit>
         
         <Customer>Hygon</Customer>
@@ -308,7 +257,6 @@ and open the template in the editor.
             <Start></Start>
             <End></End>
         </KDFDate>
-        <LatestDays>2</LatestDays>
         <FileLimit>500</FileLimit>
         
         <Customer>Hygon</Customer>
@@ -399,7 +347,6 @@ and open the template in the editor.
             <Start></Start>
             <End></End>
         </KDFDate>
-        <LatestDays>2</LatestDays>
         <FileLimit>100</FileLimit>
         
         <Customer>Hygon</Customer>
@@ -442,7 +389,55 @@ and open the template in the editor.
         <LogFailOnlyNodeSelector></LogFailOnlyNodeSelector>
         
     </SourceType>
-    <SourceType name= "CAMSTAR" enabled = "0" >
+    <SourceType name= "SMAP" enabled = "0" >
+        <DataType>SMAP</DataType>
+        <FileType>smap.</FileType>
+        <TestIndex>smap-test-*</TestIndex>
+        <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
+        <ProductionMode>1</ProductionMode>
+        <!--LogToFile means save the kdf raw data in the log file, default 1-->
+        <LogToFile>1</LogToFile>
+        <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
+        <GenerateMappingFile>0</GenerateMappingFile>
+        <KDFDate>
+            <Start></Start>
+            <End></End>
+        </KDFDate>
+        <FileLimit>5000</FileLimit>
+        
+        <Customer>Hygon</Customer>
+        <Factory>GFDRS</Factory>
+        <KDFPath>SMAP</KDFPath>
+        <!--xml path is to store the generated test item log file-->
+        <XmlPath>SMAP</XmlPath>
+        <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
+        <MappingPath>SMAP</MappingPath>
+        <!--kdf archive file is to store the kdf file which has been parsed successfully-->
+        <KDFArchivePath>SMAP</KDFArchivePath>
+        
+        <!--never trun on debug mode in production mode, default 0-->
+        <DebugMode>0</DebugMode>
+        
+        <!--comma separated filters, case sensitive-->
+        <FilterOut></FilterOut><!--filter out kdf whose name contains sbo-->
+        <!--comma separated selectors, case sensitive-->
+        <Selector></Selector> <!--select kdf whose name contains GFDRS-->
+        
+        <!--list length while kdf name is split by underline-->
+        <UnderLineCnt>8</UnderLineCnt>
+        <!--below params are filed name index in the kdf name-->
+        <LotNumberIndex>2</LotNumberIndex>
+        <WaferNumberIndex>4</WaferNumberIndex>
+        
+        <KDFMonthIndex>6</KDFMonthIndex>
+        <!--comma separated file open time indices -->
+        <FileOpenTimeIndex>6,7</FileOpenTimeIndex>
+        
+        <!--if enabled, the file name will be added in the unit level doc, default 0-->
+        <AddFileNameInUnit>1</AddFileNameInUnit>
+        
+    </SourceType>
+    <SourceType name= "CAMSTAR" enabled = "1" >
         <LotIndex>cam-lot-*</LotIndex>
         
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
@@ -463,10 +458,9 @@ and open the template in the editor.
         <Selector>xls,TMP</Selector> <!--select kdf whose name contains GFDRS-->
         
         <KDFDate>
-            <Start>20180401</Start>
-            <End>20181001</End>
+            <Start>20180101</Start>
+            <End>20181231</End>
         </KDFDate>
-        <LatestDays></LatestDays>
         <FileLimit>1000</FileLimit>
         
         
@@ -490,12 +484,15 @@ and open the template in the editor.
         
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
-        
+
+        <RptKeepDays>60</RptKeepDays>
+        <LogKeepDays>60</LogKeepDays>
+
         <!--list length while kdf name is split by underline-->
         <UnderLineCnt>4</UnderLineCnt>
         <FileOpenTimeIndex>3</FileOpenTimeIndex>
         <FileOpenTimeFormat>uuuu-MM-dd-HH-mm-ss</FileOpenTimeFormat>
-        
+        <KDFMonthIndex>3</KDFMonthIndex>
         <!--ProcessLot>Y</ProcessLot>
         <UpdateUnit>Y</UpdateUnit>
         <UpdateLot>Y</UpdateLot>

@@ -5,6 +5,7 @@
  */
 package org.himalayas.filereader.util;
 
+import com.amd.kdf.KDFFieldData;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -72,7 +73,7 @@ public
     private
         boolean allowEmpty = false;
     private
-        byte camColumnType = 0;
+        byte camColumnType = KDFFieldData.NA;
     private
         boolean camLot = false;
 
@@ -169,11 +170,22 @@ public
             + ", enabledLoged = " + this.enabledLog
             + ", startIndex = " + this.startIndex
             + ", endIndex = " + this.endIndex
+            + ", camName = " + this.camColumnName
+            + ", camType = " + this.camColumnType
+            + ", allowEmpty = " + this.isAllowEmpty()
+            + ", index = " + this.index
+            + ", enabled = " + this.enabled
+            + ", endlog = " + this.enabledLog
             + "\n";
     }
 
     public
         String toKVString() {
+        char cr = 13;
+        char crlf = 10;
+        if (this.getXmlValue().isEmpty()) {
+            return "";
+        }
 
         if (this.isTimeNode()) {
             if (Config.convertTime) {
@@ -189,14 +201,42 @@ public
             }
         }
         else {
-            char cr = 13;
-            char crlf = 10;
+
+            // camstar or wat case: must have the name and value can not be empty
+            if (this.getCamColumnName() != null && (!this.getXmlValue().isEmpty())) {
+                switch (this.getCamColumnType()) {
+                    case KDFFieldData.NA:
+                        return this.name + "=" + this.value.replace(',', ' ').replace('=', ' ').replace(cr, ' ').replace(crlf, ' ');
+                    case KDFFieldData.STRING:
+                        return this.name + "=" + this.value.replace(',', ' ').replace('=', ' ').replace(cr, ' ').replace(crlf, ' ');
+                    case KDFFieldData.FLOAT:
+                        if (XmlNode.isFloat(this.value)) {
+                            return this.name + "=" + this.value;
+                        }
+                        else {
+                            return "";
+                        }
+                    case KDFFieldData.INT:
+                        if (XmlNode.isInteger(this.value)) {
+                            return this.name + "=" + this.value;
+                        }
+                        else {
+                            return "";
+                        }
+                    default:
+                        System.out.println("Warning: unsupportted data type found: " + this.getCamColumnType());
+                        return "";
+
+                }
+            }
+
             return this.name + "=" + this.value.replace(',', ' ').replace('=', ' ').replace(cr, ' ').replace(crlf, ' ');
         }
 
     }
 
-    void resetValue() {
+    public
+        void resetValue() {
         this.value = null;
     }
 
@@ -449,7 +489,31 @@ public
         String getCamColumnName() {
         return camColumnName;
     }
-    
+
+    public static
+        boolean isInteger(String value) {
+        try {
+            int temp = Integer.valueOf(value);
+            return true;
+        }
+        catch (NumberFormatException e) {
+            System.out.println("Warning: this is not a Integer data->" + value);
+            return false;
+        }
+    }
+
+    public static
+        boolean isFloat(String value) {
+        try {
+            float temp = Float.valueOf(value);
+            return !Float.isInfinite(temp);
+        }
+        catch (NumberFormatException e) {
+            System.out.println("Warning: this is not a Float data->" + value);
+            return false;
+        }
+    }
+
     public static
         void main(String[] args) {
         String value = "1494200055407";

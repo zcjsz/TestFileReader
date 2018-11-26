@@ -24,9 +24,9 @@ import org.himalayas.filereader.util.FieldType;
 final public
     class SmapReader extends Reader {
 
-    private
+    private final
         ArrayList<String> pickBins = new ArrayList();
-    private
+    private final
         ArrayList<Die> dies = new ArrayList();
 
     public
@@ -126,6 +126,9 @@ final public
             + "," + FieldType.UnitCnt + "=" + this.dies.size()
             + "," + FieldType.IsCaled + "=N"
             + "," + FieldType.PickUnitCnt + "=" + pickUnit
+            + "," + FieldType.DataType + "=" + this.getFormat().getDataType()
+            + "," + FieldType.SourceType + "=" + this.getFormat().getSourceType()
+            + "," + FieldType.TransferTime + "=" + this.getTransferTime()
             + "\n";
         if (!this.writeKVString(docValue)) {
             return false;
@@ -252,6 +255,7 @@ final public
         new Config("config/dataformat.xml");
         Reader reader = new SmapReader(Config.smapFormat);
         Config.smapFormat.setProductionMode(false);
+        Config.smapFormat.getSelectors().add("180601_181917");
 
         File testDataFile = new File("./testdata/extend/hygon_source_data/SMAP");
         for (File lotFile : testDataFile.listFiles()) {

@@ -1,0 +1,38 @@
+PUT _ingest/pipeline/Camstar-report
+{
+  "description": "to parse the filebeat message",
+  "processors": [
+    {
+      "kv": {
+        "field": "message",
+        "field_split": ",",
+        "value_split": "="
+      }
+    },
+    {
+      "remove": {
+        "field": [
+          "message",
+          "source",
+          "offset",
+          "prospector",
+          "beat"
+        ]
+      }
+    },
+    {
+      "date_index_name": {
+        "field": "FileTime",
+        "index_name_prefix": "camstar-data-",
+        "date_rounding": "y",
+        "index_name_format": "yyyy"
+      }
+    },
+    {
+      "set": {
+        "field": "_id",
+        "value": "{{CamKey}}"
+      }
+    }
+  ]
+}
