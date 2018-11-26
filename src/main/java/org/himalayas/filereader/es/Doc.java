@@ -37,6 +37,9 @@ public
      * @param id
      * @param binType
      * @param startTime
+     * @param endTime
+     * @param index
+     * @param testTime
      */
     public
         Doc(String id, int binType, String startTime, String endTime, String index, double testTime) {

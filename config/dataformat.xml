@@ -46,7 +46,7 @@ and open the template in the editor.
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
-        <GenerateMappingFile>1</GenerateMappingFile>
+        <GenerateMappingFile>0</GenerateMappingFile>
         
         <KDFDate>
             <Start>20180401</Start>
@@ -151,7 +151,7 @@ and open the template in the editor.
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
-        <GenerateMappingFile>1</GenerateMappingFile>
+        <GenerateMappingFile>0</GenerateMappingFile>
         <KDFDate>
             <Start></Start>
             <End>201805</End>
@@ -254,7 +254,7 @@ and open the template in the editor.
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
-        <GenerateMappingFile>1</GenerateMappingFile>
+        <GenerateMappingFile>0</GenerateMappingFile>
         <KDFDate>
             <Start></Start>
             <End></End>

@@ -37,9 +37,9 @@ public
         Workbook workbook = null;
     private
         Sheet sheet = null;
-    private
+    private final
         HashMap<String, Integer> nameColumns = new HashMap();
-    private
+    private final
         ArrayList<Integer> validColumns = new ArrayList();
     private
         StringBuilder camDocs = new StringBuilder();

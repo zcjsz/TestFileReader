@@ -14,23 +14,18 @@ import com.amd.kdf.gui.KdfLoader;
 import com.amd.kdf.gui.KdfTypes;
 import com.amd.kdf.io.SeekableKDFInputStream;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import java.nio.file.StandardOpenOption;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
 import org.himalayas.filereader.util.Config;
 import org.himalayas.filereader.util.DataFormat;
 import org.himalayas.filereader.util.FieldType;
@@ -51,7 +46,7 @@ public
         KDFInstanceTree tree;
     private
         DataFormat format = null;
-    private
+    private final
         Document document = DocumentHelper.createDocument();
     private
         Element root = document.addElement("UnitData");
@@ -244,8 +239,8 @@ public
         boolean validateFile(File kdfFile) {
         this.failType = null;
 
-        String kdfName = kdfFile.getName();
-        String names[] = kdfName.split("kdf.");
+        String kdfLogName = kdfFile.getName();
+        String names[] = kdfLogName.split("kdf.");
         if (names.length != 2) {
             return false;
         }
@@ -261,7 +256,7 @@ public
 
         boolean skip = false;
         for (String filter : this.getFormat().getFilters()) {
-            if (kdfName.contains(filter)) {
+            if (kdfLogName.contains(filter)) {
                 skip = true;
                 break;
             }
@@ -271,7 +266,7 @@ public
         }
 
         for (String selector : this.getFormat().getSelectors()) {
-            if (!kdfName.contains(selector)) {
+            if (!kdfLogName.contains(selector)) {
                 skip = true;
                 break;
             }
@@ -489,14 +484,14 @@ public
         long startTime = System.currentTimeMillis();
         Node[] roots = tree.getRoots();
         if (roots != null && roots.length > 0) {
-            for (Node root : roots) {
+            for (Node rootNode : roots) {
                 if (this.isDebugMode()) {
-                    System.out.println("Root name is " + root.getName());
+                    System.out.println("Root name is " + rootNode.getName());
                 }
                 for (XmlNode xmlNode : format.getLotHead().values()) {
                     for (String fieldName : xmlNode.getFieldNames()) {
-                        if (root.containsKey(fieldName)) {
-                            xmlNode.setValue(root.get(fieldName).toString());
+                        if (rootNode.containsKey(fieldName)) {
+                            xmlNode.setValue(rootNode.get(fieldName).toString());
                         }
                     }
                 }
@@ -579,7 +574,7 @@ public
 
     /**
      * read the base class the sub class the class is stored in the <testDescs>
-     * the format is subClass=subClassName,baseClass=baseClassName
+     * the format is subClassName=subClassName,baseClass=baseClassName
      */
     private
         void readTestDesc() {
@@ -589,8 +584,8 @@ public
             for (Node des : descs) {
                 String value = "";
                 String testDescId = null;
-                String baseClass = null;
-                String subClass = null;
+                String baseClassName = null;
+                String subClassName = null;
                 for (String fieldName : des.keySet()) {
                     String fieldValue = des.get(fieldName).toString().trim();
 
@@ -598,7 +593,7 @@ public
                         continue;
                     }
                     if (fieldName.endsWith(Config.subClass)) {
-                        subClass = fieldValue;
+                        subClassName = fieldValue;
                         // base class and sub class filters need to apply them here since it needs the base and sub class
                         // to generate the generated test name
                         if (this.getFormat().getDataType().equals(Config.DataTypes.SLT)
@@ -607,7 +602,7 @@ public
                         }
                     }
                     if (fieldName.endsWith(Config.baseClass)) {
-                        baseClass = fieldValue;
+                        baseClassName = fieldValue;
                         // base class and sub class filters need to apply them here since it needs the base and sub class
                         // to generate the generated test name
                         if (this.getFormat().getDataType().equals(Config.DataTypes.SLT)
@@ -632,7 +627,7 @@ public
 
                 }
                 if (testDescId != null && (!value.isEmpty())) {
-                    this.testDescRefs.put(testDescId, new TestDesc(baseClass, subClass, value));
+                    this.testDescRefs.put(testDescId, new TestDesc(baseClassName, subClassName, value));
                 }
             }
             if (this.isDebugMode()) {
@@ -724,9 +719,9 @@ public
     private
         void readRoot_ComHash() {
         long startTime = System.currentTimeMillis();
-        Node[] comHashRefs = tree.getNodes(KdfTypes.KDF_RT_COMPGROUPDESC);
-        if (comHashRefs != null && comHashRefs.length > 0) {
-            for (Node comHashNode : comHashRefs) {
+        Node[] rawComHashRefs = tree.getNodes(KdfTypes.KDF_RT_COMPGROUPDESC);
+        if (rawComHashRefs != null && rawComHashRefs.length > 0) {
+            for (Node comHashNode : rawComHashRefs) {
                 KDFFieldData comNameField = comHashNode.get("componentName");
                 if (comNameField != null) {
                     String comName = comNameField.getValue().toString().replace('.', '_');
@@ -872,7 +867,7 @@ public
             }
 
             if (validateFullForamtString(unitKVStr)) {
-                dataContent.append(slaveKVStr + unitKVStr).append("\n");
+                dataContent.append(slaveKVStr).append(unitKVStr).append("\n");
 
             }
             else {
@@ -1137,12 +1132,7 @@ public
                     return false;
                 }
             }
-            if (this.mappingFile.createNewFile()) {
-                return true;
-            }
-            else {
-                return false;
-            }
+            return this.mappingFile.createNewFile();
         }
         catch (IOException ex) {
             Logger.getLogger(KDFReader.class.getName()).log(Level.SEVERE, null, ex);
@@ -1440,8 +1430,14 @@ public
             }
 
         }
-        if (isFlow && this.getFormat().getFlowContextFilters().contains(node.get("context"))) {
-            return formatString;
+        if (isFlow) {
+            KDFFieldData flowContextData = node.get("context");
+            if (flowContextData != null && (!flowContextData.isNull())) {
+                String contextData = flowContextData.getValue().toString();
+                if ((contextData != null) && (!contextData.isEmpty()) && (this.getFormat().getFlowContextFilters().contains(contextData))) {
+                    return formatString;
+                }
+            }
         }
 
         // return immediately after slt test
@@ -1879,7 +1875,7 @@ public
                     return false;
                 }
             }
-            catch (Exception e) {
+            catch (NumberFormatException e) {
                 System.out.printf("Bad Format Field: fieldName=%s, fieldValue=%s\n", fieldName, fieldValue);
                 return false;
             }
@@ -2071,19 +2067,20 @@ public
         boolean setKDFDate() {
         String[] names = this.file.getName().split("_");
         this.kdfMonth = names[format.getKdfMonthIndex()];
-        if (this.kdfMonth.length() == 4) {
-            //0604
-            this.kdfMonth = "20" + kdfMonth;
-        }
-        else if (this.kdfMonth.length() == 6) {
-            //180604
-            this.kdfMonth = "20" + kdfMonth.substring(0, 4);
-        }
-        else if (this.kdfMonth.length() == 8) {
-            this.kdfMonth = this.kdfMonth.substring(0, 6);
-        }
-        else {
-            return false;
+        switch (this.kdfMonth.length()) {
+            case 4:
+                //0604
+                this.kdfMonth = "20" + kdfMonth;
+                break;
+            case 6:
+                //180604
+                this.kdfMonth = "20" + kdfMonth.substring(0, 4);
+                break;
+            case 8:
+                this.kdfMonth = this.kdfMonth.substring(0, 6);
+                break;
+            default:
+                return false;
         }
 
         this.fileOpenTime = "";
@@ -2103,117 +2100,6 @@ public
         }
         this.kdfDate = fileOpenTime.substring(0, 8);
         return true;
-    }
-
-    private
-        void closeFile(String xmlFilePath) {
-        xmlFilePath = format.getXmlPath();
-
-        String[] names = this.file.getName().split("_");
-        String factoryName = format.getFactory();
-        String testerNumber = names[format.getTesterNumberIndex()];
-        String lotNumber = names[format.getLotNumberIndex()];
-        String mfgStep = names[format.getMfgStepIndex()];
-        String kdfMonth = names[format.getKdfMonthIndex()];
-        if (kdfMonth.length() == 4) {
-            //0604
-            kdfMonth = "20" + kdfMonth;
-        }
-        else if (kdfMonth.length() == 6) {
-            //180604
-            kdfMonth = "20" + kdfMonth.substring(0, 4);
-        }
-        String xmlDate = LocalDate.now().format(DateTimeFormatter.ofPattern("uuuuMMdd"));
-        String platform = format.getTesterTypes().get(names[format.getTesterTypeIndex()]);
-        /**
-         * XmlNode lotStartTimeNode = format.getLotStartTimeNode(); if
-         * (lotStartTimeNode != null && lotStartTimeNode.getValue() != null) {
-         * if (lotStartTimeNode.getValue().length() == 14 &&
-         * lotStartTimeNode.getValue().startsWith("20")) { lotOpenTime =
-         * lotStartTimeNode.getValue(); } }
-         *
-         * XmlNode lotOpenTimeNode = format.getLotOpenTimeNode(); if
-         * (lotOpenTimeNode != null && lotOpenTimeNode.getValue() != null) { if
-         * (lotOpenTimeNode.getValue().length() == 14 &&
-         * lotOpenTimeNode.getValue().startsWith("20")) { lotOpenTime =
-         * lotOpenTimeNode.getValue(); } }
-         *
-         */
-
-        String filePath = format.getXmlPath()
-            + "/" + factoryName
-            + "/" + format.getCustomer()
-            + "/" + format.getDataType()
-            + "/" + platform
-            + "/kdf"
-            + "/" + xmlDate
-            + "/" + testerNumber
-            + "/" + kdfMonth
-            + "/" + lotNumber
-            + "/" + mfgStep
-            + "/" + format.getLotOpenTimeNode().getValue();;
-
-        File unitFile = new File(filePath + "/" + "UnitData_" + this.file.getName() + ".xml");
-        File tempUunitFile = new File(filePath + "/" + "UnitData_" + this.file.getName() + ".xml.tmp");
-
-        try {
-            Files.deleteIfExists(tempUunitFile.toPath());
-            if ((!tempUunitFile.getParentFile().exists())) {
-                if (tempUunitFile.getParentFile().mkdirs()) {
-                    //System.out.println("successed to generate file: " + tempUunitFile.getParentFile().getAbsolutePath());
-                }
-                else {
-                    System.out.println("failed to generate file: " + tempUunitFile.getParentFile().getAbsolutePath());
-                }
-            }
-            if (tempUunitFile.getParentFile().exists()) {
-                if (tempUunitFile.createNewFile()) {
-                    OutputFormat goodFormat = OutputFormat.createPrettyPrint();
-                    goodFormat.setIndent(true);
-                    goodFormat.setIndentSize(2);
-                    XMLWriter writer = new XMLWriter(new FileWriter(tempUunitFile.getAbsolutePath()), goodFormat);
-                    writer.write(document);
-                    writer.close();
-                    writer = null;
-                    if (tempUunitFile.renameTo(unitFile)) {
-                        System.out.println("Successed to generate xml file");
-                        if (Config.renameKDF) {
-                            File kdfedFile = new File(this.file.getAbsolutePath() + "." + Config.KdfRename.done);
-                            if (this.file.renameTo(kdfedFile)) {
-                                System.out.println("Successed to rename the kdf file");
-                                System.out.printf("EventType=%s,DoneTime=%s,KDFName=%s,UnitCnt=%d,LotNumber=%s,MFGStep=%s,KDFMonth=%s,xmlDate=%s,TransferTime=%s\n",
-                                    "KDFDone",
-                                    ZonedDateTime.now().toOffsetDateTime(),
-                                    file.getName().split("kdf.")[0] + "kdf",
-                                    unitCnt,
-                                    lotNumber,
-                                    mfgStep,
-                                    kdfMonth,
-                                    xmlDate,
-                                    file.getName().split("kdf.")[1]
-                                );
-                            }
-                            else {
-                                System.out.println("Failed to rename the kdf file");
-                            }
-                        }
-
-                    }
-                    else {
-                        System.out.println("failed to generate xml file");
-                    }
-                }
-            }
-            else {
-                System.out.println("failed to generate the xml file since failed to make dirs");
-            }
-
-        }
-        catch (IOException ex) {
-            Logger.getLogger(KDFReader.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        this.root.clearContent();
-
     }
 
     private
@@ -2256,6 +2142,7 @@ public
      * System.out.println("unsupportted kdf type found"); return false; } return
      * true; }
      *
+     * @return
      */
     public
         DataFormat getFormat() {
@@ -2303,17 +2190,17 @@ public
 
     public
         boolean chooseFormat(File file) {
-        for (DataFormat format : Config.dataFormats.values()) {
-            if (!format.isEnabled()) {
+        for (DataFormat dataFormat : Config.dataFormats.values()) {
+            if (!dataFormat.isEnabled()) {
                 continue;
             }
-            if (format.getDataType().equals(Config.DataTypes.SMAP)
-                || format.getDataType().equals(Config.DataTypes.WAT)) {
+            if (dataFormat.getDataType().equals(Config.DataTypes.SMAP)
+                || dataFormat.getDataType().equals(Config.DataTypes.WAT)) {
                 continue;
             }
-            String sourceType = file.getName().split("_")[format.getSourceTypeIndex()];
-            if (sourceType.equals(format.getSourceType()) || sourceType.toLowerCase().contains(format.getSourceType().toLowerCase())) {
-                this.setFormat(format);
+            String sourceType = file.getName().split("_")[dataFormat.getSourceTypeIndex()];
+            if (sourceType.equals(dataFormat.getSourceType()) || sourceType.toLowerCase().contains(dataFormat.getSourceType().toLowerCase())) {
+                this.setFormat(dataFormat);
                 return true;
             }
         }

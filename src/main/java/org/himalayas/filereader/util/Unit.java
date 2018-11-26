@@ -43,7 +43,7 @@ public
         XmlNode testTimeNode = null;
     private
         XmlNode waferLotNode = null;
-    private
+    private final
         ArrayList<SlaveUnit> slaveUnits = new ArrayList();
     private
         boolean dummyUnit = false;
@@ -75,7 +75,7 @@ public
         if (this.flag == null) {
             return "0";
         }
-        return (this.flag == "P" ? "1" : "0");
+        return ("P".equals(this.flag) ? "1" : "0");
     }
 
     public

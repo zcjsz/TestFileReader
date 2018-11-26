@@ -33,10 +33,10 @@ public
         boolean recalAll = false;
     private
         boolean reloadAll = false;
-    private
+    private final
         HashMap<String, String> camstarOperMappings = new HashMap();
 
-    private
+    private final
         ArrayList<String> lotOpertions = new ArrayList();
     private
         String fileType = null;
@@ -67,15 +67,15 @@ public
 
     private
         boolean appendSlaveUnitId2Test = false;
-    private
+    private final
         ArrayList<String> logFailOnlyBaseClasses = new ArrayList();
-    private
+    private final
         ArrayList<String> logOnlyFailNodes = new ArrayList();
-    private
+    private final
         ArrayList<String> testDescFieldFilters = new ArrayList();
-    private
+    private final
         ArrayList<String> testDescFieldSelectors = new ArrayList();
-    private
+    private final
         ArrayList<String> flowContextFilters = new ArrayList();
 
     private
@@ -179,7 +179,7 @@ public
         ArrayList<String> nodeTypeFilters = new ArrayList();
     private final
         ArrayList<String> nodeTypeSelectors = new ArrayList();
-    private
+    private final
         ArrayList<String> fieldFiters = new ArrayList();
     private
         XmlNode lotNumberNode = null;
@@ -1074,8 +1074,8 @@ public
         value += "," + FieldType.HardBinDesc + "=" + this.getUnit().getHardBinDescValue();
         value += "," + FieldType.BinType + "=" + this.getUnit().getFlagIntValue();
         value += "," + FieldType.DieType + "=" + FieldType.MasterDie;
-        if((this.getDataType().equals(Config.DataTypes.ATE) || this.getDataType().equals(Config.DataTypes.SLT)) 
-                &&(!this.getUnit().getUnitIdNode().getXmlValue().isEmpty())){
+        if ((this.getDataType().equals(Config.DataTypes.ATE) || this.getDataType().equals(Config.DataTypes.SLT))
+            && (!this.getUnit().getUnitIdNode().getXmlValue().isEmpty())) {
             value += "," + FieldType.MasterDieId + "=" + this.getUnit().getUnitIdNode().getValue();
         }
 
@@ -1139,8 +1139,8 @@ public
         value += "," + FieldType.SoftBinDesc + "=" + this.getUnit().getSoftBinDescValue();
         value += "," + FieldType.HardBinDesc + "=" + this.getUnit().getHardBinDescValue();
         value += "," + FieldType.BinType + "=" + this.getUnit().getFlagIntValue();
-        if((this.getDataType().equals(Config.DataTypes.ATE) || this.getDataType().equals(Config.DataTypes.SLT)) 
-                &&(!this.getUnit().getUnitIdNode().getXmlValue().isEmpty())){
+        if ((this.getDataType().equals(Config.DataTypes.ATE) || this.getDataType().equals(Config.DataTypes.SLT))
+            && (!this.getUnit().getUnitIdNode().getXmlValue().isEmpty())) {
             value += "," + FieldType.MasterDieId + "=" + this.getUnit().getUnitIdNode().getValue();
         }
 

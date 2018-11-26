@@ -24,9 +24,9 @@ import org.himalayas.filereader.util.FieldType;
 final public
     class SmapReader extends Reader {
 
-    private
+    private final
         ArrayList<String> pickBins = new ArrayList();
-    private
+    private final
         ArrayList<Die> dies = new ArrayList();
 
     public
