@@ -180,8 +180,10 @@ public
 
             this.goodLotCnt++;
             String docIdKVString = "," + FieldType.Lot_Doc_id + "=" + this.getCamDocId(camLot, camOper);
-            this.camDocs.append(this.generateLotHeadKVStr()).append(docIdKVString).append(camDateKVString).append(camMonthKVString).append("\n");
-
+            String docValue = this.generateLotHeadKVStr() + docIdKVString + camDateKVString + camMonthKVString + "\n";
+            if (Reader.validateFullForamtString(docValue)) {
+                this.camDocs.append(docValue);
+            }
         }
         return true;
     }
