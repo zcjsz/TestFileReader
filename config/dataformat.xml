@@ -1208,8 +1208,9 @@ and open the template in the editor.
             <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "WAT" enabled = "0" >
+            <SourceType name= "WAT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
+                <Index>4</Index>
             </SourceType>
             <SourceType name= "SMAP" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
