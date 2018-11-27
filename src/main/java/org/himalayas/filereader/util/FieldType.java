@@ -155,5 +155,19 @@ public
         String CamDate = "camDate";
     public static
         String CamMonth = "camMonth";
-
+    // for wat data
+    public static
+        String TestNumber = "TestNumber";
+    public static
+        String TestName = "TestName";
+    public static
+        String HiLimit = "HiLimit";
+    public static
+        String LoLimit = "LoLimit";
+    public static
+        String TestValue = "TestValue";
+    public static
+        String SlaveDie = "SalveDie";
+    public static
+        String Group = "Group";
 }
