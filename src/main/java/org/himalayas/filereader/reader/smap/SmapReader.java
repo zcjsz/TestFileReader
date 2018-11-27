@@ -74,8 +74,9 @@ final public
                     ycoord++;
                 }
             }
-            System.out.println();
-
+            if (this.isDebugMode()) {
+                System.out.println();
+            }
         }
         catch (IOException ex) {
             Logger.getLogger(SmapReader.class.getName()).log(Level.SEVERE, null, ex);
@@ -96,6 +97,7 @@ final public
     public
         boolean writeLogFile() {
         this.setUnitCnt(this.dies.size());
+        this.setDocCnt(this.dies.size());
         String lotHead = this.generateLotHeadKVStr();
         int pickUnit = 0;
 
@@ -114,8 +116,7 @@ final public
             if (this.isDebugMode()) {
                 System.out.print(docValue);
             }
-
-            if (!this.writeKVString(docValue)) {
+            if (Reader.validateFullForamtString(docValue) && (!this.writeKVString(docValue))) {
                 return false;
             }
         }
@@ -124,16 +125,16 @@ final public
         String docValue = lotHead
             + "," + FieldType.Type + "=" + FieldType.File
             + "," + FieldType.UnitCnt + "=" + this.dies.size()
+            + "," + FieldType.DocCnt + "=" + this.dies.size()
             + "," + FieldType.IsCaled + "=N"
             + "," + FieldType.PickUnitCnt + "=" + pickUnit
             + "," + FieldType.DataType + "=" + this.getFormat().getDataType()
             + "," + FieldType.SourceType + "=" + this.getFormat().getSourceType()
             + "," + FieldType.TransferTime + "=" + this.getTransferTime()
             + "\n";
-        if (!this.writeKVString(docValue)) {
-            return false;
+        if (Reader.validateFullForamtString(docValue)) {
+            return this.writeKVString(docValue);
         }
-
         return true;
     }
 

@@ -56,8 +56,6 @@ public abstract
     private
         String lotNumber = null;
     private
-        int fileLevelDocCnt = 0;
-    private
         String fileOpenTime = null;
     private
         long jobStartTime = 0;
@@ -69,6 +67,8 @@ public abstract
         int unitCnt = 0;
     private
         int kdfDoneCnt = 0;
+    private
+        int docCnt = 0;
 
     public
         void resetAll() {
@@ -84,10 +84,10 @@ public abstract
         this.transferTime = null;
         this.fileName = null;
         this.lotNumber = null;
-        this.fileLevelDocCnt = 0;
         this.fileOpenTime = null;
         this.failType = null;
         this.unitCnt = 0;
+        this.docCnt = 0;
 
     }
 
@@ -648,11 +648,12 @@ public abstract
 
     public
         void logFileDoneToES() {
-        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%d,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%d,%s=%d,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFDone,
             FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
             FieldType.KdfName, this.fileName,
             FieldType.UnitCnt, this.unitCnt,
+            FieldType.DocCnt, this.docCnt,
             this.getFormat().getLotNumberNode().getName(), this.lotNumber,
             FieldType.KdfMonth, this.kdfMonth,
             FieldType.KdfDate, this.kdfDate,
@@ -687,7 +688,13 @@ public abstract
                     if (i != 0) {
                         value += ",";
                     }
-                    value += node.getName() + "=" + names[node.getIndex()];
+                    String temp = names[node.getIndex()];
+                    if (node == this.getFormat().getWaferNumebrNode()) {
+                        if (temp.length() == 2 && temp.startsWith("0")) {
+                            temp = temp.substring(1);
+                        }
+                    }
+                    value += node.getName() + "=" + temp;
                     i++;
                 }
                 else {
@@ -713,6 +720,7 @@ public abstract
     /**
      * write the kv string in to log file
      *
+     * @param dataContent
      * @return
      */
     protected
@@ -777,11 +785,6 @@ public abstract
     }
 
     public
-        int getFileLevelDocCnt() {
-        return fileLevelDocCnt;
-    }
-
-    public
         long getJobStartTime() {
         return jobStartTime;
     }
@@ -802,6 +805,11 @@ public abstract
     }
 
     public
+        int getUnitCnt() {
+        return unitCnt;
+    }
+
+    public
         int getKdfDoneCnt() {
         return kdfDoneCnt;
     }
@@ -809,6 +817,53 @@ public abstract
     private
         File getExceptionArchiveFile() {
         return exceptionArchiveFile;
+    }
+
+    protected
+        void setDocCnt(int docCnt) {
+        this.docCnt = docCnt;
+    }
+
+    public
+        int getDocCnt() {
+        return docCnt;
+    }
+
+    /**
+     * validate a string return false if this string contains char ',' or '='
+     * else return true
+     *
+     * @param formatString
+     * @return
+     */
+    public static
+        boolean validateFullForamtString(String formatString) {
+        int length = formatString.length();
+        int commaCnt = 0;
+        int equalityCnt = 0;
+        int lfCnt = 0;
+        while (length-- > 0) {
+            char chr = formatString.charAt(length);
+            switch (chr) {
+                case '\n':
+                    lfCnt++;
+                    break;
+                case ',':
+                    commaCnt++;
+                    break;
+                case '=':
+                    equalityCnt++;
+                    break;
+                default:
+                    break;
+            }
+        }
+        boolean result = (commaCnt + 1 == equalityCnt) && (lfCnt == 1);
+        if (!result) {
+            System.out.println("Warning: failed to validate this format string: " + formatString);
+        }
+        return result;
+
     }
 
     protected abstract
