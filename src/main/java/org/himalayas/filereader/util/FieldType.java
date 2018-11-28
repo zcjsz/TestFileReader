@@ -64,6 +64,8 @@ public
     public final static
         String Unit = "Unit";
     public final static
+        String Units = "Units";
+    public final static
         String SoftBinDesc = "SBinDesc";
     public final static
         String HardBinDesc = "HBinDesc";
@@ -161,11 +163,11 @@ public
     public static
         String TestName = "TestName";
     public static
-        String HiLimit = "HiLimit";
+        String HiLimit = "highSpecLimit";
     public static
-        String LoLimit = "LoLimit";
+        String LoLimit = "lowSpecLimit";
     public static
-        String TestValue = "TestValue";
+        String TestValue = "value";
     public static
         String SlaveDie = "SalveDie";
     public static

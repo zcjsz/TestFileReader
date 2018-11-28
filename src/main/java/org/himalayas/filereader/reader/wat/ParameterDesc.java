@@ -52,7 +52,7 @@ public
             + "," + FieldType.Group + "=" + this.group
             + "," + FieldType.LoLimit + "=" + this.loLimit
             + "," + FieldType.HiLimit + "=" + this.hiLimit
-            + "," + FieldType.Unit + "=" + this.unit;
+            + "," + FieldType.Units + "=" + this.unit;
     }
 
 }
