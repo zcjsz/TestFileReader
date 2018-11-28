@@ -84,6 +84,58 @@ and open the template in the editor.
         <AddFileNameInUnit>1</AddFileNameInUnit>
         
     </SourceType>
+    <SourceType name= "WAT" enabled = "1" >
+        <TestIndex>wat-test-*</TestIndex>
+        <FileType>.dis</FileType>
+        <DataType>WAT</DataType>
+        <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
+        <ProductionMode>1</ProductionMode>
+        <!--LogToFile means save the kdf raw data in the log file, default 1-->
+        <LogToFile>1</LogToFile>
+        <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
+        <GenerateMappingFile>1</GenerateMappingFile>
+        <KDFDate>
+            <Start></Start>
+            <End></End>
+        </KDFDate>
+        <LatestDays></LatestDays>
+        <FileLimit>5000</FileLimit>
+        
+        <Customer>Hygon</Customer>
+        <Factory>GFDRS</Factory>
+        <KDFPath>WAT</KDFPath>
+        <!--xml path is to store the generated test item log file-->
+        <XmlPath>WAT</XmlPath>
+        <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
+        <MappingPath>WAT</MappingPath>
+        <!--kdf archive file is to store the kdf file which has been parsed successfully-->
+        <KDFArchivePath>WAT</KDFArchivePath>
+        
+        <!--never trun on debug mode in production mode, default 0-->
+        <DebugMode>0</DebugMode>
+        
+        <!--comma separated filters, case sensitive-->
+        <FilterOut></FilterOut><!--filter out kdf whose name contains sbo-->
+        <!--comma separated selectors, case sensitive-->
+        <Selector>data.dis</Selector> <!--select kdf whose name contains GFDRS-->
+        
+        
+        <!--list length while kdf name is split by underline-->
+        <UnderLineCnt>10</UnderLineCnt>
+        <!--below params are filed name index in the kdf name-->
+        <LotNumberIndex>2</LotNumberIndex>
+        <MfgStepIndex>6</MfgStepIndex>
+        <TestCodeIndex></TestCodeIndex>
+        <WaferNumberIndex>3</WaferNumberIndex>
+        <SiteIndex></SiteIndex>
+        <KDFMonthIndex>8</KDFMonthIndex>
+        <!--comma separated file open time indices -->
+        <FileOpenTimeIndex>8,9</FileOpenTimeIndex>
+        
+        <!--if enabled, the file name will be added in the unit level doc, default 0-->
+        <AddFileNameInUnit>1</AddFileNameInUnit>
+        
+    </SourceType>
 
     <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
@@ -385,63 +437,7 @@ and open the template in the editor.
         <!--slave unit id will append to test level doc if enabled, default false-->
         <AppendSlaveUnitId2Test>1</AppendSlaveUnitId2Test>
     </SourceType>
-    <SourceType name= "WAT" enabled = "0" >
-        <TestIndex>wat-test-*</TestIndex>
-        <FileType>.dis</FileType>
-        <DataType>WAT</DataType>
-        <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
-        <ProductionMode>0</ProductionMode>
-        <!--LogToFile means save the kdf raw data in the log file, default 1-->
-        <LogToFile>1</LogToFile>
-        <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
-        <GenerateMappingFile>0</GenerateMappingFile>
-        <KDFDate>
-            <Start></Start>
-            <End></End>
-        </KDFDate>
-        <LatestDays>2</LatestDays>
-        <FileLimit>100</FileLimit>
-        
-        <Customer>Hygon</Customer>
-        <Factory>GFDRS</Factory>
-        <KDFPath>WAT</KDFPath>
-        <!--xml path is to store the generated test item log file-->
-        <XmlPath>WAT</XmlPath>
-        <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
-        <MappingPath>WAT</MappingPath>
-        <!--kdf archive file is to store the kdf file which has been parsed successfully-->
-        <KDFArchivePath>WAT</KDFArchivePath>
-        
-        <!--never trun on debug mode in production mode, default 0-->
-        <DebugMode>0</DebugMode>
-        
-        <!--comma separated filters, case sensitive-->
-        <FilterOut></FilterOut><!--filter out kdf whose name contains sbo-->
-        <!--comma separated selectors, case sensitive-->
-        <Selector>GF</Selector> <!--select kdf whose name contains GFDRS-->
-        
-        
-        <!--list length while kdf name is split by underline-->
-        <UnderLineCnt>8</UnderLineCnt>
-        <!--below params are filed name index in the kdf name-->
-        <LotNumberIndex>4</LotNumberIndex>
-        <TesterNumberIndex>3</TesterNumberIndex>
-        <MfgStepIndex>5</MfgStepIndex>
-        <TestCodeIndex></TestCodeIndex>
-        <WaferNumberIndex>7</WaferNumberIndex>
-        <SiteIndex></SiteIndex>
-        <KDFMonthIndex>9</KDFMonthIndex>
-        <SourceTypeIndex>0</SourceTypeIndex>
-        <!--comma separated file open time indices -->
-        <FileOpenTimeIndex>9,10</FileOpenTimeIndex>
-        
-        <!--if enabled, the file name will be added in the unit level doc, default 0-->
-        <AddFileNameInUnit>1</AddFileNameInUnit>
-        
-        
-        <LogFailOnlyNodeSelector></LogFailOnlyNodeSelector>
-        
-    </SourceType>
+    
     <SourceType name= "CAMSTAR" enabled = "0" >
         <LotIndex>cam-lot-*</LotIndex>
         
@@ -577,7 +573,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -608,7 +603,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -638,7 +632,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -666,7 +659,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -700,7 +692,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -727,7 +718,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -758,7 +748,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -785,7 +774,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -814,7 +802,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -841,7 +828,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -869,7 +855,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -896,7 +881,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -924,7 +908,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -951,7 +934,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -978,7 +960,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1005,7 +986,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1029,14 +1009,15 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "WAT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>1</Index>
+                <Name>STATION</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1064,7 +1045,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1085,15 +1065,17 @@ and open the template in the editor.
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "WAT" enabled = "0" >
+            <SourceType name= "WAT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
+                <Name>PROBECARD</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1123,7 +1105,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1152,7 +1133,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1180,7 +1160,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1207,7 +1186,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1236,7 +1214,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1264,7 +1241,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1282,8 +1258,9 @@ and open the template in the editor.
             <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "WAT" enabled = "0" >
+            <SourceType name= "WAT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
+                <Index>4</Index>
             </SourceType>
             <SourceType name= "SMAP" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
@@ -1291,7 +1268,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1318,7 +1294,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1348,12 +1323,11 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
-                <EnabledLog>0</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
+            <IswaferNumber>1</IswaferNumber>
         </XmlNode>
         
         
@@ -1377,7 +1351,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>0</Index>
                 <Name>Pline</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1401,7 +1374,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>1</Index>
                 <Name>Type</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1425,7 +1397,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>2</Index>
                 <Name>Insert</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -1449,7 +1420,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>3</Index>
                 <Name>Device</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1473,7 +1443,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>4</Index>
                 <Name>Package</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1497,13 +1466,14 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>5</Index>
                 <Name>Lot</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
+            <LotNumber>1</LotNumber>
         </XmlNode>
-        <XmlNode name= "camDate" >
+        <XmlNode name= "camTime" >
+            <Time>1</Time>
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -1521,7 +1491,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>6</Index>
                 <Name>Date</Name>
                 <Type>Date</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1545,11 +1514,11 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>7</Index>
                 <Name>Oper</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
+            <Operation>1</Operation>
         </XmlNode>
         <XmlNode name= "camTemp" >
             <SourceType name= "HTEST1" enabled = "0" >
@@ -1569,7 +1538,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>8</Index>
                 <Name>Temp</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -1593,7 +1561,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>9</Index>
                 <Name>Mother</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -1617,7 +1584,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>10</Index>
                 <Name>Datecode</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -1641,7 +1607,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>11</Index>
                 <Name>Tester</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -1665,7 +1630,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>12</Index>
                 <Name>Tcode</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -1689,7 +1653,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>13</Index>
                 <Name>Tprog</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -1713,7 +1676,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>14</Index>
                 <Name>Trev</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -1737,7 +1699,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>15</Index>
                 <Name>QtyIn</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1761,7 +1722,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>16</Index>
                 <Name>Qtyout</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1785,7 +1745,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>17</Index>
                 <Name>Yield</Name>
                 <Type>Float</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1809,7 +1768,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>18</Index>
                 <Name>Rej1</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1833,7 +1791,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>19</Index>
                 <Name>Rej2</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1857,7 +1814,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>20</Index>
                 <Name>Rej3</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1881,7 +1837,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>21</Index>
                 <Name>Rej4</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1905,7 +1860,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>22</Index>
                 <Name>Rej5</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1929,7 +1883,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>23</Index>
                 <Name>Rej6</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1953,7 +1906,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>24</Index>
                 <Name>Rej7</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -1977,7 +1929,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>25</Index>
                 <Name>Rej8</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2001,7 +1952,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>26</Index>
                 <Name>Rej9</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2025,7 +1975,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>27</Index>
                 <Name>Rej10</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2049,7 +1998,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>28</Index>
                 <Name>Rej11</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2073,7 +2021,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>29</Index>
                 <Name>Rej12</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2097,7 +2044,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>30</Index>
                 <Name>Rej13</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2121,7 +2067,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>31</Index>
                 <Name>Rej14</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2145,7 +2090,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>32</Index>
                 <Name>Rej15</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2169,7 +2113,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>33</Index>
                 <Name>Rej16</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2193,7 +2136,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>34</Index>
                 <Name>RejOth</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2217,7 +2159,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>35</Index>
                 <Name>B1</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2241,7 +2182,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>36</Index>
                 <Name>B2</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2265,7 +2205,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>37</Index>
                 <Name>B3</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2289,7 +2228,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>38</Index>
                 <Name>B4</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2313,7 +2251,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>39</Index>
                 <Name>B5</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2337,7 +2274,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>40</Index>
                 <Name>B6</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2361,7 +2297,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>41</Index>
                 <Name>B7</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2385,7 +2320,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>42</Index>
                 <Name>B8</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2409,7 +2343,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>43</Index>
                 <Name>B9</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2433,7 +2366,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>44</Index>
                 <Name>B10</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2457,7 +2389,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>45</Index>
                 <Name>B11</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2481,7 +2412,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>46</Index>
                 <Name>B12</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2505,7 +2435,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>47</Index>
                 <Name>B13</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2529,7 +2458,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>48</Index>
                 <Name>B14</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2553,7 +2481,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>49</Index>
                 <Name>B15</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2577,7 +2504,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>50</Index>
                 <Name>B16</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2601,7 +2527,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>51</Index>
                 <Name>Speed</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -2625,7 +2550,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>52</Index>
                 <Name>Handler</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -2649,7 +2573,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>53</Index>
                 <Name>Wafer</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -2673,7 +2596,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>54</Index>
                 <Name>DIB</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -2697,7 +2619,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>55</Index>
                 <Name>AV</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -2721,7 +2642,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>56</Index>
                 <Name>TFI</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -2745,7 +2665,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>57</Index>
                 <Name>Part</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -2769,7 +2688,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>58</Index>
                 <Name>Venc</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -2793,7 +2711,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>59</Index>
                 <Name>PARTName</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -2817,7 +2734,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>60</Index>
                 <Name>OPN</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -2841,7 +2757,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>61</Index>
                 <Name>owner</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -2865,7 +2780,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>62</Index>
                 <Name>Sample</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -2889,7 +2803,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>63</Index>
                 <Name>Mtype</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -2913,7 +2826,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>64</Index>
                 <Name>RC1</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2937,7 +2849,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>65</Index>
                 <Name>RC2</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2961,7 +2872,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>66</Index>
                 <Name>RC3</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -2985,7 +2895,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>67</Index>
                 <Name>RC4</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3009,7 +2918,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>68</Index>
                 <Name>RC5</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3033,7 +2941,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>69</Index>
                 <Name>RC6</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3057,7 +2964,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>70</Index>
                 <Name>RC7</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3081,7 +2987,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>71</Index>
                 <Name>RC8</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3105,7 +3010,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>72</Index>
                 <Name>RC9</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3129,7 +3033,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>73</Index>
                 <Name>RC10</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3153,7 +3056,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>74</Index>
                 <Name>RC11</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3177,7 +3079,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>75</Index>
                 <Name>RC12</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3201,7 +3102,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>76</Index>
                 <Name>RC13</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3225,7 +3125,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>77</Index>
                 <Name>RC14</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3249,7 +3148,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>78</Index>
                 <Name>RC15</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3273,7 +3171,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>79</Index>
                 <Name>RC16</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3297,7 +3194,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>80</Index>
                 <Name>Fablotnumber</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -3321,7 +3217,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>81</Index>
                 <Name>Assembly_Part</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -3345,7 +3240,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>82</Index>
                 <Name>TrackIn</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -3369,7 +3263,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>83</Index>
                 <Name>Aspen</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -3393,7 +3286,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>84</Index>
                 <Name>Aspen_Rev</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -3417,7 +3309,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>85</Index>
                 <Name>NR1</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3441,7 +3332,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>86</Index>
                 <Name>NR2</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3465,7 +3355,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>87</Index>
                 <Name>NR3</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3489,7 +3378,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>88</Index>
                 <Name>NR4</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3513,7 +3401,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>89</Index>
                 <Name>NR5</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3537,7 +3424,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>90</Index>
                 <Name>NR6</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3561,7 +3447,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>91</Index>
                 <Name>NR7</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3585,7 +3470,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>92</Index>
                 <Name>NR8</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3609,7 +3493,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>93</Index>
                 <Name>NR9</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3633,7 +3516,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>94</Index>
                 <Name>NR10</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3657,7 +3539,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>95</Index>
                 <Name>NR11</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3681,7 +3562,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>96</Index>
                 <Name>NR12</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3705,7 +3585,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>97</Index>
                 <Name>NR13</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3729,7 +3608,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>98</Index>
                 <Name>NR14</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3753,7 +3631,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>99</Index>
                 <Name>NR15</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3777,7 +3654,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>100</Index>
                 <Name>NR16</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3801,7 +3677,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>101</Index>
                 <Name>VM1</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3825,7 +3700,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>102</Index>
                 <Name>VM2</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3849,7 +3723,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>103</Index>
                 <Name>VM3</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3873,7 +3746,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>104</Index>
                 <Name>VM4</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3897,7 +3769,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>105</Index>
                 <Name>VM5</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3921,7 +3792,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>106</Index>
                 <Name>VM6</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
@@ -3945,7 +3815,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>107</Index>
                 <Name>TEST PHASE</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
@@ -3969,7 +3838,6 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "CAMSTAR" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
-                <Index>108</Index>
                 <Name>ReclaimCount</Name>
                 <Type>Integer</Type>
                 <AllowEmpty>N</AllowEmpty>
