@@ -397,7 +397,7 @@ and open the template in the editor.
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
-        <GenerateMappingFile>1</GenerateMappingFile>
+        <GenerateMappingFile>0</GenerateMappingFile>
         <KDFDate>
             <Start></Start>
             <End></End>
@@ -448,7 +448,7 @@ and open the template in the editor.
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
-        <GenerateMappingFile>1</GenerateMappingFile>
+        <GenerateMappingFile>0</GenerateMappingFile>
         <!--if this a lot file, the mapping path is date/lot/file, else is just use date/file-->
         <IsLotFile>0</IsLotFile>
         
