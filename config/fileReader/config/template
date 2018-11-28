@@ -139,7 +139,8 @@ PUT _template/all-test
       "wafer-sort-test-*",
       "slt-test-*",
       "ft-test-*",
-      "smap-test-*"
+      "smap-test-*",
+      "wat-test-*"
     ],
     "settings": {
       "index": {
