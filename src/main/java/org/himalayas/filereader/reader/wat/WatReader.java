@@ -35,14 +35,24 @@ final public
         boolean emptyDataFile = false;
     private
         WatDie currentDie = null;
+    private static
+        WatReader instance = null;
 
-    public
+    private
         WatReader(DataFormat format) {
         super(format);
     }
 
+    public static
+        WatReader getInstance() {
+        if (instance == null && Config.camFormat != null && Config.watFormat.isEnabled()) {
+            instance = new WatReader(Config.watFormat);
+        }
+        return instance;
+    }
+
     @Override
-    public
+    protected
         void init() {
         this.dies.clear();
         this.parameterDescs.clear();
@@ -51,7 +61,7 @@ final public
     }
 
     @Override
-    public
+    protected
         boolean readFile() {
         return this.readDataFile()
             && (this.emptyDataFile ? true : this.readLimitFile());
@@ -212,7 +222,7 @@ final public
     }
 
     @Override
-    public
+    protected
         boolean writeLogFile() {
         this.setUnitCnt(this.dies.size());
         String lotHead = this.generateLotHeadKVStr();
@@ -251,13 +261,12 @@ final public
         void main(String[] args) {
         long startTime = System.currentTimeMillis();
         new Config("config/dataformat.xml");
-        Reader reader = new WatReader(Config.watFormat);
         Config.watFormat.setProductionMode(false);
 
         File testDataFile = new File(Config.watFormat.getKdfPath());
         for (File lotFile : testDataFile.listFiles()) {
             for (File file : lotFile.listFiles()) {
-                reader.loadFile(file);
+                WatReader.getInstance().loadFile(file);
             }
         }
 

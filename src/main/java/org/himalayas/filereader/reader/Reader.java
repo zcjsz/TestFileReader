@@ -65,12 +65,12 @@ public abstract
         DataFormat format = null;
     private
         int unitCnt = 0;
-    private
+    public static
         int kdfDoneCnt = 0;
     private
         int docCnt = 0;
 
-    public
+    private
         void resetAll() {
         this.testLogFile = null;
         this.mappingFile = null;
@@ -91,7 +91,7 @@ public abstract
 
     }
 
-    public
+    protected
         Reader(DataFormat format) {
         this.format = format;
         this.debugMode = this.format.isDebugMode();
@@ -171,13 +171,13 @@ public abstract
         }
     }
 
-    public abstract
+    protected abstract
         boolean readFile();
 
     /**
      * initialization
      */
-    public abstract
+    protected abstract
         void init();
 
     /**
@@ -527,7 +527,7 @@ public abstract
         return true;
     }
 
-    public
+    protected
         boolean renameOrArchiveKDF(File destinationFile, Config.KdfRename rename) {
         if (destinationFile == null) {
             return false;
@@ -603,7 +603,7 @@ public abstract
         return false;
     }
 
-    public
+    protected
         void logRepeatFileToES() {
         System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFRepeat,
@@ -617,7 +617,7 @@ public abstract
         );
     }
 
-    public
+    protected
         void logOpenFailureToES() {
         System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFOpenFailure,
@@ -631,7 +631,7 @@ public abstract
         );
     }
 
-    public
+    protected
         void logIoErrorToES(String error) {
         System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.IOError,
@@ -646,7 +646,7 @@ public abstract
         );
     }
 
-    public
+    protected
         void logFileDoneToES() {
         System.out.printf("%s=%s,%s=%s,%s=%s,%s=%d,%s=%d,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFDone,
@@ -663,7 +663,7 @@ public abstract
         );
     }
 
-    public
+    protected
         void logExceptionToES() {
         System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFException,
@@ -739,79 +739,74 @@ public abstract
         return true;
     }
 
-    public
+    protected
         File getFile() {
         return file;
     }
 
-    public
+    protected
         boolean isDebugMode() {
         return debugMode;
     }
 
-    public
+    protected
         File getTestLogFile() {
         return testLogFile;
     }
 
-    public
+    protected
         File getMappingFile() {
         return mappingFile;
     }
 
-    public
+    protected
         String getFileMonth() {
         return kdfMonth;
     }
 
-    public
+    protected
         String getFileDate() {
         return kdfDate;
     }
 
-    public
+    protected
         String getTransferTime() {
         return transferTime;
     }
 
-    public
+    protected
         String getFileName() {
         return fileName;
     }
 
-    public
+    protected
         String getLotNumber() {
         return lotNumber;
     }
 
-    public
+    protected
         long getJobStartTime() {
         return jobStartTime;
     }
 
-    public
+    protected
         Config.FailureCase getFailType() {
         return failType;
     }
 
-    public
+    protected
         DataFormat getFormat() {
         return format;
     }
 
-    public
+    protected
         void setUnitCnt(int unitCnt) {
         this.unitCnt = unitCnt;
     }
 
-    public
+    protected
         int getUnitCnt() {
         return unitCnt;
-    }
-
-    public
-        int getKdfDoneCnt() {
-        return kdfDoneCnt;
     }
 
     private
@@ -824,7 +819,7 @@ public abstract
         this.docCnt = docCnt;
     }
 
-    public
+    protected
         int getDocCnt() {
         return docCnt;
     }

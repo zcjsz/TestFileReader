@@ -28,14 +28,24 @@ final public
         ArrayList<String> pickBins = new ArrayList();
     private final
         ArrayList<Die> dies = new ArrayList();
+    private static
+        SmapReader instance = null;
 
-    public
+    private
         SmapReader(DataFormat format) {
         super(format);
     }
 
+    public static
+        SmapReader getInstance() {
+        if (instance == null && Config.camFormat != null && Config.smapFormat.isEnabled()) {
+            instance = new SmapReader(Config.smapFormat);
+        }
+        return instance;
+    }
+
     @Override
-    public
+    protected
         boolean readFile() {
         try {
             List<String> lines = Files.readAllLines(this.getFile().toPath());
@@ -86,7 +96,7 @@ final public
     }
 
     @Override
-    public
+    protected
         void init() {
         this.dies.clear();
         this.pickBins.clear();
@@ -94,7 +104,7 @@ final public
     }
 
     @Override
-    public
+    protected
         boolean writeLogFile() {
         this.setUnitCnt(this.dies.size());
         this.setDocCnt(this.dies.size());
@@ -151,7 +161,7 @@ final public
         }
     }
 
-    public
+    protected
         void readBins(String content) {
         String[] bins = content.split(";");
         for (String bin : bins) {
@@ -254,14 +264,12 @@ final public
         void main(String[] args) {
         long startTime = System.currentTimeMillis();
         new Config("config/dataformat.xml");
-        Reader reader = new SmapReader(Config.smapFormat);
         Config.smapFormat.setProductionMode(false);
-        Config.smapFormat.getSelectors().add("180601_181917");
 
         File testDataFile = new File("./testdata/extend/hygon_source_data/SMAP");
         for (File lotFile : testDataFile.listFiles()) {
             for (File file : lotFile.listFiles()) {
-                reader.loadFile(file);
+                SmapReader.getInstance().loadFile(file);
             }
         }
 
