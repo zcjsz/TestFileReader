@@ -42,9 +42,9 @@ public
     public
         String getDocValue() {
         if (this.dieType.equals(FieldType.MasterDie)) {
-            return "," + "=" + FieldType.X0 + this.x
-                + "," + "=" + FieldType.Y0 + this.y
-                + "," + "=" + FieldType.DieType + this.dieType;
+            return "," + FieldType.X0 + "=" + this.x
+                + "," + FieldType.Y0 + "=" + this.y
+                + "," + FieldType.DieType + "=" + this.dieType;
         }
         else {
             return "," + Config.watFormat.getUnit().getxCoordNode().getName() + "=" + this.x
