@@ -27,6 +27,8 @@ public
         ArrayList<RawDie> dies = new ArrayList();
     private
         int docCnt = 0;
+    private static
+        StringBuilder docValue = new StringBuilder();
 
     public
         WatDie(int x, int y, int seq) {
@@ -63,7 +65,7 @@ public
 
     public
         StringBuilder getDocValue(String lotHead, HashMap<Integer, ParameterDesc> parameterDescs) {
-        StringBuilder docValue = new StringBuilder();
+        docValue.setLength(0);
         for (TestItem item : this.testItems) {
             String testItemDocValue = lotHead + item.getDocValue();
             ParameterDesc testDesc = parameterDescs.get(item.getTestNumber());
