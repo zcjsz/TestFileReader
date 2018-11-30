@@ -337,7 +337,7 @@ public
             // unique unit cnt
             this.totalUniqueUnitCntInc(1);
 
-            // 
+            //
             for (Doc doc : dataSet.getUnitData()) {
                 if (doc.getBinType() == 1) {
                     this.totalPassCnt += 1;
@@ -655,10 +655,15 @@ public
 
     public
         String getDoc_Id() {
-        if(this.doc_Id == null) {
-            this.setDoc_Id(lotNumber + "_" + operation);
+        if (this.doc_Id == null) {
+            this.setDoc_Id(getDocID(this.lotNumber, this.operation));
         }
         return doc_Id;
+    }
+
+    public static
+        String getDocID(String lotNumber, String operation) {
+        return lotNumber + "_" + operation;
     }
 
     public
