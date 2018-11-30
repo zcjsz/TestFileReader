@@ -13,6 +13,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -30,6 +32,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.action.search.ShardSearchFailure;
 import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
@@ -44,6 +47,8 @@ import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
 import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.himalayas.filereader.util.Config;
@@ -64,14 +69,17 @@ public
         RestHighLevelClient productionClient = null;
     private
         RestHighLevelClient testClient = null;
-    private
-        SearchRequest searchUnitRequest = null;
-    private
-        SearchRequest searchFileRequest = null;
-    private
-        SearchRequest searchLotRequest = null;
-    private
-        AggregationBuilder grossTimeAgg = null;
+    private final
+        SearchRequest searchUnitRequest = new SearchRequest();
+    private final
+        SearchRequest searchFileRequest = new SearchRequest();
+    private final
+        SearchRequest searchLotRequest = new SearchRequest();
+    private final
+        SearchRequest searchLotRequestFromFile = new SearchRequest();
+    private final
+        AggregationBuilder grossTimeAgg = AggregationBuilders.sum(FieldType.GrossTime).field(FieldType.GrossTime);
+
     private
         SearchResponse searchResponse = null;
     final
@@ -84,9 +92,17 @@ public
         DataFormat dataFormat = null;
     private static
         ESHelper instance = null;
+    private final
+        Map<String, Object> jsonMap = new HashMap<>();
+    private final
+        UpdateRequest updateRequest = new UpdateRequest();
 
     private
         ESHelper() {
+        if (!this.init()) {
+            instance = null;
+        }
+
     }
 
     public static
@@ -97,22 +113,19 @@ public
         return ESHelper.instance;
     }
 
-    public
+    private
         boolean init() {
-
         if (!initProductionClient()) {
             System.out.printf("%s: failed to connect production es host!\n", LocalDateTime.now().toString());
             System.out.printf("Please make sure those host are available: %s\n", Arrays.toString(Config.productionHost.toArray()));
             return false;
         }
-        if (!initTestClient()) {
-            System.out.printf("%s: failed to connect test es host!\n", LocalDateTime.now().toString());
-            System.out.printf("Please make sure those host are available: %s\n", Config.testHost);
-            return false;
-        }
-        this.initSearchUnitRequest();
-        this.initSearchFileRequest();
-        this.initSearchLotRequest();
+//        if (!initTestClient()) {
+//            System.out.printf("%s: failed to connect test es host!\n", LocalDateTime.now().toString());
+//            System.out.printf("Please make sure those host are available: %s\n", Config.testHost);
+//            return false;
+//        }
+
         return true;
     }
 
@@ -124,6 +137,7 @@ public
             int hostNo = 0;
             for (String host : Config.productionHost) {
                 httpHosts[hostNo] = new HttpHost(host, 9200, "http");
+                hostNo++;
             }
             RestClientBuilder builder = RestClient.builder(httpHosts);
             builder.setMaxRetryTimeoutMillis(6 * 60 * 1000);
@@ -187,7 +201,7 @@ public
         try {
             if (productionClient != null) {
                 productionClient.close();
-                System.out.printf("%s:%s\n", LocalDateTime.now().toString(), "successed to close the test client");
+                System.out.printf("%s:%s\n", LocalDateTime.now().toString(), "successed to close the production client");
             }
             if (testClient != null) {
                 testClient.close();
@@ -200,6 +214,16 @@ public
             ex.printStackTrace();
             return false;
         }
+    }
+
+    public
+        void initDataForamt(DataFormat dataFormat) {
+        this.dataFormat = dataFormat;
+        this.initSearchUnitRequest();
+        this.initSearchFileRequest();
+        this.initSearchLotRequest();
+        this.initSearchLotRequestFromFile();
+
     }
 
     /**
@@ -236,7 +260,6 @@ public
      */
     private
         void initSearchUnitRequest() {
-        this.searchUnitRequest = new SearchRequest();
         this.searchUnitRequest.indices(this.dataFormat.getTestIndexName());
         this.searchUnitRequest.scroll(this.scroll);
 
@@ -248,34 +271,32 @@ public
         String[] includeFields = new String[]{unitIDName, FieldType.BinType, startTimeName, endTimeName, testTimeName, FieldType.DieType};
         String[] excludeFields = new String[]{"_type"};
 
-        this.searchUnitRequest.source(new SearchSourceBuilder()
-            .size(500)
-            .timeout(new TimeValue(180, TimeUnit.SECONDS))
-            .fetchSource(true)
-            .fetchSource(includeFields, excludeFields));
+        if (this.searchUnitRequest.source() == null) {
+            this.searchUnitRequest.source(new SearchSourceBuilder()
+                .size(500)
+                .timeout(new TimeValue(180, TimeUnit.SECONDS))
+                .fetchSource(true)
+                .fetchSource(includeFields, excludeFields));
+        }
+        else {
+            this.searchUnitRequest.source().fetchSource(includeFields, excludeFields);
+        }
 
     }
 
     private
         void initSearchFileRequest() {
-        this.searchFileRequest = new SearchRequest();
         this.searchFileRequest.indices(this.dataFormat.getTestIndexName());
-        this.searchFileRequest.source(new SearchSourceBuilder()
-            .size(0)
-            .timeout(new TimeValue(180, TimeUnit.SECONDS))
-            .fetchSource(false));
-
-//		searchSourceBuilder.profile(true);
-//		this.aggregation = AggregationBuilders.global("LotInfo")
-//			.subAggregation(AggregationBuilders.sum(FieldType.GrossTime).field(FieldType.GrossTime))
-//			.subAggregation(AggregationBuilders.sum(FieldType.UnitCnt).field(FieldType.Unit));
-        this.grossTimeAgg = AggregationBuilders.sum(FieldType.GrossTime).field(FieldType.GrossTime);
-
+        if (this.searchFileRequest.source() == null) {
+            this.searchFileRequest.source(new SearchSourceBuilder()
+                .size(0)
+                .timeout(new TimeValue(180, TimeUnit.SECONDS))
+                .fetchSource(false));
+        }
     }
 
     private
         void initSearchLotRequest() {
-        this.searchLotRequest = new SearchRequest();
         this.searchLotRequest.indices(this.dataFormat.getLotIndexName());
         this.searchLotRequest.scroll(this.scroll);
 
@@ -287,11 +308,30 @@ public
         String[] includeFields = new String[]{lotNumberName, operationName, camLotName};
         String[] excludeFields = new String[]{"_type"};
 
-        this.searchLotRequest.source(new SearchSourceBuilder()
-            .size(500)
-            .timeout(new TimeValue(180, TimeUnit.SECONDS))
-            .fetchSource(true)
-            .fetchSource(includeFields, excludeFields));
+        if (this.searchLotRequest.source() == null) {
+            this.searchLotRequest.source(new SearchSourceBuilder()
+                .size(500)
+                .timeout(new TimeValue(180, TimeUnit.SECONDS))
+                .fetchSource(true)
+                .fetchSource(includeFields, excludeFields));
+        }
+        else {
+            this.searchLotRequest.source().fetchSource(includeFields, excludeFields);
+
+        }
+
+    }
+
+    private
+        void initSearchLotRequestFromFile() {
+        this.searchLotRequestFromFile.indices(this.dataFormat.getTestIndexName());
+
+        if (this.searchLotRequestFromFile.source() == null) {
+            this.searchLotRequestFromFile.source(new SearchSourceBuilder()
+                .size(500)
+                .timeout(new TimeValue(180, TimeUnit.SECONDS))
+                .fetchSource(false));
+        }
 
     }
 
@@ -389,6 +429,11 @@ public
             TimeValue took = this.searchResponse.getTook();
             Boolean terminatedEarly = this.searchResponse.isTerminatedEarly();
             boolean timedOut = this.searchResponse.isTimedOut();
+            System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s\n",
+                "status", status,
+                "tooktime", took.toString(),
+                "terminatedEarly", terminatedEarly,
+                "timeout", timedOut);
 
             int totalShards = this.searchResponse.getTotalShards();
             int successfulShards = this.searchResponse.getSuccessfulShards();
@@ -429,6 +474,12 @@ public
             Boolean terminatedEarly = this.searchResponse.isTerminatedEarly();
             boolean timedOut = this.searchResponse.isTimedOut();
 
+            System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s\n",
+                "status", status,
+                "tooktime", took.toString(),
+                "terminatedEarly", terminatedEarly,
+                "timeout", timedOut);
+
             int totalShards = this.searchResponse.getTotalShards();
             int successfulShards = this.searchResponse.getSuccessfulShards();
             int failedShards = this.searchResponse.getFailedShards();
@@ -442,6 +493,7 @@ public
                 System.out.printf("%s: there's no any unit data found in this query\n", LocalDateTime.now().toString());
                 return false;
             }
+            this.lotList.clear();
             this.fillLotListData(searchHits);
 
             while (searchHits != null && searchHits.length > 0) {
@@ -459,8 +511,48 @@ public
             ClearScrollResponse clearScrollResponse = this.productionClient.clearScroll(clearScrollRequest, RequestOptions.DEFAULT);
             boolean succeeded = clearScrollResponse.isSucceeded();
         }
-        catch (Exception ex) {
+        catch (IOException ex) {
             ex.printStackTrace();
+            return false;
+        }
+        return true;
+
+    }
+
+    private
+        boolean getLotListDataFromFile() {
+        this.searchLotRequestFromFile.source().query(QueryBuilders.boolQuery()
+            .must(QueryBuilders.termQuery(FieldType.Type, FieldType.File))
+        );
+        try {
+            AggregationBuilder lotOperationAgg = AggregationBuilders.terms(this.dataFormat.getLotNumberNode().getName()).size(5000).field(this.dataFormat.getLotNumberNode().getName())
+                .subAggregation(AggregationBuilders.terms(this.dataFormat.getOperationNode().getName()).size(300).field(this.dataFormat.getOperationNode().getName()));
+            this.searchLotRequestFromFile.source().aggregation(lotOperationAgg);
+            this.searchResponse = this.productionClient.search(this.searchLotRequestFromFile, RequestOptions.DEFAULT);
+
+            RestStatus status = this.searchResponse.status();
+            TimeValue took = this.searchResponse.getTook();
+            Boolean terminatedEarly = this.searchResponse.isTerminatedEarly();
+            boolean timedOut = this.searchResponse.isTimedOut();
+
+            System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s\n",
+                "status", status,
+                "tooktime", took.toString(),
+                "terminatedEarly", terminatedEarly,
+                "timeout", timedOut);
+
+            int totalShards = this.searchResponse.getTotalShards();
+            int successfulShards = this.searchResponse.getSuccessfulShards();
+            int failedShards = this.searchResponse.getFailedShards();
+            for (ShardSearchFailure failure : this.searchResponse.getShardFailures()) {
+                // failures should be handled here
+            }
+
+            this.lotList.clear();
+            this.fillLotListFromFile();
+
+        }
+        catch (IOException ex) {
             return false;
         }
         return true;
@@ -476,6 +568,28 @@ public
                 this.getLotInfo().setGrossTestTime(((Sum) agg).getValue());
             }
         }
+    }
+
+    private
+        void fillLotListFromFile() {
+        Aggregations aggregations = this.searchResponse.getAggregations();
+        Terms lotNumberAgg = aggregations.get(this.dataFormat.getLotNumberNode().getName());
+        for (Bucket bucket : lotNumberAgg.getBuckets()) {
+            String lotNumber = (String) bucket.getKey();
+
+            Terms operAgg = bucket.getAggregations().get(this.dataFormat.getOperationNode().getName());
+
+            for (Bucket operBucket : operAgg.getBuckets()) {
+                String oper = (String) operBucket.getKey();
+                System.out.println("Lotnumber = " + lotNumber + ", operation = " + oper);
+                LotInfo tempLot = new LotInfo();
+                tempLot.setLotNumber(lotNumber);
+                tempLot.setOperation(oper);
+                this.lotList.add(tempLot);
+            }
+
+        }
+
     }
 
     private
@@ -520,11 +634,12 @@ public
             String camLot = (String) sourceAsMap.get(Config.camFormat.getLotNumberNode().getName());
 
             // missmatch camstar lot case here
-            if (camLot == null || camLot.isEmpty() || camLot.equalsIgnoreCase("null")) {
-                System.out.printf("Warnings: there's no camstar lot for this kdf lot, %s=%s, %=%s\n",
+            if (camLot == null || camLot.isEmpty() || camLot.equalsIgnoreCase("null") && this.dataFormat.isDebugMode()) {
+                System.out.printf("Warnings: there's no camstar lot for this kdf lot, %s=%s, %s=%s\n",
                     this.dataFormat.getLotNumberNode().getName(), lotNumber,
                     this.dataFormat.getOperationNode().getName(), operation);
-                continue;
+
+//                continue;
             }
             LotInfo lot = new LotInfo();
             lot.setLotNumber(lotNumber);
@@ -545,7 +660,7 @@ public
                     /**
                      * generate the bulk update request
                      */
-                    Map<String, Object> jsonMap = new HashMap<>();
+                    jsonMap.clear();
                     jsonMap.put(FieldType.Rank, doc.getMotherLotInsertion());
                     bulkRequest.add(new UpdateRequest(
                         doc.getIndex(),
@@ -650,14 +765,50 @@ public
      *
      * @param lotNumber
      * @param operation
-     * @param dataFormat
      * @return
      */
     public
-        boolean upsertLotIsCalFlag2N(String lotNumber, String operation, DataFormat dataFormat) {
-        String lotIndex = dataFormat.getLotIndexName();
-        //@todo upsert lot IsCaled to N
+        boolean upsertLotIsCalFlag2N(String lotNumber, String operation) {
+        if (this.dataFormat == null) {
+            System.out.println("Fatal Error: please setup the data format for es instance");
+            return false;
+        }
+        try {
+            String lotIndex = this.dataFormat.getLotIndexName();
+            jsonMap.clear();
+            jsonMap.put(this.dataFormat.getLotNumberNode().getName(), lotNumber);
+            jsonMap.put(this.dataFormat.getOperationNode().getName(), operation);
+            jsonMap.put(FieldType.IsCaled, "N");
+            jsonMap.put(FieldType.Lot_LotStartTime, ZonedDateTime.now().toOffsetDateTime());
+            jsonMap.put(FieldType.DataType, this.dataFormat.getDataType().toString());
+
+            this.updateRequest.index(lotIndex).type("doc").id(LotInfo.getDocID(lotNumber, operation)).doc(jsonMap);
+            this.updateRequest.timeout(TimeValue.timeValueSeconds(20));
+            this.updateRequest.docAsUpsert(true);
+            UpdateResponse updateResponse = this.productionClient.update(this.updateRequest, RequestOptions.DEFAULT);
+
+            if (null != updateResponse.getResult()) {
+                System.out.printf("%s = %s, %s = %s, upsert lot result: %s\n",
+                    this.dataFormat.getLotNumberNode().getName(),
+                    lotNumber,
+                    this.dataFormat.getOperationNode().getName(),
+                    operation,
+                    updateResponse.getResult());
+                /*
+                 * switch (updateResponse.getResult()) { case CREATED:
+                 * System.out.println("successed to creat lot"); break; case
+                 * DELETED: System.out.println("successed to delete lot");
+                 * break; case NOOP: System.out.println("noop"); break; default:
+                 * break; }
+                 */
+            }
+        }
+        catch (IOException ex) {
+            Logger.getLogger(ESHelper.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
         return true;
+
     }
 
     /**
@@ -670,7 +821,7 @@ public
      * @return
      */
     private
-        boolean calLot(String lotNumber, String operation, DataFormat dataFromat) {
+        boolean calLot(String lotNumber, String operation, DataFormat dataFormat) {
         if (lotNumber == null
             || operation == null
             || dataFormat == null) {
@@ -804,17 +955,34 @@ public
         return lotInfo;
     }
 
-    public
-        void setDataFormat(DataFormat dataFormat) {
-        this.dataFormat = dataFormat;
-    }
-
     public static
         void main(String[] args) {
+        new Config("config/dataformat.xml");
         ESHelper es = ESHelper.getInstance();
         if (!es.init()) {
+            es.closeConn();
             return;
         }
+
+        // to generate all the lot doc in one time
+        for (DataFormat dataFormat : Config.dataFormats.values()) {
+
+            if (dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)
+                || dataFormat.getDataType().equals(Config.DataTypes.SMAP)
+                || dataFormat.getDataType().equals(Config.DataTypes.WAT)) {
+            }
+            else {
+                es.initDataForamt(dataFormat);
+                if (es.getLotListDataFromFile()) {
+                    for (LotInfo lotInfo : es.lotList) {
+                        es.upsertLotIsCalFlag2N(lotInfo.getLotNumber(), lotInfo.getOperation());
+                    }
+                }
+            }
+        }
+
+        es.closeConn();
+        System.exit(1);
 //        String lotNumber = null;
 //        String operation = null;
 //        DataFormat format = null;
@@ -825,9 +993,9 @@ public
                 || dataFormat.getDataType().equals(Config.DataTypes.WAT)) {
                 continue;
             }
+            es.initDataForamt(dataFormat);
             es.proceedUncaledLot();
         }
-
     }
 
 }
