@@ -1100,6 +1100,7 @@ public
             && (!this.getUnit().getUnitIdNode().getXmlValue().isEmpty())) {
             value += "," + FieldType.MasterDieId + "=" + this.getUnit().getUnitIdNode().getValue();
         }
+        value += "," + FieldType.Rank + "=N";
 
         return value;
 
@@ -1165,6 +1166,7 @@ public
             && (!this.getUnit().getUnitIdNode().getXmlValue().isEmpty())) {
             value += "," + FieldType.MasterDieId + "=" + this.getUnit().getUnitIdNode().getValue();
         }
+        value += "," + FieldType.Rank + "=N";
 
         return value;
 
