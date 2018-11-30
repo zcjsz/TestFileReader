@@ -26,8 +26,8 @@ and open the template in the editor.
     <BaseClass>baseClass</BaseClass>
     
     <!--es host names of production env-->
-    <!--<ESHostProduction>10.72.1.237,10.72.1.238,10.72.1.239</ESHostProduction>-->
-    <ESHostProduction>localhost</ESHostProduction>
+    <ESHostProduction>10.72.1.237,10.72.1.238,10.72.1.239</ESHostProduction>
+    <!--ESHostProduction>localhost</ESHostProduction-->
     <!--es host names of testing only env-->
     <ESHostTest>192.168.52.100</ESHostTest>
     
@@ -39,7 +39,7 @@ and open the template in the editor.
     <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
     <SourceType name= "HTEST1" enabled = "1" >
-        <LotIndex>ft-lot-*</LotIndex>
+        <LotIndex>test-ft-lot</LotIndex>
         <TestIndex>ft-test-*</TestIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>1</ProductionMode>
@@ -144,7 +144,7 @@ and open the template in the editor.
     <!--GFDRS_S6310A1AB0PG_P_ATC607_H800S.00_WS1_BBIYG148MVB1_1_-5_180905_051627.kdf.20190909090909-->
     <!--NEVER try to change the SourceType name here-->
     <SourceType name= "GFDRS" enabled = "1" >
-        <LotIndex>sort-lot-*</LotIndex>
+        <LotIndex>test-sort-lot</LotIndex>
         <TestIndex>sort-test-*</TestIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>1</ProductionMode>
@@ -247,7 +247,7 @@ and open the template in the editor.
     <!--HG00058.1.1_6310_H800D0007101504_SLT_AXFNCP_DS2000DBABC01_20180823_052611_suzamdaslt086_006_MAIN.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
     <SourceType name= "SLT" enabled = "1" >
-        <LotIndex>slt-lot-*</LotIndex>
+        <LotIndex>test-slt-lot</LotIndex>
         <TestIndex>slt-test-*</TestIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>1</ProductionMode>
