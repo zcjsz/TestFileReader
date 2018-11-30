@@ -45,7 +45,7 @@ final public
 
     public static
         WatReader getInstance() {
-        if (instance == null && Config.camFormat != null && Config.watFormat.isEnabled()) {
+        if (instance == null && Config.watFormat != null && Config.watFormat.isEnabled()) {
             instance = new WatReader(Config.watFormat);
         }
         return instance;
