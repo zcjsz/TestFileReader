@@ -88,6 +88,7 @@ public abstract
         this.failType = null;
         this.unitCnt = 0;
         this.docCnt = 0;
+        this.format.clearAll();
 
     }
 
@@ -853,7 +854,9 @@ public abstract
                     break;
             }
         }
-        boolean result = (commaCnt + 1 == equalityCnt) && (lfCnt == 1);
+        boolean result = ((commaCnt + 1 == equalityCnt) && (lfCnt == 1))
+            && (!formatString.contains(",="))
+            && (!formatString.contains(",="));
         if (!result) {
             System.out.println("Warning: failed to validate this format string: " + formatString);
         }
