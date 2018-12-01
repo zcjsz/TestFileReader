@@ -566,6 +566,7 @@ public
     private
         void fillLotGrossTimeData() {
         Aggregations aggregations = this.searchResponse.getAggregations();
+        if(aggregations == null) { return; }
         for (Aggregation agg : aggregations) {
             String name = agg.getName();
             if (name.equals(FieldType.GrossTime)) {
@@ -577,6 +578,7 @@ public
     private
         void fillLotListFromFile() {
         Aggregations aggregations = this.searchResponse.getAggregations();
+        if(aggregations == null) { return; }
         Terms lotNumberAgg = aggregations.get(this.dataFormat.getLotNumberNode().getName());
         for (Bucket bucket : lotNumberAgg.getBuckets()) {
             String lotNumber = (String) bucket.getKey();
