@@ -146,7 +146,7 @@ and open the template in the editor.
     <!--NEVER try to change the SourceType name here-->
     <SourceType name= "GFDRS" enabled = "1" >
         <LotIndex>test-sort-lot</LotIndex>
-        <TestIndex>sort-test-*</TestIndex>
+        <TestIndex>wafer-sort-test-*</TestIndex>
         <FileExtension>kdf.</FileExtension>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>0</ProductionMode>
