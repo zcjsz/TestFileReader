@@ -69,15 +69,15 @@ public
         RestHighLevelClient productionClient = null;
     private
         RestHighLevelClient testClient = null;
-    private final
-        SearchRequest searchUnitRequest = new SearchRequest();
-    private final
-        SearchRequest searchFileRequest = new SearchRequest();
-    private final
-        SearchRequest searchLotRequest = new SearchRequest();
-    private final
-        SearchRequest searchLotRequestFromFile = new SearchRequest();
-    private final
+    private
+        SearchRequest searchUnitRequest = null;
+    private
+        SearchRequest searchFileRequest = null;
+    private
+        SearchRequest searchLotRequest = null;
+    private
+        SearchRequest searchLotRequestFromFile = null;
+    private
         AggregationBuilder grossTimeAgg = AggregationBuilders.sum(FieldType.GrossTime).field(FieldType.GrossTime);
 
     private
@@ -260,6 +260,7 @@ public
      */
     private
         void initSearchUnitRequest() {
+        this.searchUnitRequest = new SearchRequest();
         this.searchUnitRequest.indices(this.dataFormat.getTestIndexName());
         this.searchUnitRequest.scroll(this.scroll);
 
@@ -286,6 +287,7 @@ public
 
     private
         void initSearchFileRequest() {
+        this.searchFileRequest = new SearchRequest();
         this.searchFileRequest.indices(this.dataFormat.getTestIndexName());
         if (this.searchFileRequest.source() == null) {
             this.searchFileRequest.source(new SearchSourceBuilder()
@@ -297,6 +299,7 @@ public
 
     private
         void initSearchLotRequest() {
+        this.searchLotRequest = new SearchRequest();
         this.searchLotRequest.indices(this.dataFormat.getLotIndexName());
         this.searchLotRequest.scroll(this.scroll);
 
@@ -324,6 +327,7 @@ public
 
     private
         void initSearchLotRequestFromFile() {
+        this.searchLotRequestFromFile = new SearchRequest();
         this.searchLotRequestFromFile.indices(this.dataFormat.getTestIndexName());
 
         if (this.searchLotRequestFromFile.source() == null) {
