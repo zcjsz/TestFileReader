@@ -6,6 +6,7 @@
 package org.himalayas.filereader.reader;
 
 import org.himalayas.filereader.reader.camstar.CamstarReader;
+import org.himalayas.filereader.reader.kdf.KdfReader;
 import org.himalayas.filereader.reader.smap.SmapReader;
 import org.himalayas.filereader.reader.wat.WatReader;
 import org.himalayas.filereader.util.DataFormat;
@@ -24,9 +25,9 @@ public class ReaderFactory {
                 case SMAP:
                     return SmapReader.getInstance();
                 case CAMSTAR:
-                    return CamstarReader.getInstance();
+                    return CamstarReader.getInstance(dataFormat);
                 default:
-                    return null;
+                    return KdfReader.getInstance(dataFormat);
             }
         } else {
             return null;

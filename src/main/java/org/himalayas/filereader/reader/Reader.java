@@ -825,6 +825,10 @@ public abstract
         return docCnt;
     }
 
+    protected void setFormat(DataFormat format) {
+        this.format = format;
+    }
+
     /**
      * validate a string return false if this string contains char ',' or '='
      * else return true

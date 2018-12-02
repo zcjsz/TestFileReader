@@ -18,6 +18,9 @@ import org.himalayas.filereader.kdf.Bin;
 
 public
     class DataFormat {
+    
+    private
+        boolean kdfData = false;
 
     private
         int latestDays = 0;
@@ -1634,5 +1637,14 @@ public
         void setWaferNumebrNode(XmlNode waferNumebrNode) {
         this.waferNumebrNode = waferNumebrNode;
     }
+
+    public boolean isKdfData() {
+        return (this.dataType.equals(Config.DataTypes.ATE)
+                || this.dataType.equals(Config.DataTypes.SLT)
+                || this.dataType.equals(Config.DataTypes.WaferSort));
+    }
+    
+    
+    
 
 }

@@ -30,7 +30,7 @@ import org.himalayas.filereader.util.XmlNode;
  *
  * @author ghfan
  */
-public
+final public
     class CamstarReader extends Reader {
 
     private
@@ -58,9 +58,16 @@ public
     }
 
     public static
-        CamstarReader getInstance() {
-        if (instance == null && Config.camFormat != null && Config.camFormat.isEnabled()) {
-            instance = new CamstarReader(Config.camFormat);
+        CamstarReader getInstance(DataFormat dataFormat) {
+        if((dataFormat == null) ||(!dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR))){
+            System.out.println("Fatal Error: CamstarReader only should be initilized with Camstar Data Type DataFormat");
+            return null;
+        }
+        if (instance == null && dataFormat.isEnabled()) {
+            instance = new CamstarReader(dataFormat);
+        }
+        else if(instance != null && instance.getFormat() != dataFormat ){
+            instance.setFormat(dataFormat);
         }
         return instance;
     }
@@ -331,7 +338,7 @@ public
         for (File shiftFile : testDataFile.listFiles()) {
             for (File dateFile : shiftFile.listFiles()) {
                 for (File xlsFile : dateFile.listFiles()) {
-                    CamstarReader.getInstance().loadFile(xlsFile);
+                    CamstarReader.getInstance(Config.camFormat).loadFile(xlsFile);
                 }
             }
         }
