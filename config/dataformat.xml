@@ -421,7 +421,7 @@ and open the template in the editor.
         <!--comma separated filters, case sensitive-->
         <FilterOut></FilterOut><!--filter out kdf whose name contains sbo-->
         <!--comma separated selectors, case sensitive-->
-        <Selector></Selector> <!--select kdf whose name contains GFDRS-->
+        <Selector>smap</Selector> <!--select kdf whose name contains GFDRS-->
         
         <!--list length while kdf name is split by underline-->
         <UnderLineCnt>8</UnderLineCnt>

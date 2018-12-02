@@ -5,40 +5,27 @@
  */
 package org.himalayas.filereader.reader.smap;
 
+import org.himalayas.filereader.util.Die;
+
 /**
  *
  * @author guanghao
  */
 public
-    class Die {
-
-    private
-        int x = 0;
-    private
-        int y = 0;
+    class SmapDie extends Die {
+    
     private
         String pickBin = null;
 
     public
-        Die(int x, int y, String bin) {
-        this.x = x;
-        this.y = y;
+        SmapDie(int x, int y, String bin) {
+        super(x,y);
         this.pickBin = bin;
     }
 
     public
         String getPickBin() {
         return pickBin;
-    }
-
-    public
-        int getX() {
-        return x;
-    }
-
-    public
-        int getY() {
-        return y;
     }
 
 }

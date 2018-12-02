@@ -25,16 +25,16 @@ import org.himalayas.filereader.util.FieldType;
 final public
     class WatReader extends Reader {
 
-    private final
+    public static final
         HashMap<Integer, ParameterDesc> parameterDescs = new HashMap<>();
     private final
-        ArrayList<WatDie> dies = new ArrayList();
+        ArrayList<WatDieGroup> dies = new ArrayList();
     private final
         String splitStr = "\\|";
     private
         boolean emptyDataFile = false;
     private
-        WatDie currentDie = null;
+        WatDieGroup currentDie = null;
     private static
         WatReader instance = null;
 
@@ -55,7 +55,7 @@ final public
     protected
         void init() {
         this.dies.clear();
-        this.parameterDescs.clear();
+        WatReader.parameterDescs.clear();
         this.emptyDataFile = false;
         this.currentDie = null;
     }
@@ -137,7 +137,7 @@ final public
         try {
             if (testItemStr.length == 3) {
                 // x/y/seq case
-                this.currentDie = new WatDie(
+                this.currentDie = new WatDieGroup(
                     Integer.valueOf(testItemStr[0]), // Xcoord
                     Integer.valueOf(testItemStr[1]), // Ycoord
                     Integer.valueOf(testItemStr[2]) // Seq
@@ -212,7 +212,7 @@ final public
                     descStrs[4],
                     descStrs[9].replace('=', ':').replace(',', ';') // unit
                 );
-                this.parameterDescs.putIfAbsent(Integer.valueOf(descStrs[0]), paramDesc);
+                WatReader.parameterDescs.putIfAbsent(Integer.valueOf(descStrs[0]), paramDesc);
             }
             catch (NumberFormatException e) {
                 System.out.println("Warning: failed to parse test desc Number String: " + content);
@@ -227,8 +227,8 @@ final public
         this.setUnitCnt(this.dies.size());
         String lotHead = this.generateLotHeadKVStr();
 
-        for (WatDie die : this.dies) {
-            if (!this.writeKVString(die.getDocValue(lotHead, parameterDescs).toString())) {
+        for (WatDieGroup die : this.dies) {
+            if (!this.writeKVString(die.getDocValue(lotHead).toString())) {
                 return false;
             }
             else {

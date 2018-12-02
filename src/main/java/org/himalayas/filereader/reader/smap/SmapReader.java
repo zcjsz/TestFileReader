@@ -27,7 +27,7 @@ final public
     private final
         ArrayList<String> pickBins = new ArrayList();
     private final
-        ArrayList<Die> dies = new ArrayList();
+        ArrayList<SmapDie> dies = new ArrayList();
     private static
         SmapReader instance = null;
 
@@ -38,7 +38,7 @@ final public
 
     public static
         SmapReader getInstance() {
-        if (instance == null && Config.camFormat != null && Config.smapFormat.isEnabled()) {
+        if (instance == null && Config.smapFormat != null && Config.smapFormat.isEnabled()) {
             instance = new SmapReader(Config.smapFormat);
         }
         return instance;
@@ -111,7 +111,7 @@ final public
         String lotHead = this.generateLotHeadKVStr();
         int pickUnit = 0;
 
-        for (Die die : this.dies) {
+        for (SmapDie die : this.dies) {
             boolean isPick = this.isPickBin(die.getPickBin());
             if (isPick) {
                 pickUnit++;
@@ -155,7 +155,7 @@ final public
         int xcoord = 0;
         for (; xcoord != size; xcoord++) {
             if (validatePickBin(names[xcoord])) {
-                Die die = new Die(xcoord, ycoord, names[xcoord]);
+                SmapDie die = new SmapDie(xcoord, ycoord, names[xcoord]);
                 this.dies.add(die);
             }
         }
