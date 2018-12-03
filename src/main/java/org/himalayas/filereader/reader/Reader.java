@@ -111,7 +111,7 @@ public abstract
                 System.out.println("Warning: this file is skipped since pre-validate failed.");
                 return false;
             }
-            if (!this.validateFile()) {
+            if (!(this.validateFile() && this.postValidate())) {
                 this.failType = Config.FailureCase.BadFormat;
                 this.logBadFormatFileToES();
                 this.renameOrArchiveKDF(this.badFormatArchiveFile, Config.KdfRename.badFormat);
@@ -193,20 +193,7 @@ public abstract
         }
         String names[] = null;
         String logFileName = this.file.getName();
-        // here please add the split word in the config file....
-        if (this.getFormat().getDataType().equals(Config.DataTypes.SMAP)) {
-            names = logFileName.split("smap.");
-        }
-        else if (this.getFormat().getDataType().equals(Config.DataTypes.WAT)) {
-            names = logFileName.split("dis.");
-        }
-        else if (this.getFormat().getDataType().equals(Config.DataTypes.CAMSTAR)) {
-            names = logFileName.split("xls.");
-        }
-        else {
-            System.err.println("Fatal Error: bad Data Type found: " + this.getFormat().getDataType().toString());
-            System.exit(1);
-        }
+        names = logFileName.split(this.format.getFileType());
 
         if (names.length != 2) {
             return false;
@@ -221,7 +208,7 @@ public abstract
 
         names = logFileName.split("_");
         if (names.length != this.getFormat().getUnderLineCnt()) {
-            System.out.println("Skip this kdf since underline cnt is not " + this.getFormat().getUnderLineCnt());
+            System.out.println("Skip this file since underline cnt is not " + this.getFormat().getUnderLineCnt());
             return false;
         }
 
@@ -374,11 +361,13 @@ public abstract
                 break;
             }
         }
-        if (skip) {
-            return false;
-        }
-        return true;
+        return !skip;
 
+    }
+
+    protected
+        boolean postValidate() {
+        return true;
     }
 
     /**
@@ -388,7 +377,7 @@ public abstract
      * @param timeStr
      * @return
      */
-    private
+    protected
         String formatTimeStr(String timeStr) {
         return timeStr.substring(0, 4) + "-" + timeStr.substring(4, 6) + "-" + timeStr.substring(6, 8)
             + "T" + timeStr.substring(8, 10) + ":" + timeStr.substring(10, 12) + ":"
@@ -411,7 +400,7 @@ public abstract
      *
      * @return
      */
-    private
+    protected
         boolean generateMapFile() {
         if (!this.getFormat().isGenerateMappingFile()) {
             return true;
@@ -825,7 +814,13 @@ public abstract
         return docCnt;
     }
 
-    protected void setFormat(DataFormat format) {
+    protected
+        String getFileOpenTime() {
+        return fileOpenTime;
+    }
+
+    protected
+        void setFormat(DataFormat format) {
         this.format = format;
     }
 
@@ -863,6 +858,7 @@ public abstract
             && (!formatString.contains(",="));
         if (!result) {
             System.out.println("Warning: failed to validate this format string: " + formatString);
+            System.out.printf("CommaCnt = %d, EqualityCnt = %d, LFCnt = %d\n", commaCnt, equalityCnt, lfCnt);
         }
         return result;
 

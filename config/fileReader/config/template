@@ -717,14 +717,6 @@ PUT _template/all-test
             }
           }
          },
-         {
-          "key_word_62": {
-            "match": "Group",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
 
           {
             "text_1": {

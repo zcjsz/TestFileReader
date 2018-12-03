@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.himalayas.filereader.kdf.KDFReader;
+import org.himalayas.filereader.es.ESHelper;
 import org.himalayas.filereader.reader.Reader;
 import org.himalayas.filereader.reader.ReaderFactory;
 import org.himalayas.filereader.util.Config;
@@ -26,113 +26,29 @@ public
     class FileReader {
 
     private
-        KDFReader kdfReader = null;
-    private
         Reader reader = null;
-    
+    private
+        ESHelper esHelper = null;
+
     public
         FileReader(File configFile) {
         long startTime = System.currentTimeMillis();
         new Config(configFile.getAbsolutePath());
-        this.init();
+
+        esHelper = ESHelper.getInstance();
 
         System.out.println(LocalDateTime.now().toString() + ": Task start...");
         this.readFile();
-//        for (DataFormat format : Config.dataFormats.values()) {
-//            if (format.getDataType().equals(Config.DataTypes.ATE)
-//                || format.getDataType().equals(Config.DataTypes.WaferSort)
-//                || format.getDataType().equals(Config.DataTypes.SLT)) {
-//                this.readKDF(format);
-//            }
-//        }
         System.out.println();
         System.out.println(LocalDateTime.now().toString() + ": All task completed,total time = " + (System.currentTimeMillis() - startTime));
     }
 
-
     private
-        void init() {
-        for (DataFormat format : Config.dataFormats.values()) {
-            if (!format.isEnabled()) {
-                continue;
-            }
-            
-            Config.DataTypes dataType = format.getDataType();
-            if (kdfReader == null
-                && (dataType.equals(Config.DataTypes.ATE)
-                || dataType.equals(Config.DataTypes.SLT)
-                || dataType.equals(Config.DataTypes.WaferSort))) {
-                kdfReader = new KDFReader();
-            }
-        }
-    }
-
-    private
-        void readKDF(DataFormat format) {
-        if (kdfReader != null && format.isEnabled()
-            && (format.getDataType().equals(Config.DataTypes.WaferSort)
-            || format.getDataType().equals(Config.DataTypes.ATE)
-            || format.getDataType().equals(Config.DataTypes.SLT))) {
-            System.out.println("*****************************************************************");
-            System.out.println("**********                                     ******************");
-            System.out.printf("**********           start to proceed %s\n", format.getSourceType());
-            System.out.println("**********                                     ******************");
-            System.out.println("*****************************************************************");
-
-            kdfReader.setFormat(format);
-            for (File dateFile : new File(format.getKdfPath()).listFiles()) {
-                if (!this.checkDateFile(dateFile, format.getMinDateString())) {
-                    System.out.printf("Warning: skip %s since minDate is %s\n", dateFile.getName(), format.getMinDateString());
-                    continue;
-                }
-
-                for (File kdfFile : dateFile.listFiles()) {
-                    if (kdfFile.isFile()) {
-                        String fileName = kdfFile.getName();
-                        if (!kdfFile.canRead()) {
-                            System.out.println("Error: tdni has no permission to read this file");
-                            continue;
-                        }
-                        if (kdfFile.length() < 100) {
-                            System.out.printf("Error: file size = %d error, less than 100 byte\n", kdfFile.length());
-                            continue;
-                        }
-                        try {
-                            kdfReader.loadFile(kdfFile);
-                            if (kdfReader.getKdfDoneCnt() >= kdfReader.getFormat().getFileLimit()) {
-                                System.out.println("kdf done file cnt is " + (kdfReader.getKdfDoneCnt()));
-                                System.out.println("Have break now, bye");
-                                return;
-                            }
-                        }
-                        catch (Exception e) {
-                            kdfReader.logExceptionToES();
-                            kdfReader.renameOrArchiveKDF(kdfReader.getExceptionArchiveFile(), Config.KdfRename.exception);
-                            System.out.println();
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-
-            /**
-             * @todo for each lotOperation in dataformat upsert lot operations
-             * to es index
-             */
-            System.out.println("*****************************************************************");
-            System.out.println("**********                                     ******************");
-            System.out.printf("**********           complete to proceed %s\n", format.getSourceType());
-            System.out.println("**********                                     ******************");
-            System.out.println("*****************************************************************");
-        }
-    }
-   
-    private
-        void readFile(){
-        for(DataFormat dataFormat: Config.dataFormats.values()){
-            if(dataFormat.isEnabled()){
+        void readFile() {
+        for (DataFormat dataFormat : Config.dataFormats.values()) {
+            if (dataFormat.isEnabled()) {
                 reader = ReaderFactory.creatReader(dataFormat);
-                if(reader == null) {
+                if (reader == null) {
                     continue;
                 }
 
@@ -150,26 +66,25 @@ public
 
                     try {
                         Files.walk(rootFile.toPath(), 3)
-                                .filter(path -> path.toFile().isFile() && path.toFile().canRead())
-                                .forEach(path ->{
-                                    if (path.toFile().length() < 100) {
-                                        System.out.println("Error: " + path.toString());
-                                        System.out.printf("Error: file size = %d error, less than 100 byte\n", path.toFile().length());
-                                    }
-                                    else{
-                                        reader.loadFile(path.toFile());
-                                    }
+                            .filter(path -> path.toFile().isFile() && path.toFile().canRead())
+                            .forEach(path -> {
+                                if (path.toFile().length() < 100) {
+                                    System.out.println("Error: " + path.toString());
+                                    System.out.printf("Error: file size = %d error, less than 100 byte\n", path.toFile().length());
+                                }
+                                else {
+                                    reader.loadFile(path.toFile());
+                                }
 //                                    if (reader.kdfDoneCnt >= Config.smapFormat.getFileLimit()) {
 //                                        System.out.println("kdf done file cnt is " + (reader.kdfDoneCnt));
 //                                        System.out.println("Have break now, bye");
 //                                        return;
 //                                    }
-                                });
-                    } catch (IOException ex) {
+                            });
+                    }
+                    catch (IOException ex) {
                         Logger.getLogger(FileReader.class.getName()).log(Level.SEVERE, null, ex);
                     }
-
-
 
                     System.out.println("*****************************************************************");
                     System.out.println("**********                                     ******************");

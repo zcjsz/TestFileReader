@@ -14,11 +14,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import org.dom4j.Element;
-import org.himalayas.filereader.kdf.Bin;
 
 public
     class DataFormat {
-    
+
     private
         boolean kdfData = false;
 
@@ -295,7 +294,7 @@ public
                     case "Factory":
                         this.factory = fieldValue;
                         break;
-                    case "FileType":
+                    case "FileExtension":
                         this.fileType = fieldValue;
                         break;
                     case "LotIndex":
@@ -1638,13 +1637,11 @@ public
         this.waferNumebrNode = waferNumebrNode;
     }
 
-    public boolean isKdfData() {
+    public
+        boolean isKdfData() {
         return (this.dataType.equals(Config.DataTypes.ATE)
-                || this.dataType.equals(Config.DataTypes.SLT)
-                || this.dataType.equals(Config.DataTypes.WaferSort));
+            || this.dataType.equals(Config.DataTypes.SLT)
+            || this.dataType.equals(Config.DataTypes.WaferSort));
     }
-    
-    
-    
 
 }
