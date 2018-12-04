@@ -20,6 +20,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.himalayas.filereader.es.LotInfo;
 import org.himalayas.filereader.reader.Reader;
 import org.himalayas.filereader.util.Config;
 import org.himalayas.filereader.util.DataFormat;
@@ -196,18 +197,13 @@ final public
             }
 
             this.goodLotCnt++;
-            String docIdKVString = "," + FieldType.Lot_Doc_id + "=" + this.getCamDocId(camLot, camOper);
+            String docIdKVString = "," + FieldType.Lot_Doc_id + "=" + LotInfo.getDocID(camLot, camOper);
             String docValue = this.generateLotHeadKVStr() + docIdKVString + camDateKVString + camMonthKVString + "\n";
             if (Reader.validateFullForamtString(docValue)) {
                 this.camDocs.append(docValue);
             }
         }
         return true;
-    }
-
-    private
-        String getCamDocId(String lotNumber, String oper) {
-        return lotNumber + "_" + oper;
     }
 
     private
