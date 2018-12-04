@@ -113,7 +113,7 @@ public
         return ESHelper.instance;
     }
 
-    private
+    public
         boolean init() {
         if (!initProductionClient()) {
             System.out.printf("%s: failed to connect production es host!\n", LocalDateTime.now().toString());
@@ -741,6 +741,36 @@ public
         }
         return true;
     }
+        
+        
+    public boolean updateCamData(String docIndex, String docID, Map<String, String> jsonMap) {
+        try {
+            //jsonMap.put("IsMatched", "Y");
+
+            UpdateRequest request = new UpdateRequest(docIndex, "doc", docID).doc(jsonMap);
+            request.timeout(TimeValue.timeValueSeconds(20));
+            request.docAsUpsert(true);
+
+            UpdateResponse updateResponse = this.productionClient.update(request, RequestOptions.DEFAULT);
+
+            if (null != updateResponse.getResult()) {
+                switch (updateResponse.getResult()) {
+                    case CREATED : System.out.println("Cam Created : " + docID); break; 
+                    case UPDATED : System.out.println("Cam Updated : " + docID); break;
+                    case DELETED : System.out.println("Cam Deleted : " + docID); break;
+                    case NOOP    : System.out.println("Cam Noop : "    + docID); break;
+                    default: break;
+                }
+            }
+            System.out.println("Update Cam Data PASS : " + jsonMap.toString());
+        } catch (Exception ex) {
+            System.out.println("Update Cam Data FAIL : " + jsonMap.toString());
+            ex.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+        
 
     public
         void proceedUncaledLot() {

@@ -1645,4 +1645,10 @@ public
             || this.dataType.equals(Config.DataTypes.WaferSort));
     }
 
+    public HashMap<String, String> getCamstarOperMappings() {
+        return camstarOperMappings;
+    }
+    
+    
+    
 }
