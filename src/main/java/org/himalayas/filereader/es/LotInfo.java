@@ -5,13 +5,8 @@
  */
 package org.himalayas.filereader.es;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.himalayas.filereader.util.FieldType;
 
@@ -99,16 +94,23 @@ public
         int totalPassCnt = 0;
 
     private
-        String lotStartTime = "1970-01-01 00:00:00.00 +0800";
+        String lotStartTime = "3";
     private
-        String lotEndTime = "2099-12-31 23:59:59.00 +0800";
-    private
-        Set<String> lotStartTimeSet = new TreeSet<>();
-    private
-        Set<String> lotEndTimeSet = new TreeSet<>();
+        String lotEndTime = "1";
 
     public
         LotInfo() {
+    }
+
+    /**
+     *
+     * @param lotNumber
+     * @param oper
+     */
+    public
+        LotInfo(String lotNumber, String oper) {
+        this.lotNumber = lotNumber;
+        this.operation = oper;
     }
 
     public
@@ -148,8 +150,8 @@ public
         this.totalUniqueUnitCnt = 0;
         this.totalUnitTestTime = 0;
 
-        this.lotStartTime = null;
-        this.lotEndTime = null;
+        this.lotStartTime = "3";
+        this.lotEndTime = "1";
     }
 
     public
@@ -350,43 +352,21 @@ public
                 this.totalUnitTestTimeInc(doc.getTestTime());
                 this.totalTestedUnitCntInc(1);
 
-                lotStartTimeSet.add(doc.getStartTime());
-                lotEndTimeSet.add(doc.getEndTime());
+                if (this.getLotStartTime().compareTo(doc.getStartTime()) > 0) {
+                    this.setLotStartTime(doc.getStartTime());
+                }
+                if (this.getLotEndTime().compareTo(doc.getEndTime()) < 0) {
+                    this.setLotEndTime(doc.getEndTime());
+                }
 
             }
         }
-    }
-
-    public
-        void calStartEndTime() {
-
-        List<String> tmpStartTimeList = new ArrayList<>(lotStartTimeSet);
-        List<String> tmpEndTimeList = new ArrayList<>(lotEndTimeSet);
-
-        for (int i = 0; i < tmpStartTimeList.size(); i++) {
-            String tmpStartTime = tmpStartTimeList.get(i);
-            Matcher matcher = pat1.matcher(tmpStartTime);
-            if (matcher.find()) {
-                lotStartTime = matcher.group(0);
-                break;
-            }
-            else {
-                continue;
-            }
+        if (this.lotStartTime.equals("3")) {
+            this.lotStartTime = null;
         }
-
-        for (int j = tmpEndTimeList.size() - 1; j >= 0; j--) {
-            String tmpEndTime = tmpEndTimeList.get(j);
-            Matcher matcher = pat1.matcher(tmpEndTime);
-            if (matcher.find()) {
-                lotEndTime = matcher.group(0);
-                break;
-            }
-            else {
-                continue;
-            }
+        if (this.lotEndTime.equals("1")) {
+            this.lotEndTime = null;
         }
-
     }
 
     public
