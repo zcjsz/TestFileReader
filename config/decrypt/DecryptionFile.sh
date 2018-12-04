@@ -42,8 +42,9 @@ ENG_PATH="EngSORT"
 
 FT_PATH="FT"
 SLT_PATH="SLT"
-YMS_PATH_shift="TransYieldRep/shift"
-YMS_PATH_week="TransYieldRep/weekly"
+YMS_PATH_ROOT="TransYieldRep";
+YMS_PATH_shift="$YMS_PATH_ROOT/shift"
+YMS_PATH_week="$YMS_PATH_ROOT/weekly"
 
 if [ ! $# -eq 3 ];then
     echo -e "$Usage"
@@ -531,7 +532,7 @@ move_yms_file()
     
     for lotFile in `ls $tempFile`; do
         if [ -d $tempFile/$lotFile ]; then
-            for kdfFile in `ls "$tempFile/$lotFile" | grep '.kdf$'`; do
+            for kdfFile in `ls "$tempFile/$lotFile" | grep '.xls$'`; do
                 move_file "$tempFile/$lotFile/$kdfFile" "$1/$kdfFile.$2"
             done
         fi
@@ -628,7 +629,13 @@ decrypt_extract()
         elif [ $3 -eq 3 ]; then
             move_wat_file "$kdfHourFile" "$second"
         elif [ $3 -eq 4 ]; then
-            move_yms_file "$kdfHourFile" "$second"
+            # place all the camstar report file in the same $hour file
+            camAllPath="$DestPath/$YMS_PATH_ROOT/$hour"
+            make_path $camAllPath
+            if [ $? = 0 ]; then
+                move_yms_file "$camAllPath" "$second"
+            fi
+            
         else
             echo "$(date): unknow source type number $3 found"
         fi
