@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import org.dom4j.Element;
+import org.himalayas.filereader.es.LotInfo;
 
 public
     class DataFormat {
@@ -39,7 +40,7 @@ public
         HashMap<String, String> camstarOperMappings = new HashMap();
 
     private final
-        ArrayList<String> lotOpertions = new ArrayList();
+        HashMap<String, LotInfo> lotList = new HashMap();
     private
         String fileType = null;
 
@@ -1580,8 +1581,8 @@ public
     }
 
     public
-        ArrayList<String> getLotOpertions() {
-        return lotOpertions;
+        HashMap<String, LotInfo> getLotList() {
+        return lotList;
     }
 
     public

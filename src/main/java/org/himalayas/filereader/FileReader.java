@@ -93,6 +93,10 @@ public
                     System.out.println("*****************************************************************");
                 }
             }
+            if (dataFormat.isKdfData() && (!dataFormat.getLotList().isEmpty())) {
+                esHelper.initDataForamt(dataFormat);
+                esHelper.updateIsCalFlag2N(dataFormat.getLotList());
+            }
         }
     }
 

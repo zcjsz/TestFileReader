@@ -319,7 +319,8 @@ final public
             return false;
         }
 
-        this.getFormat().getLotOpertions().add(LotInfo.getDocID(this.getLotNumber(), this.mfgStp));
+        LotInfo lotInfo = new LotInfo(this.getLotNumber(), this.mfgStp);
+        this.getFormat().getLotList().putIfAbsent(lotInfo.getDoc_Id(), lotInfo);
 
         kdfDoneCnt++;
         return true;
