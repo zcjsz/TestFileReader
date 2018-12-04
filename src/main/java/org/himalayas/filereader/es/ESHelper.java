@@ -274,7 +274,7 @@ public
 
         if (this.searchUnitRequest.source() == null) {
             this.searchUnitRequest.source(new SearchSourceBuilder()
-                .size(500)
+                .size(1000)
                 .timeout(new TimeValue(180, TimeUnit.SECONDS))
                 .fetchSource(true)
                 .fetchSource(includeFields, excludeFields));
@@ -379,9 +379,15 @@ public
                 // failures should be handled here
             }
 
+            int totalHits = 0;
+            
             String scrollId = this.searchResponse.getScrollId();
             SearchHit[] searchHits = this.searchResponse.getHits().getHits();
 
+            totalHits += searchHits.length;
+            System.out.println(this.lotInfo.getLotNumber() + "_" + this.lotInfo.getOperation());
+            System.out.println("Search Hits : " + searchHits.length);
+            
             if (searchHits == null || searchHits.length < 1) {
                 System.out.printf("%s: there's no any unit data found in this query\n", LocalDateTime.now().toString());
                 return false;
@@ -397,8 +403,15 @@ public
 
                 searchHits = this.searchResponse.getHits().getHits();
                 this.fillUnitData(searchHits);
+                
+                if(searchHits.length > 0) {
+                    totalHits += searchHits.length;
+                    System.out.println("Search Hits : " + searchHits.length);
+                }
             }
 
+            System.out.println("Total Hits : " + totalHits);
+            
             ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
             clearScrollRequest.addScrollId(scrollId);
             ClearScrollResponse clearScrollResponse = this.productionClient.clearScroll(clearScrollRequest, RequestOptions.DEFAULT);
@@ -489,7 +502,7 @@ public
             String scrollId = this.searchResponse.getScrollId();
             SearchHit[] searchHits = this.searchResponse.getHits().getHits();
             if (searchHits == null || searchHits.length < 1) {
-                System.out.printf("%s: there's no any unit data found in this query\n", LocalDateTime.now().toString());
+                System.out.printf("%s: there's no any lot data found in this query\n", LocalDateTime.now().toString());
                 return false;
             }
             this.lotList.clear();
@@ -971,7 +984,8 @@ public
 //
 //            if (dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)
 //                || dataFormat.getDataType().equals(Config.DataTypes.SMAP)
-//                || dataFormat.getDataType().equals(Config.DataTypes.WAT)) {
+//                || dataFormat.getDataType().equals(Config.DataTypes.WAT) || dataFormat.getDataType().equals(Config.DataTypes.ATE) || dataFormat.getDataType().equals(Config.DataTypes.SLT)) {
+//                continue;
 //            }
 //            else {
 //                es.initDataForamt(dataFormat);
@@ -982,23 +996,23 @@ public
 //                }
 //            }
 //        }
-//
 //        es.closeConn();
+        
 //        System.exit(1);
 //        String lotNumber = null;
 //        String operation = null;
 //        DataFormat format = null;
 //        es.calLot(lotNumber, operation, format);
 
-//        for (DataFormat dataFormat : Config.dataFormats.values()) {
-//            if (dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)
-//                || dataFormat.getDataType().equals(Config.DataTypes.SMAP)
-//                || dataFormat.getDataType().equals(Config.DataTypes.WAT) || dataFormat.getDataType().equals(Config.DataTypes.SLT) || dataFormat.getDataType().equals(Config.DataTypes.WaferSort)) {
-//                continue;
-//            }
-//            es.initDataForamt(dataFormat);
-//            es.proceedUncaledLot();
-//        }
+        for (DataFormat dataFormat : Config.dataFormats.values()) {
+            if (dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)
+                || dataFormat.getDataType().equals(Config.DataTypes.SMAP)
+                || dataFormat.getDataType().equals(Config.DataTypes.WAT) || dataFormat.getDataType().equals(Config.DataTypes.ATE) || dataFormat.getDataType().equals(Config.DataTypes.SLT)) {
+                continue;
+            }
+            es.initDataForamt(dataFormat);
+            es.proceedUncaledLot();
+        }
         
         es.closeConn();
     }
