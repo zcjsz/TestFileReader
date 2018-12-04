@@ -582,9 +582,7 @@ public
             for (Bucket operBucket : operAgg.getBuckets()) {
                 String oper = (String) operBucket.getKey();
                 System.out.println("Lotnumber = " + lotNumber + ", operation = " + oper);
-                LotInfo tempLot = new LotInfo();
-                tempLot.setLotNumber(lotNumber);
-                tempLot.setOperation(oper);
+                LotInfo tempLot = new LotInfo(lotNumber, oper);
                 this.lotList.add(tempLot);
             }
 
@@ -641,9 +639,7 @@ public
 
 //                continue;
             }
-            LotInfo lot = new LotInfo();
-            lot.setLotNumber(lotNumber);
-            lot.setOperation(operation);
+            LotInfo lot = new LotInfo(lotNumber, operation);
             this.lotList.add(lot);
         }
     }
@@ -749,6 +745,20 @@ public
         }
     }
 
+    /**
+     * this method is to update the IsCaled flag to 'N' for the lot list in the
+     * HashMap lotInfos. each lot info should contains the lot number and the
+     * operation
+     *
+     * @param lotInfos
+     */
+    public
+        void updateIsCalFlag2N(HashMap<String, LotInfo> lotInfos) {
+        for (LotInfo lot : lotInfos.values()) {
+            this.upsertLotIsCalFlag2N(lot);
+        }
+    }
+
     private
         void logLotCalEvent2ES(boolean result, LotInfo lot) {
         System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
@@ -767,8 +777,8 @@ public
      * @param operation
      * @return
      */
-    public
-        boolean upsertLotIsCalFlag2N(String lotNumber, String operation) {
+    private
+        boolean upsertLotIsCalFlag2N(LotInfo lot) {
         if (this.dataFormat == null) {
             System.out.println("Fatal Error: please setup the data format for es instance");
             return false;
@@ -776,13 +786,14 @@ public
         try {
             String lotIndex = this.dataFormat.getLotIndexName();
             jsonMap.clear();
-            jsonMap.put(this.dataFormat.getLotNumberNode().getName(), lotNumber);
-            jsonMap.put(this.dataFormat.getOperationNode().getName(), operation);
+            jsonMap.put(this.dataFormat.getLotNumberNode().getName(), lot.getLotNumber());
+            jsonMap.put(this.dataFormat.getOperationNode().getName(), lot.getOperation());
             jsonMap.put(FieldType.IsCaled, "N");
             jsonMap.put(FieldType.Lot_LotStartTime, ZonedDateTime.now().toOffsetDateTime());
+            jsonMap.put(FieldType.Lot_LotEndTime, ZonedDateTime.now().toOffsetDateTime());
             jsonMap.put(FieldType.DataType, this.dataFormat.getDataType().toString());
 
-            this.updateRequest.index(lotIndex).type("doc").id(LotInfo.getDocID(lotNumber, operation)).doc(jsonMap);
+            this.updateRequest.index(lotIndex).type("doc").id(lot.getDoc_Id()).doc(jsonMap);
             this.updateRequest.timeout(TimeValue.timeValueSeconds(20));
             this.updateRequest.docAsUpsert(true);
             UpdateResponse updateResponse = this.productionClient.update(this.updateRequest, RequestOptions.DEFAULT);
@@ -790,9 +801,9 @@ public
             if (null != updateResponse.getResult()) {
                 System.out.printf("%s = %s, %s = %s, upsert lot result: %s\n",
                     this.dataFormat.getLotNumberNode().getName(),
-                    lotNumber,
+                    lot.getLotNumber(),
                     this.dataFormat.getOperationNode().getName(),
-                    operation,
+                    lot.getOperation(),
                     updateResponse.getResult());
                 /*
                  * switch (updateResponse.getResult()) { case CREATED:
@@ -842,7 +853,6 @@ public
         //camData.put("IsLotMatched", "Y");
         this.getLotInfo().calInsertion();
         this.getLotInfo().calKPI();
-        this.getLotInfo().calStartEndTime();
 
         if (!updateUnitData()) {
             return false;
@@ -975,7 +985,7 @@ public
                 es.initDataForamt(dataFormat);
                 if (es.getLotListDataFromFile()) {
                     for (LotInfo lotInfo : es.lotList) {
-                        es.upsertLotIsCalFlag2N(lotInfo.getLotNumber(), lotInfo.getOperation());
+                        es.upsertLotIsCalFlag2N(lotInfo);
                     }
                 }
             }
