@@ -99,9 +99,9 @@ public
 
     private
         ESHelper() {
-        if (!this.init()) {
-            instance = null;
-        }
+//        if (!this.init()) {
+//            instance = null;
+//        }
 
     }
 
@@ -989,15 +989,16 @@ public
 //        String operation = null;
 //        DataFormat format = null;
 //        es.calLot(lotNumber, operation, format);
-        for (DataFormat dataFormat : Config.dataFormats.values()) {
-            if (dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)
-                || dataFormat.getDataType().equals(Config.DataTypes.SMAP)
-                || dataFormat.getDataType().equals(Config.DataTypes.WAT) || dataFormat.getDataType().equals(Config.DataTypes.SLT) || dataFormat.getDataType().equals(Config.DataTypes.WaferSort)) {
-                continue;
-            }
-            es.initDataForamt(dataFormat);
-            es.proceedUncaledLot();
-        }
+
+//        for (DataFormat dataFormat : Config.dataFormats.values()) {
+//            if (dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)
+//                || dataFormat.getDataType().equals(Config.DataTypes.SMAP)
+//                || dataFormat.getDataType().equals(Config.DataTypes.WAT) || dataFormat.getDataType().equals(Config.DataTypes.SLT) || dataFormat.getDataType().equals(Config.DataTypes.WaferSort)) {
+//                continue;
+//            }
+//            es.initDataForamt(dataFormat);
+//            es.proceedUncaledLot();
+//        }
         
         es.closeConn();
     }
