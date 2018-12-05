@@ -790,7 +790,7 @@ public
         void proceedUncaledLot() {
         this.getLotListData();
         for (LotInfo lot : this.lotList) {
-            logLotCalEvent2ES(this.calLot(lot, this.dataFormat), lot);
+            logLotCalEvent2ES(this.calLot(lot), lot);
         }
     }
 
@@ -881,14 +881,12 @@ public
      * @return
      */
     private
-        boolean calLot(LotInfo lotInfo, DataFormat dataFormat) {
+        boolean calLot(LotInfo lotInfo) {
         if (lotInfo.getLotNumber() == null
             || lotInfo.getOperation() == null
             || dataFormat == null) {
             return false;
         }
-
-        this.dataFormat = dataFormat;
         this.InitLot(lotInfo);
 
         if (!this.getUnitData()) {
