@@ -21,6 +21,9 @@ import org.dom4j.io.SAXReader;
 
 public
     class Config {
+    
+    public static
+        String productionHostName = "tdexample01";
 
     public static
         String sourcePath = null;
@@ -112,6 +115,23 @@ public
                 void onEnd(ElementPath path) {
                 Element row = path.getCurrent();
                 lockFilePath = row.getTextTrim();
+                row.detach();
+            }
+
+            @Override
+            public
+                void onStart(ElementPath path) {
+            }
+
+        });
+        reader.addHandler("/root/ProductionHostName", new ElementHandler() {
+            @Override
+            public
+                void onEnd(ElementPath path) {
+                Element row = path.getCurrent();
+                if(!row.getTextTrim().isEmpty()){
+                    productionHostName = row.getTextTrim().toLowerCase();
+                }
                 row.detach();
             }
 

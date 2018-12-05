@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -114,17 +115,23 @@ public
 
     private
         boolean init() {
-        if (!initProductionClient()) {
-            System.out.printf("%s: failed to connect production es host!\n", LocalDateTime.now().toString());
-            System.out.printf("Please make sure those host are available: %s\n", Arrays.toString(Config.productionHost.toArray()));
-            return false;
+        if(this.isProductionHost()){
+            if (!initProductionClient()) {
+                System.out.printf("%s: failed to connect production es host!\n", LocalDateTime.now().toString());
+                System.out.printf("Please make sure those host are available: %s\n", Arrays.toString(Config.productionHost.toArray()));
+                return false;
+            }
         }
-//        if (!initTestClient()) {
-//            System.out.printf("%s: failed to connect test es host!\n", LocalDateTime.now().toString());
-//            System.out.printf("Please make sure those host are available: %s\n", Config.testHost);
-//            return false;
-//        }
-
+        else{
+            if (!initTestClient()) {
+                System.out.printf("%s: failed to connect test es host!\n", LocalDateTime.now().toString());
+                System.out.printf("Please make sure those host are available: %s\n", Config.testHost);
+                return false;
+            }
+        }
+        if(!this.isProductionHost()){
+            this.productionClient = this.testClient;
+        }
         return true;
     }
 
@@ -979,6 +986,36 @@ public
             }
         }
     }
+        
+    private
+        boolean isProductionHost(){
+            if(isWindows()){
+                return false;
+            }
+            else{
+                try {
+//                System.out.println("Unix-like computer name through env:\"" + System.getenv("HOSTNAME") + "\"");
+//                System.out.println("Unix-like computer name through exec:\"" + execReadToString("hostname") + "\"");
+//                System.out.println("Unix-like computer name through /etc/hostname:\"" + execReadToString("cat /etc/hostname") + "\"");
+                    return execReadToString("hostname").toLowerCase().contains(Config.productionHostName);
+                } catch (IOException ex) {
+                    Logger.getLogger(ESHelper.class.getName()).log(Level.SEVERE, null, ex);
+                    return false;
+                }
+            }
+        }
+    private
+        String execReadToString(String execCommand) throws IOException {
+        try (Scanner s = new Scanner(Runtime.getRuntime().exec(execCommand).getInputStream()).useDelimiter("\\A")) {
+            return s.hasNext() ? s.next() : "";
+        }
+    }
+        
+    private
+        boolean isWindows(){
+            String os = System.getProperty("os.name").toLowerCase();
+            return os.contains("win");
+        }
 
     public static
         void main(String[] args) {

@@ -25,6 +25,7 @@ and open the template in the editor.
     <SubClass>subClass</SubClass>
     <BaseClass>baseClass</BaseClass>
     
+    <ProductionHostName>tdexample01</ProductionHostName>
     <!--es host names of production env-->
     <ESHostProduction>10.72.1.237,10.72.1.238,10.72.1.239</ESHostProduction>
     <!--ESHostProduction>localhost</ESHostProduction-->
