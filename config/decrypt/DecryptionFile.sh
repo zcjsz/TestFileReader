@@ -763,14 +763,14 @@ fi
 change_dir_to_yms_shift
 if [ $? = 0 ]; then
     echo "$(date): yms shift task start"
-    decrypt_extract "$yms_gpg_path_shift" "$DestPath/$YMS_PATH_shift" "4"
+    decrypt_extract "$yms_gpg_path_shift" "$DestPath/$YMS_PATH_ROOT" "4"
     echo "$(date): yms shift task done"
 fi
 
 change_dir_to_yms_week
 if [ $? = 0 ]; then
     echo "$(date): yms week task start"
-    decrypt_extract "$yms_gpg_path_week" "$DestPath/$YMS_PATH_week" "4"
+    decrypt_extract "$yms_gpg_path_week" "$DestPath/$YMS_PATH_ROOT" "4"
     echo "$(date): yms week task done"
 fi
 
