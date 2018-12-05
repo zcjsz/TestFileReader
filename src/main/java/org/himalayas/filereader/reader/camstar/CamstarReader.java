@@ -12,6 +12,9 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -20,6 +23,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.himalayas.filereader.es.ESHelper;
 import org.himalayas.filereader.es.LotInfo;
 import org.himalayas.filereader.reader.Reader;
 import org.himalayas.filereader.util.Config;
@@ -53,6 +57,8 @@ final public
     private static
         CamstarReader instance = null;
 
+    private Map<String, Map<String, String>> camRecords = new HashMap<>();
+    
     private
         CamstarReader(DataFormat format) {
         super(format);
@@ -157,6 +163,8 @@ final public
             boolean lineHasError = false;
             Row row = sheet.getRow(rowNo);
 
+            Map<String, String> camRecord = new HashMap<>();
+            
             for (XmlNode xmlNode : this.getFormat().getLotHead().values()) {
                 if (xmlNode.isEnabled() && xmlNode.isEnabledLog() && xmlNode.getCamColumnName() != null) {
                     xmlNode.resetValue();
@@ -166,6 +174,7 @@ final public
                         if (cell != null) {
                             String cellValue = getCellValue(cell, rowNo, colNo, xmlNode.isTimeNode());
                             xmlNode.setValue(cellValue);
+                            camRecord.put(xmlNode.getName(), cellValue);
                         }
                     }
                     else {
@@ -175,6 +184,7 @@ final public
             }
             String camLot = this.getFormat().getLotNumberNode().getXmlValue();
             String camOper = this.getFormat().getOperationNode().getXmlValue();
+            String kdfOper = this.getFormat().getCamstarOperMappings().getOrDefault(camOper, camOper);
 
             // invalid row whose camLot/camOper is empty
             if (camLot.isEmpty() || camOper.isEmpty()) {
@@ -194,8 +204,12 @@ final public
                 String camMonth = camTime.substring(0, 6);
                 camDateKVString = "," + FieldType.CamDate + "=" + camDate;
                 camMonthKVString = "," + FieldType.CamMonth + "=" + camMonth;
+                camRecord.put(FieldType.CamDate, camDate);
+                camRecord.put(FieldType.CamMonth, camMonth);
             }
 
+            camRecords.put(camLot + "_" + kdfOper, camRecord);
+            
             this.goodLotCnt++;
             String docIdKVString = "," + FieldType.Lot_Doc_id + "=" + LotInfo.getDocID(camLot, camOper);
             String docValue = this.generateLotHeadKVStr() + docIdKVString + camDateKVString + camMonthKVString + "\n";
@@ -204,6 +218,15 @@ final public
             }
         }
         return true;
+    }
+
+    private
+        String getCamDocId(String lotNumber, String oper) {
+        return lotNumber + "_" + oper;
+    }
+
+    public Map<String, Map<String, String>> getCamRecords() {
+        return camRecords;
     }
 
     private
@@ -338,6 +361,34 @@ final public
                 }
             }
         }
+
+        ESHelper es = ESHelper.getInstance();
+        if (!es.init()) {
+            es.closeConn();
+            return;
+        }
+        
+        Map<String, Map<String, String>> camRecords = CamstarReader.getInstance(Config.camFormat).getCamRecords();
+        for(Entry<String, Map<String, String>> entry : camRecords.entrySet()) {
+            String docID = entry.getKey();
+            Map<String, String> dataMap = entry.getValue();
+            String camOper = dataMap.getOrDefault("camOper", "unknow");
+            String docIndex = null;
+            switch(camOper) {
+                case "6820" : { docIndex = Config.getFTFormat().getLotIndexName();  break; }
+                case "6824" : { docIndex = Config.getFTFormat().getLotIndexName();  break; }
+                case "7903" : { docIndex = Config.getFTFormat().getLotIndexName();  break; }
+                case "6905" : { docIndex = Config.getSLTFormat().getLotIndexName(); break; }
+                case "6911" : { docIndex = Config.getSLTFormat().getLotIndexName(); break; }
+                default: break;
+            }
+            if(docIndex!=null && docID!=null) {
+                es.updateCamData(docIndex, docID, dataMap);
+            }
+        }
+        
+        es.closeConn();
+        
         System.out.println("total time = " + (System.currentTimeMillis() - startTime));
 
     }

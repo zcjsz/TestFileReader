@@ -142,7 +142,9 @@ public
         String Lot_KDFLot = "KDFLot";
     public final static
         String Lot_Doc_id = "_id";
-
+    public final static
+        String Lot_Doc_index = "_index";
+    
     public final static
         String Lot_LotStartTime = "LotStartTime";
     public final static

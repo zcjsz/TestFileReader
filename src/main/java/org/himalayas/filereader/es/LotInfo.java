@@ -22,6 +22,8 @@ public
 
     private
         String doc_Id = null;
+    private
+        String doc_Index = null;
 
     private
         String lotNumberName = null;
@@ -527,6 +529,7 @@ public
             + this.lotNumberName + "=" + this.lotNumber + ","
             + this.operationName + "=" + this.operation + ","
             + FieldType.Lot_Doc_id + "=" + this.doc_Id + ","
+            + FieldType.Lot_Doc_index + "=" + this.doc_Index + ","
             + FieldType.Lot_kdfAvgFailTestTime + "=" + this.valueOf2f(this.avgFailTestTime) + ","
             + FieldType.Lot_kdfAvgPassTestTime + "=" + this.valueOf2f(this.avgPassTestTime) + ","
             + FieldType.Lot_kdfAvgTestTime + "=" + this.valueOf2f(this.avgUnitTestTime) + ","
@@ -628,7 +631,7 @@ public
         this.operationName = operationName;
     }
 
-    private
+    public
         void setDoc_Id(String doc_Id) {
         this.doc_Id = doc_Id;
     }
@@ -639,6 +642,14 @@ public
             this.setDoc_Id(getDocID(this.lotNumber, this.operation));
         }
         return doc_Id;
+    }
+
+    public String getDoc_Index() {
+        return doc_Index;
+    }
+
+    public void setDoc_Index(String doc_Index) {
+        this.doc_Index = doc_Index;
     }
 
     public static
