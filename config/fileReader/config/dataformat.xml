@@ -12,7 +12,7 @@ and open the template in the editor.
 <!--please NEVER edit the configuration unless you are FULLY UNDERSTAND to the setttings-->
 
 <root>
-    <LockFilePath>/home/tdni/hygon_apps/fileReader</LockFilePath>
+    <LockFilePath>./testdata</LockFilePath>
     
     <!--convert the long time to human readable date time stamper-->
     <ConvertTime>1</ConvertTime>
@@ -25,34 +25,47 @@ and open the template in the editor.
     <SubClass>subClass</SubClass>
     <BaseClass>baseClass</BaseClass>
     
+    <!--es host names of production env-->
+    <ESHostProduction>10.72.1.237,10.72.1.238,10.72.1.239</ESHostProduction>
+    <!--ESHostProduction>localhost</ESHostProduction-->
+    <!--es host names of testing only env-->
+    <ESHostTest>192.168.52.100</ESHostTest>
     
-    
+    <SourcePath>testdata/extend/hygon_source_data</SourcePath>
+    <DatalogPath>testdata/extend/data_log</DatalogPath>
+    <MappingPath>testdata/extend/data_mapping</MappingPath>
+    <ArchivePath>testdata/data/data_archive</ArchivePath>
+
     <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
     <SourceType name= "HTEST1" enabled = "1" >
-        <LotIndex>ft-lot-*</LotIndex>
+        <LotIndex>test-ft-lot</LotIndex>
+        <TestIndex>ft-test-*</TestIndex>
+        <FileExtension>kdf.</FileExtension>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>1</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
-        <GenerateMappingFile>0</GenerateMappingFile>
+        <GenerateMappingFile>1</GenerateMappingFile>
         
         <KDFDate>
-            <Start></Start>
+            <Start>20181001</Start>
             <End></End>
         </KDFDate>
+        <LatestDays></LatestDays>
+        <FileLimit>100</FileLimit>
         
         <Customer>AMD</Customer>
         <Factory>Suzhou</Factory>
         
-        <KDFPath>/extend/hygon_source_data/FT/</KDFPath>
+        <KDFPath>FT</KDFPath>
         <!--xml path is to store the generated test item log file-->
-        <XmlPath>/extend/data_log/FT/</XmlPath>
+        <XmlPath>FT</XmlPath>
         <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
-        <MappingPath>/extend/data_mapping/FT/</MappingPath>
+        <MappingPath>FT</MappingPath>
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
-        <KDFArchivePath>/data/data_archive/FT/</KDFArchivePath>
+        <KDFArchivePath>FT</KDFArchivePath>
         <DataType>ATE</DataType>
         <DebugMode>0</DebugMode>
         
@@ -97,11 +110,11 @@ and open the template in the editor.
         
         <!--comma separated Node Type filters, , case sensitive-->
         <!--ULSD,PinMeasure,Evaluation,StructureMeasure,Flow,Test,BitString,PatternFailInfo,PatternPinFail,PatternResult,Unit,File-->
-        <!--NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter-->
+        <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
         <!--comma separated Node Type selectors-->
         <NodeTypeSelector></NodeTypeSelector>
         
-        <FieldValueLength>8192</FieldValueLength>
+        <FieldValueLength>32000</FieldValueLength>
         <EnabledComponentHash>1</EnabledComponentHash>
         <!--comma separated KDFFieldData filters, case sensitive-->
         <!--FieldFilter>lowSpecLimit,highSpecLimit,sequence,units,startTimestamp,endTimestamp,connectTimeout,portNumber,queryTimeout,queryType,networkError,hostName</FieldFilter-->
@@ -131,28 +144,32 @@ and open the template in the editor.
     
     <!--GFDRS_S6310A1AB0PG_P_ATC607_H800S.00_WS1_BBIYG148MVB1_1_-5_180905_051627.kdf.20190909090909-->
     <!--NEVER try to change the SourceType name here-->
-    <SourceType name= "GFDRS" enabled = "1" >
-        <LotIndex>sort-lot-*</LotIndex>
+    <SourceType name= "GFDRS" enabled = "0" >
+        <LotIndex>test-sort-lot</LotIndex>
+        <TestIndex>wafer-sort-test-*</TestIndex>
+        <FileExtension>kdf.</FileExtension>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
-        <ProductionMode>1</ProductionMode>
+        <ProductionMode>0</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
         <GenerateMappingFile>0</GenerateMappingFile>
         <KDFDate>
             <Start></Start>
-            <End></End>
+            <End>201805</End>
         </KDFDate>
+        <LatestDays></LatestDays>
+        <FileLimit>100</FileLimit>
         
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
-        <KDFPath>/extend/hygon_source_data/SORT/</KDFPath>
+        <KDFPath>SORT</KDFPath>
         <!--xml path is to store the generated test item log file-->
-        <XmlPath>/extend/data_log/SORT/</XmlPath>
+        <XmlPath>SORT</XmlPath>
         <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
-        <MappingPath>/extend/data_mapping/SORT/</MappingPath>
+        <MappingPath>SORT</MappingPath>
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
-        <KDFArchivePath>/data/data_archive/SORT/</KDFArchivePath>
+        <KDFArchivePath>SORT</KDFArchivePath>
         <DataType>WaferSort</DataType>
         
         <!--never trun on debug mode in production mode, default 0-->
@@ -228,13 +245,118 @@ and open the template in the editor.
         <!--RINGOSC , CONTINUITY , HSIO ,IOSPEC ,PWRDOMAIN,PLL,TCC,SCAN,SETUPINFO,PSSHORTS,PSCURRENT,FUSE,DIODE,MISCIO,CREST,DATARIVER,JTAG,MBIST,EVV,DIECRACKMON,COMPONENT-->
         <LogFailOnlyBaseClassSelector></LogFailOnlyBaseClassSelector>
     </SourceType>
+    
+    <!--GFDRS_S6310A1AB0PG_P_ATC607_H800S.00_WS1_BBIYG148MVB1_1_-5_180905_051627.kdf.20190909090909-->
+    <!--NEVER try to change the SourceType name here-->
+    <SourceType name= "EngSORT" enabled = "1" >
+        <DataType>WaferSort</DataType>
+        <LotIndex>wafer-sort-lot-*</LotIndex>
+        <TestIndex>eng-sort-test-*</TestIndex>
+        <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
+        <ProductionMode>1</ProductionMode>
+        <!--LogToFile means save the kdf raw data in the log file, default 1-->
+        <LogToFile>1</LogToFile>
+        <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
+        <GenerateMappingFile>1</GenerateMappingFile>
+        <KDFDate>
+            <Start>20180800</Start>
+            <End></End>
+        </KDFDate>
+        <LatestDays>2</LatestDays>
+	<FileLimit>30</FileLimit>       
+        
+        <Customer>Hygon</Customer>
+        <Factory>GFDRS</Factory>
+        <KDFPath>EngSORT</KDFPath>
+        <!--xml path is to store the generated test item log file-->
+        <XmlPath>EngSORT</XmlPath>
+        <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
+        <MappingPath>EngSORT</MappingPath>
+        <!--kdf archive file is to store the kdf file which has been parsed successfully-->
+        <KDFArchivePath>EngSORT</KDFArchivePath>
+        
+        <!--never trun on debug mode in production mode, default 0-->
+        <DebugMode>0</DebugMode>
+        
+        <!--comma separated filters, case sensitive-->
+        <FilterOut></FilterOut><!--filter out kdf whose name contains sbo-->
+        <!--comma separated selectors, case sensitive-->
+        <Selector>GFDRS</Selector> <!--select kdf whose name contains GFDRS-->
+        
+        <!--tester type field-->
+        <TesterTypeIndex>2</TesterTypeIndex>
+        <TesterType>P:93k_data,S:sapphire_data</TesterType>
+        
+        
+        <!--list length while kdf name is split by underline-->
+        <UnderLineCnt>11</UnderLineCnt>
+        <!--below params are filed name index in the kdf name-->
+        <LotNumberIndex>4</LotNumberIndex>
+        <TesterNumberIndex>3</TesterNumberIndex>
+        <MfgStepIndex>5</MfgStepIndex>
+        <TestCodeIndex></TestCodeIndex>
+        <WaferNumberIndex>7</WaferNumberIndex>
+        <SiteIndex></SiteIndex>
+        <KDFMonthIndex>9</KDFMonthIndex>
+        <SourceTypeIndex>0</SourceTypeIndex>
+        <!--comma separated file open time indices -->
+        <FileOpenTimeIndex>9,10</FileOpenTimeIndex>
+        
+        <!--falg to enable/diable ulsd test, case sensitive-->
+        <ULSDNodeEnabled></ULSDNodeEnabled>
+        <!-- comma separated ulsd fields, case sensitive-->
+        <ULSDNodeFilter></ULSDNodeFilter>
+        
+        <!--comma separated filters and selectors for sub and main class, case sensitive-->
+        <!--RINGOSC,CONTINUITY,HSIO,IOSPEC,PWRDOMAIN,PLL,TCC,SCAN,SETUPINFO,PSSHORTS,PSCURRENT,FUSE,DIODE,MISCIO,CREST,DATARIVER,JTAG,MBIST,EVV,DIECRACKMON,COMPONENT-->
+        <BaseClasFilter></BaseClasFilter>
+        <BaseClasSelector></BaseClasSelector>
+        
+        <!--PERF,LEAKAGE,FUNCTIONAL,PINOPENSHORTSGNDDIODE,PINOPENSHORTSPWRDIODE,PARAMETRIC,MONITOR,FREQMEAS,READ,DELAY,SOFTWARE,HARDWARE-->
+        <!--LOWPOWER,STUCK,CHAIN,REGULATOR,SIDD,IDEALITY,FUNC,VERSION,DIDD,LOCK,DCVOLTAGE,HIGHPOWER,HR,ENCODE,RESISTANCE,CHAINCHECK,ANALOG_CAL,PRECONDITION-->
+        <SubClasFilter></SubClasFilter>
+        <SubClasSelector></SubClasSelector>
+        <!--comma separated Node Type filters, case sensitive-->
+        <!--PinMeasure,StructureMeasure,Flow,Test,Evaluation,BitString,PatternFailInfo,PatternPinFail,PatternResult,BistFailArray-->
+        <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer,ULSD</NodeTypeFilter>
+        <!--comma separated Node Type selectors, case sensitive-->
+        <NodeTypeSelector></NodeTypeSelector>
+        
+        <!--the field whose value length beyonds this limit will be skipped-->
+        <FieldValueLength>32000</FieldValueLength>
+        <EnabledComponentHash>1</EnabledComponentHash>
+        <!--comma separated KDFFieldData filters, case sensitive-->
+        <!--startTimestamp,endTimestamp-->
+        <FieldFilter>message</FieldFilter>
+        <!--if enabled, the file name will be added in the unit level doc, default 0-->
+        <AddFileNameInUnit>1</AddFileNameInUnit>
+        
+        <!--filter and selector for test desc field, case sensitive-->
+        <TestDescFieldFilter></TestDescFieldFilter>
+        <TestDescFieldSelector>baseClass,subClass</TestDescFieldSelector>
+        
+        <!--flow type node, flow context filters, full name in case any mistakes-->
+        <FlowContextFilter></FlowContextFilter>
+        
+        <!--this filter only apply to below kdf Node Types which extend the Test Type node-->
+        <!--comma separated node types, PinMeasure , StructureMeasure,Evaluation-->
+        <!--Evaluation has not result, and it inherit the test level result-->
+        <!--if skil a Node, it means all the child nodes will be ignored too-->
+        <LogFailOnlyNodeSelector>PinMeasure,StructureMeasure,Evaluation</LogFailOnlyNodeSelector>
+        
+        <!--only log fail for those base class in the filter, it only works on Test Type child node-->
+        <!--RINGOSC , CONTINUITY , HSIO ,IOSPEC ,PWRDOMAIN,PLL,TCC,SCAN,SETUPINFO,PSSHORTS,PSCURRENT,FUSE,DIODE,MISCIO,CREST,DATARIVER,JTAG,MBIST,EVV,DIECRACKMON,COMPONENT-->
+        <LogFailOnlyBaseClassSelector>RINGOSC,CONTINUITY,IOSPEC</LogFailOnlyBaseClassSelector>
+    </SourceType>
         
     <!--HG00058.1.1_6310_H800D0007101504_SLT_AXFNCP_DS2000DBABC01_20180823_052611_suzamdaslt086_006_MAIN.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
-    <SourceType name= "SLT" enabled = "1" >
-        <LotIndex>slt-lot-*</LotIndex>
+    <SourceType name= "SLT" enabled = "0" >
+        <LotIndex>test-slt-lot</LotIndex>
+        <TestIndex>slt-test-*</TestIndex>
+        <FileExtension>kdf.</FileExtension>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
-        <ProductionMode>1</ProductionMode>
+        <ProductionMode>0</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
@@ -243,16 +365,18 @@ and open the template in the editor.
             <Start></Start>
             <End></End>
         </KDFDate>
+        <LatestDays></LatestDays>
+        <FileLimit>500</FileLimit>
         
         <Customer>Hygon</Customer>
         <Factory>Suzhou</Factory>
-        <KDFPath>/extend/hygon_source_data/SLT/</KDFPath>
+        <KDFPath>SLT</KDFPath>
         <!--xml path is to store the generated test item log file-->
-        <XmlPath>/extend/data_log/SLT/</XmlPath>
+        <XmlPath>SLT</XmlPath>
         <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
-        <MappingPath>/extend/data_mapping/SLT/</MappingPath>
+        <MappingPath>SLT</MappingPath>
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
-        <KDFArchivePath>/data/data_archive/SLT/</KDFArchivePath>
+        <KDFArchivePath>SLT</KDFArchivePath>
         <DataType>SLT</DataType>
         <DebugMode>0</DebugMode>
         
@@ -319,6 +443,8 @@ and open the template in the editor.
         <AppendSlaveUnitId2Test>1</AppendSlaveUnitId2Test>
     </SourceType>
     <SourceType name= "WAT" enabled = "1" >
+        <TestIndex>wat-test-*</TestIndex>
+        <FileExtension>dis.</FileExtension>
         <DataType>WAT</DataType>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>0</ProductionMode>
@@ -330,49 +456,48 @@ and open the template in the editor.
             <Start></Start>
             <End></End>
         </KDFDate>
+        <LatestDays></LatestDays>
+        <FileLimit>1000</FileLimit>
         
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
-        <KDFPath>/home/ghfan/kdf/WAT</KDFPath>
+        <KDFPath>WAT</KDFPath>
         <!--xml path is to store the generated test item log file-->
-        <XmlPath>/data/wat_log/</XmlPath>
+        <XmlPath>WAT</XmlPath>
         <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
-        <MappingPath>/data/wat_mapping</MappingPath>
+        <MappingPath>WAT</MappingPath>
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
-        <KDFArchivePath>/data/wat_archive</KDFArchivePath>
+        <KDFArchivePath>WAT</KDFArchivePath>
         
         <!--never trun on debug mode in production mode, default 0-->
         <DebugMode>0</DebugMode>
         
         <!--comma separated filters, case sensitive-->
-        <FilterOut>sbo</FilterOut><!--filter out kdf whose name contains sbo-->
+        <FilterOut></FilterOut><!--filter out kdf whose name contains sbo-->
         <!--comma separated selectors, case sensitive-->
-        <Selector>GFDRS</Selector> <!--select kdf whose name contains GFDRS-->
+        <Selector>data.dis</Selector> <!--select kdf whose name contains GFDRS-->
         
         
         <!--list length while kdf name is split by underline-->
-        <UnderLineCnt>11</UnderLineCnt>
+        <UnderLineCnt>10</UnderLineCnt>
         <!--below params are filed name index in the kdf name-->
-        <LotNumberIndex>4</LotNumberIndex>
-        <TesterNumberIndex>3</TesterNumberIndex>
-        <MfgStepIndex>5</MfgStepIndex>
+        <LotNumberIndex>2</LotNumberIndex>
+        <MfgStepIndex>6</MfgStepIndex>
         <TestCodeIndex></TestCodeIndex>
-        <WaferNumberIndex>7</WaferNumberIndex>
+        <WaferNumberIndex>3</WaferNumberIndex>
         <SiteIndex></SiteIndex>
-        <KDFMonthIndex>9</KDFMonthIndex>
-        <SourceTypeIndex>0</SourceTypeIndex>
+        <KDFMonthIndex>8</KDFMonthIndex>
         <!--comma separated file open time indices -->
-        <FileOpenTimeIndex>9,10</FileOpenTimeIndex>
+        <FileOpenTimeIndex>8,9</FileOpenTimeIndex>
         
         <!--if enabled, the file name will be added in the unit level doc, default 0-->
         <AddFileNameInUnit>1</AddFileNameInUnit>
         
-        
-        <LogFailOnlyNodeSelector></LogFailOnlyNodeSelector>
-        
     </SourceType>
     <SourceType name= "SMAP" enabled = "1" >
         <DataType>SMAP</DataType>
+        <FileExtension>smap.</FileExtension>
+        <TestIndex>smap-test-*</TestIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>0</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
@@ -383,50 +508,99 @@ and open the template in the editor.
             <Start></Start>
             <End></End>
         </KDFDate>
+        <LatestDays></LatestDays>
+        <FileLimit>5000</FileLimit>
         
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
-        <KDFPath>/home/ghfan/kdf/SMAP</KDFPath>
+        <KDFPath>SMAP</KDFPath>
         <!--xml path is to store the generated test item log file-->
-        <XmlPath>/data/smap_log/</XmlPath>
+        <XmlPath>SMAP</XmlPath>
         <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
-        <MappingPath>/data/smap_mapping</MappingPath>
+        <MappingPath>SMAP</MappingPath>
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
-        <KDFArchivePath>/data/smap_archive</KDFArchivePath>
+        <KDFArchivePath>SMAP</KDFArchivePath>
         
         <!--never trun on debug mode in production mode, default 0-->
         <DebugMode>0</DebugMode>
         
         <!--comma separated filters, case sensitive-->
-        <FilterOut>sbo</FilterOut><!--filter out kdf whose name contains sbo-->
+        <FilterOut></FilterOut><!--filter out kdf whose name contains sbo-->
         <!--comma separated selectors, case sensitive-->
-        <Selector>GFDRS</Selector> <!--select kdf whose name contains GFDRS-->
-        
-        <!--tester type field-->
-        <TesterTypeIndex>2</TesterTypeIndex>
-        <TesterType>P:93k_data,S:sapphire_data</TesterType>
-        
+        <Selector>smap</Selector> <!--select kdf whose name contains GFDRS-->
         
         <!--list length while kdf name is split by underline-->
-        <UnderLineCnt>11</UnderLineCnt>
+        <UnderLineCnt>8</UnderLineCnt>
         <!--below params are filed name index in the kdf name-->
-        <LotNumberIndex>4</LotNumberIndex>
-        <TesterNumberIndex>3</TesterNumberIndex>
-        <MfgStepIndex>5</MfgStepIndex>
-        <TestCodeIndex></TestCodeIndex>
-        <WaferNumberIndex>7</WaferNumberIndex>
-        <SiteIndex></SiteIndex>
-        <KDFMonthIndex>9</KDFMonthIndex>
-        <SourceTypeIndex>0</SourceTypeIndex>
+        <LotNumberIndex>2</LotNumberIndex>
+        <WaferNumberIndex>4</WaferNumberIndex>
+        
+        <KDFMonthIndex>6</KDFMonthIndex>
         <!--comma separated file open time indices -->
-        <FileOpenTimeIndex>9,10</FileOpenTimeIndex>
+        <FileOpenTimeIndex>6,7</FileOpenTimeIndex>
         
         <!--if enabled, the file name will be added in the unit level doc, default 0-->
         <AddFileNameInUnit>1</AddFileNameInUnit>
         
+    </SourceType>
+    <SourceType name= "CAMSTAR" enabled = "1" >
+        <LotIndex>cam-lot-*</LotIndex>
+        <FileExtension>xls.</FileExtension>
+        <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
+        <ProductionMode>1</ProductionMode>
+        <DataType>CAMSTAR</DataType>
+        <DebugMode>0</DebugMode>
         
-        <LogFailOnlyNodeSelector></LogFailOnlyNodeSelector>
+        <!--LogToFile means save the kdf raw data in the log file, default 1-->
+        <LogToFile>1</LogToFile>
+        <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
+        <GenerateMappingFile>0</GenerateMappingFile>
+        <!--if this a lot file, the mapping path is date/lot/file, else is just use date/file-->
+        <IsLotFile>0</IsLotFile>
         
+        <!--comma separated filters, case sensitive-->
+        <FilterOut></FilterOut><!--filter out kdf whose name contains sbo-->
+        <!--comma separated selectors, case sensitive-->
+        <Selector>xls,TMP</Selector> <!--select kdf whose name contains GFDRS-->
+        
+        <KDFDate>
+            <Start>20180125</Start>
+            <End>20181128</End>
+        </KDFDate>
+        <LatestDays></LatestDays>
+        <FileLimit>1000</FileLimit>
+        
+        
+        <KDFPath>TransYieldRep</KDFPath>
+        <!--xml path is to store the generated test item log file-->
+        <XmlPath>TransYieldRep</XmlPath>
+        <!--mapping file is to store the temp mapping file, which is to avoid the repeat kdf-->
+        <MappingPath>TransYieldRep</MappingPath>
+        <!--kdf archive file is to store the kdf file which has been parsed successfully-->
+        <KDFArchivePath>TransYieldRep</KDFArchivePath>
+        <!--reload all means first delete all the index, and then reload all the cam report to es-->
+        <ReloadAll></ReloadAll>
+        
+        <!--recal all means recal re-update all the lot level doc-->
+        <RelcalAll></RelcalAll>
+        
+        
+        <!--repeatable CamstarOper:KDFMfgStep mappings-->
+        <!--comma separated for each key-value group-->
+        <OperMap>6820:FT,6824:FT2,7903:FT-FUSE,6905:SLT,6911:CESLT</OperMap>
+        
+        <Customer>Hygon</Customer>
+        <Factory>GFDRS</Factory>
+
+        <!--list length while kdf name is split by underline-->
+        <UnderLineCnt>4</UnderLineCnt>
+        <FileOpenTimeIndex>3</FileOpenTimeIndex>
+        <FileOpenTimeFormat>uuuu-MM-dd-HH-mm-ss</FileOpenTimeFormat>
+        <KDFMonthIndex>3</KDFMonthIndex>
+        
+        <AddFileNameInUnit>1</AddFileNameInUnit>
+        
+    
     </SourceType>
         
         
@@ -444,6 +618,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -452,6 +629,12 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
 
@@ -468,6 +651,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -476,6 +662,12 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
 
@@ -491,6 +683,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -499,6 +694,12 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
 
@@ -512,6 +713,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -521,12 +725,17 @@ and open the template in the editor.
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
         </XmlNode>
 
         <XmlNode name= "LotNumber">
             <Field>lotId</Field>
             <Field>LOT_ID</Field>
-            <Index>1</Index>
             <LotNumber>1</LotNumber>
                 
             <SourceType name= "HTEST1" enabled = "1" >
@@ -536,16 +745,28 @@ and open the template in the editor.
                 <EnabledLog>1</EnabledLog>
                 <AliasName>WaferLot</AliasName>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <AliasName>WaferLot</AliasName>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "WAT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
                 <AliasName>WaferLot</AliasName>
+                <Index>2</Index>
             </SourceType>
             <SourceType name= "SMAP" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
                 <AliasName>WaferLot</AliasName>
+                <Index>2</Index>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
 
@@ -558,6 +779,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -567,13 +791,18 @@ and open the template in the editor.
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
             
         </XmlNode>
 
         <XmlNode name= "Device">
             <Field>IDV</Field>
             <Field>internalDevVer</Field>
-            <Index>3</Index>
             
             <SourceType name= "HTEST1" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
@@ -581,14 +810,25 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "WAT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
+                <Index>1</Index>
             </SourceType>
             <SourceType name= "SMAP" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
+                <Index>1</Index>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
 
@@ -601,6 +841,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -609,6 +852,12 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
 
@@ -623,6 +872,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -631,6 +883,12 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
 
@@ -643,6 +901,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -651,6 +912,12 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
 
@@ -664,6 +931,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -672,6 +942,12 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
 
@@ -684,6 +960,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -692,6 +971,12 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
 
@@ -705,6 +990,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -713,6 +1001,12 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
 
@@ -725,6 +1019,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -733,6 +1030,12 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
 
@@ -745,6 +1048,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -753,6 +1059,12 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
 
@@ -765,6 +1077,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -774,13 +1089,19 @@ and open the template in the editor.
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
         </XmlNode>
 
         <XmlNode name= "Tester">
             <Field>TESTER_ID</Field>
             <Field>equipmentId</Field>
             <LowerCase>1</LowerCase>
-            <Index>1</Index>
+            
             
             <SourceType name= "HTEST1" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
@@ -788,14 +1109,26 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
             <SourceType name= "WAT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
+                <Name>STATION</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
-            <SourceType name= "SMAP" enabled = "1" >
+            <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
 
@@ -809,6 +1142,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -817,6 +1153,12 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
 
@@ -831,15 +1173,28 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "WAT" enabled = "0" >
+            <SourceType name= "WAT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
+                <Name>PROBECARD</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+
             
         </XmlNode>
 
@@ -853,6 +1208,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -862,12 +1220,17 @@ and open the template in the editor.
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
         </XmlNode>
 
         <XmlNode name= "Operation">
             <Field>TESTPHASE</Field>
             <Field>mfgStepName</Field>
-            <Index>2</Index>
             <Operation>1</Operation>
             
             <SourceType name= "HTEST1" enabled = "1" >
@@ -876,14 +1239,23 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "WAT" enabled = "1" >
+            <SourceType name= "WAT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "SMAP" enabled = "1" >
+            <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
 
@@ -897,6 +1269,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -905,6 +1280,12 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
 
@@ -917,6 +1298,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -925,6 +1309,12 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
         
@@ -939,6 +1329,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -947,6 +1340,12 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
 
@@ -960,6 +1359,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -969,7 +1371,2949 @@ and open the template in the editor.
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
         </XmlNode>
+        <XmlNode name= "WaferID" >
+            <Field>testTemperature</Field>
+            
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Index>4</Index>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Index>3</Index>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "SBOType" >
+            <Field>testTemperature</Field>
+            
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Index>5</Index>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        
+        <!--add WaferNumber node for wat and smap in lot level head doc-->
+        <XmlNode name= "WaferNumber" >
+            <Field>wafer</Field>
+         
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Index>3</Index>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Index>4</Index>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+            <IswaferNumber>1</IswaferNumber>
+        </XmlNode>
+        
+        
+        
+        <!--items starting from this is for camstar lot only-->
+        <XmlNode name= "camPline" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Pline</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camType" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Type</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camInsert" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Insert</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camDevice" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Device</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camPackage" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Package</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camLot" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Lot</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+            <LotNumber>1</LotNumber>
+        </XmlNode>
+        <XmlNode name= "camTime" >
+            <Time>1</Time>
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Date</Name>
+                <Type>Date</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camOper" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Oper</Name>
+                <Type>String</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+            <Operation>1</Operation>
+        </XmlNode>
+        <XmlNode name= "camTemp" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Temp</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camMother" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Mother</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camDatecode" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Datecode</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camTester" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Tester</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camTcode" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Tcode</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camTprog" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Tprog</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camTrev" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Trev</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camQtyIn" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>QtyIn</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camQtyOut" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Qtyout</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camYield" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Yield</Name>
+                <Type>Float</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRej1" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Rej1</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRej2" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Rej2</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRej3" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Rej3</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRej4" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Rej4</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRej5" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Rej5</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRej6" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Rej6</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRej7" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Rej7</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRej8" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Rej8</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRej9" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Rej9</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRej10" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Rej10</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRej11" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Rej11</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRej12" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Rej12</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRej13" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Rej13</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRej14" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Rej14</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRej15" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Rej15</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRej16" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Rej16</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRejOth" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>RejOth</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camB1" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>B1</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camB2" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>B2</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camB3" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>B3</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camB4" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>B4</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camB5" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>B5</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camB6" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>B6</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camB7" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>B7</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camB8" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>B8</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camB9" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>B9</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camB10" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>B10</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camB11" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>B11</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camB12" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>B12</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camB13" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>B13</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camB14" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>B14</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camB15" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>B15</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camB16" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>B16</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camSpeed" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Speed</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camHandler" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Handler</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camWafer" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Wafer</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camDIB" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>DIB</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camAV" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>AV</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camTFI" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>TFI</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camPart" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Part</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camVenc" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Venc</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camPARTName" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>PARTName</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camOPN" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>OPN</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camOwner" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>owner</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camSample" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Sample</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camMtype" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Mtype</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRC1" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>RC1</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRC2" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>RC2</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRC3" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>RC3</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRC4" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>RC4</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRC5" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>RC5</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRC6" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>RC6</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRC7" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>RC7</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRC8" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>RC8</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRC9" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>RC9</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRC10" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>RC10</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRC11" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>RC11</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRC12" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>RC12</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRC13" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>RC13</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRC14" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>RC14</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRC15" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>RC15</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camRC16" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>RC16</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camFablotnumber" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Fablotnumber</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camAssembly_Part" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Assembly_Part</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camTrackIn" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>TrackIn</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camAspen" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Aspen</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camAspen_Rev" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>Aspen_Rev</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camNR1" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>NR1</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camNR2" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>NR2</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camNR3" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>NR3</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camNR4" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>NR4</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camNR5" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>NR5</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camNR6" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>NR6</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camNR7" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>NR7</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camNR8" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>NR8</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camNR9" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>NR9</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camNR10" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>NR10</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camNR11" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>NR11</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camNR12" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>NR12</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camNR13" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>NR13</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camNR14" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>NR14</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camNR15" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>NR15</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camNR16" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>NR16</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camVM1" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>VM1</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camVM2" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>VM2</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camVM3" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>VM3</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camVM4" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>VM4</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camVM5" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>VM5</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camVM6" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>VM6</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camTestPhase" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>TEST PHASE</Name>
+                <Type>String</Type>
+                <AllowEmpty>Y</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        <XmlNode name= "camReclaimCount" >
+            <SourceType name= "HTEST1" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "GFDRS" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SLT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "WAT" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "SMAP" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+                <Name>ReclaimCount</Name>
+                <Type>Integer</Type>
+                <AllowEmpty>N</AllowEmpty>
+            </SourceType>
+        </XmlNode>
+        
+        
+        
 
     </Head>
     <!--unit level details info for this kdf -->
@@ -984,6 +4328,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -992,6 +4339,9 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
             </SourceType>
         </XmlNode>
 
@@ -1004,6 +4354,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -1012,6 +4365,9 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
             </SourceType>
 
         </XmlNode>
@@ -1028,6 +4384,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -1036,6 +4395,9 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
             </SourceType>
         </XmlNode>
 
@@ -1051,6 +4413,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -1059,6 +4424,9 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
             </SourceType>
         </XmlNode>
 
@@ -1074,6 +4442,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -1082,6 +4453,9 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
             </SourceType>
         </XmlNode>
 
@@ -1096,6 +4470,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -1104,6 +4481,9 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
             </SourceType>
             <IsUnitID>1</IsUnitID>
         </XmlNode>
@@ -1117,14 +4497,20 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "WAT" enabled = "0" >
+            <SourceType name= "WAT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
-            <SourceType name= "SMAP" enabled = "0" >
+            <SourceType name= "SMAP" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
             </SourceType>
             <IswaferNumber>1</IswaferNumber>
             <!--comma separated index to get wafer number from unit id-->
@@ -1140,6 +4526,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -1148,6 +4537,9 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
             </SourceType>
             <IsXCoord>1</IsXCoord>
             <!--comma separated index to get wafer number from unit id-->
@@ -1163,6 +4555,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -1171,6 +4566,9 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
             </SourceType>
             <IsYCoord>1</IsYCoord>
             <!--comma separated index to get wafer number from unit id-->
@@ -1184,6 +4582,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "0" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -1192,6 +4593,9 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
             </SourceType>
             <IsWaferLot>1</IsWaferLot>
             <!--comma separated index to get wafer lot number from unit id-->
@@ -1207,6 +4611,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -1215,6 +4622,9 @@ and open the template in the editor.
             </SourceType>
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
+            </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
             </SourceType>
             <IsHardBin>1</IsHardBin>
         </XmlNode>
@@ -1228,6 +4638,9 @@ and open the template in the editor.
             <SourceType name= "GFDRS" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "EngSORT" enabled = "1" >
+                <EnabledLog>1</EnabledLog>
+            </SourceType>
             <SourceType name= "SLT" enabled = "1" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
@@ -1237,10 +4650,13 @@ and open the template in the editor.
             <SourceType name= "SMAP" enabled = "0" >
                 <EnabledLog>1</EnabledLog>
             </SourceType>
+            <SourceType name= "CAMSTAR" enabled = "0" >
+                <EnabledLog>0</EnabledLog>
+            </SourceType>
             <IsSoftBin>1</IsSoftBin>
         </XmlNode>
     </Unit>
     
-        
-       
+
+    
 </root>
