@@ -39,9 +39,8 @@ and open the template in the editor.
     <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
     <SourceType name= "HTEST1" enabled = "1" >
-        <LotIndex>test-ft-lot</LotIndex>
-        <TestIndex>ft-test-*</TestIndex>
-        <FileExtension>kdf.</FileExtension>
+        <!--Valid DataType are [ATE, SLT, WaferSort, CAMSTAR, SMAP, WAT] -->
+        <DataType>ATE</DataType>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>1</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
@@ -49,11 +48,17 @@ and open the template in the editor.
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
         <GenerateMappingFile>1</GenerateMappingFile>
         
+        <LotIndex>ft-lot</LotIndex>
+        <TestIndex>ft-test-*</TestIndex>
+        <FileExtension>kdf.</FileExtension>
+        
+        <DebugMode>0</DebugMode>
+        
         <KDFDate>
-            <Start>20181001</Start>
+            <Start>20180800</Start>
             <End></End>
         </KDFDate>
-        <LatestDays></LatestDays>
+        <LatestDays>2</LatestDays>
         <FileLimit>100</FileLimit>
         
         <Customer>AMD</Customer>
@@ -66,10 +71,6 @@ and open the template in the editor.
         <MappingPath>FT</MappingPath>
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
         <KDFArchivePath>FT</KDFArchivePath>
-        <DataType>ATE</DataType>
-        <DebugMode>0</DebugMode>
-        
-        
         
         <!--comma separated filters, case sensitive-->
         <FilterOut>sbo</FilterOut><!--filter out kdf whose name contains sbo-->
@@ -117,7 +118,7 @@ and open the template in the editor.
         <FieldValueLength>32000</FieldValueLength>
         <EnabledComponentHash>1</EnabledComponentHash>
         <!--comma separated KDFFieldData filters, case sensitive-->
-        <!--FieldFilter>lowSpecLimit,highSpecLimit,sequence,units,startTimestamp,endTimestamp,connectTimeout,portNumber,queryTimeout,queryType,networkError,hostName</FieldFilter-->
+        <FieldFilter>message</FieldFilter>
         <!--if enabled, the file name will be added in the unit level doc, default 0-->
         <AddFileNameInUnit>1</AddFileNameInUnit>
         
@@ -144,22 +145,28 @@ and open the template in the editor.
     
     <!--GFDRS_S6310A1AB0PG_P_ATC607_H800S.00_WS1_BBIYG148MVB1_1_-5_180905_051627.kdf.20190909090909-->
     <!--NEVER try to change the SourceType name here-->
-    <SourceType name= "GFDRS" enabled = "0" >
-        <LotIndex>test-sort-lot</LotIndex>
-        <TestIndex>wafer-sort-test-*</TestIndex>
-        <FileExtension>kdf.</FileExtension>
+    <SourceType name= "GFDRS" enabled = "1" >
+        <DataType>WaferSort</DataType>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
-        <ProductionMode>0</ProductionMode>
+        <ProductionMode>1</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
-        <GenerateMappingFile>0</GenerateMappingFile>
+        <GenerateMappingFile>1</GenerateMappingFile>
+        
+        <LotIndex>wafer-sort-lot</LotIndex>
+        <TestIndex>sort-test-*</TestIndex>
+        <FileExtension>kdf.</FileExtension>
+        
+        <!--never trun on debug mode in production mode and will generate huge amount of data, default 0-->
+        <DebugMode>0</DebugMode>
+        
         <KDFDate>
-            <Start></Start>
-            <End>201805</End>
+            <Start>20180800</Start>
+            <End></End>
         </KDFDate>
-        <LatestDays></LatestDays>
-        <FileLimit>100</FileLimit>
+        <LatestDays>2</LatestDays>
+	<FileLimit>30</FileLimit>       
         
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
@@ -170,10 +177,6 @@ and open the template in the editor.
         <MappingPath>SORT</MappingPath>
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
         <KDFArchivePath>SORT</KDFArchivePath>
-        <DataType>WaferSort</DataType>
-        
-        <!--never trun on debug mode in production mode, default 0-->
-        <DebugMode>0</DebugMode>
         
         <!--comma separated filters, case sensitive-->
         <FilterOut></FilterOut><!--filter out kdf whose name contains sbo-->
@@ -215,16 +218,16 @@ and open the template in the editor.
         <SubClasSelector></SubClasSelector>
         <!--comma separated Node Type filters, case sensitive-->
         <!--PinMeasure,StructureMeasure,Flow,Test,Evaluation,BitString,PatternFailInfo,PatternPinFail,PatternResult,BistFailArray-->
-        <!--NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter-->
+        <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
         <!--comma separated Node Type selectors, case sensitive-->
         <NodeTypeSelector></NodeTypeSelector>
         
         <!--the field whose value length beyonds this limit will be skipped-->
-        <FieldValueLength>8192</FieldValueLength>
+        <FieldValueLength>32000</FieldValueLength>
         <EnabledComponentHash>1</EnabledComponentHash>
         <!--comma separated KDFFieldData filters, case sensitive-->
         <!--startTimestamp,endTimestamp-->
-        <!--FieldFilter>lowSpecLimit,highSpecLimit,sequence,units,startTimestamp,endTimestamp,connectTimeout,portNumber,queryTimeout,queryType,networkError,hostName</FieldFilter-->
+        <FieldFilter>message</FieldFilter>
         <!--if enabled, the file name will be added in the unit level doc, default 0-->
         <AddFileNameInUnit>1</AddFileNameInUnit>
         
@@ -239,25 +242,32 @@ and open the template in the editor.
         <!--comma separated node types, PinMeasure , StructureMeasure,Evaluation-->
         <!--Evaluation has not result, and it inherit the test level result-->
         <!--if skil a Node, it means all the child nodes will be ignored too-->
-        <LogFailOnlyNodeSelector></LogFailOnlyNodeSelector>
+        <LogFailOnlyNodeSelector>PinMeasure,StructureMeasure,Evaluation</LogFailOnlyNodeSelector>
         
         <!--only log fail for those base class in the filter, it only works on Test Type child node-->
         <!--RINGOSC , CONTINUITY , HSIO ,IOSPEC ,PWRDOMAIN,PLL,TCC,SCAN,SETUPINFO,PSSHORTS,PSCURRENT,FUSE,DIODE,MISCIO,CREST,DATARIVER,JTAG,MBIST,EVV,DIECRACKMON,COMPONENT-->
-        <LogFailOnlyBaseClassSelector></LogFailOnlyBaseClassSelector>
+        <LogFailOnlyBaseClassSelector>RINGOSC,CONTINUITY,IOSPEC</LogFailOnlyBaseClassSelector>
     </SourceType>
     
     <!--GFDRS_S6310A1AB0PG_P_ATC607_H800S.00_WS1_BBIYG148MVB1_1_-5_180905_051627.kdf.20190909090909-->
     <!--NEVER try to change the SourceType name here-->
     <SourceType name= "EngSORT" enabled = "1" >
         <DataType>WaferSort</DataType>
-        <LotIndex>wafer-sort-lot-*</LotIndex>
-        <TestIndex>eng-sort-test-*</TestIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>1</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
         <GenerateMappingFile>1</GenerateMappingFile>
+        
+        
+        <LotIndex>wafer-sort-lot</LotIndex>
+        <TestIndex>eng-sort-test-*</TestIndex>
+        <FileExtension>kdf.</FileExtension>
+        
+        <!--never trun on debug mode in production mode, default 0-->
+        <DebugMode>0</DebugMode>
+        
         <KDFDate>
             <Start>20180800</Start>
             <End></End>
@@ -275,8 +285,7 @@ and open the template in the editor.
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
         <KDFArchivePath>EngSORT</KDFArchivePath>
         
-        <!--never trun on debug mode in production mode, default 0-->
-        <DebugMode>0</DebugMode>
+        
         
         <!--comma separated filters, case sensitive-->
         <FilterOut></FilterOut><!--filter out kdf whose name contains sbo-->
@@ -351,22 +360,27 @@ and open the template in the editor.
         
     <!--HG00058.1.1_6310_H800D0007101504_SLT_AXFNCP_DS2000DBABC01_20180823_052611_suzamdaslt086_006_MAIN.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
-    <SourceType name= "SLT" enabled = "0" >
-        <LotIndex>test-slt-lot</LotIndex>
-        <TestIndex>slt-test-*</TestIndex>
-        <FileExtension>kdf.</FileExtension>
+    <SourceType name= "SLT" enabled = "1" >
+        <DataType>SLT</DataType>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
-        <ProductionMode>0</ProductionMode>
+        <ProductionMode>1</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
-        <GenerateMappingFile>0</GenerateMappingFile>
+        <GenerateMappingFile>1</GenerateMappingFile>
+        
+        <LotIndex>slt-lot</LotIndex>
+        <TestIndex>slt-test-*</TestIndex>
+        <FileExtension>kdf.</FileExtension>
+        
+        <DebugMode>0</DebugMode>
+        
         <KDFDate>
-            <Start></Start>
+            <Start>20180800</Start>
             <End></End>
         </KDFDate>
-        <LatestDays></LatestDays>
-        <FileLimit>500</FileLimit>
+        <LatestDays>2</LatestDays>
+        <FileLimit>1000</FileLimit>
         
         <Customer>Hygon</Customer>
         <Factory>Suzhou</Factory>
@@ -377,10 +391,11 @@ and open the template in the editor.
         <MappingPath>SLT</MappingPath>
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
         <KDFArchivePath>SLT</KDFArchivePath>
-        <DataType>SLT</DataType>
-        <DebugMode>0</DebugMode>
+        
+        
         
         <!--comma separated filters, case sensitive-->
+        <FilterOut></FilterOut>
         <!--comma separated selectors, case sensitive-->
         <Selector></Selector>
         
@@ -426,7 +441,7 @@ and open the template in the editor.
         
         <EnabledComponentHash>0</EnabledComponentHash>
         <!--comma separated KDFFieldData filters, case sensitive-->
-        <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units,DEFAULT,startTimestamp,endTimestamp,connectTimeout,portNumber,queryTimeout,queryType,networkError,hostName</FieldFilter>
+        <FieldFilter>lowSpecLimit,highSpecLimit,sequence,units,DEFAULT</FieldFilter>
         <!--default the base and sub class always log in the test type node, case sensitive-->
         <SkipTestClass>1</SkipTestClass>
         <!--this is only for no-slt-->
@@ -442,16 +457,22 @@ and open the template in the editor.
         <!--slave unit id will append to test level doc if enabled, default false-->
         <AppendSlaveUnitId2Test>1</AppendSlaveUnitId2Test>
     </SourceType>
+    
     <SourceType name= "WAT" enabled = "1" >
-        <TestIndex>wat-test-*</TestIndex>
-        <FileExtension>dis.</FileExtension>
         <DataType>WAT</DataType>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
-        <ProductionMode>0</ProductionMode>
+        <ProductionMode>1</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
-        <GenerateMappingFile>0</GenerateMappingFile>
+        <GenerateMappingFile>1</GenerateMappingFile>
+        
+        <TestIndex>wat-test-*</TestIndex>
+        <FileExtension>dis.</FileExtension>
+        
+        <!--never trun on debug mode in production mode, default 0-->
+        <DebugMode>0</DebugMode>
+        
         <KDFDate>
             <Start></Start>
             <End></End>
@@ -461,6 +482,7 @@ and open the template in the editor.
         
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
+        
         <KDFPath>WAT</KDFPath>
         <!--xml path is to store the generated test item log file-->
         <XmlPath>WAT</XmlPath>
@@ -468,9 +490,6 @@ and open the template in the editor.
         <MappingPath>WAT</MappingPath>
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
         <KDFArchivePath>WAT</KDFArchivePath>
-        
-        <!--never trun on debug mode in production mode, default 0-->
-        <DebugMode>0</DebugMode>
         
         <!--comma separated filters, case sensitive-->
         <FilterOut></FilterOut><!--filter out kdf whose name contains sbo-->
@@ -494,25 +513,32 @@ and open the template in the editor.
         <AddFileNameInUnit>1</AddFileNameInUnit>
         
     </SourceType>
+    
     <SourceType name= "SMAP" enabled = "1" >
         <DataType>SMAP</DataType>
-        <FileExtension>smap.</FileExtension>
-        <TestIndex>smap-test-*</TestIndex>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
-        <ProductionMode>0</ProductionMode>
+        <ProductionMode>1</ProductionMode>
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
-        <GenerateMappingFile>0</GenerateMappingFile>
+        <GenerateMappingFile>1</GenerateMappingFile>
+        
+        <FileExtension>smap.</FileExtension>
+        <TestIndex>smap-test-*</TestIndex>
+        
+        <!--never trun on debug mode in production mode, default 0-->
+        <DebugMode>0</DebugMode>
+        
         <KDFDate>
             <Start></Start>
             <End></End>
         </KDFDate>
-        <LatestDays></LatestDays>
+        <LatestDays>2</LatestDays>
         <FileLimit>5000</FileLimit>
         
         <Customer>Hygon</Customer>
         <Factory>GFDRS</Factory>
+        
         <KDFPath>SMAP</KDFPath>
         <!--xml path is to store the generated test item log file-->
         <XmlPath>SMAP</XmlPath>
@@ -521,8 +547,7 @@ and open the template in the editor.
         <!--kdf archive file is to store the kdf file which has been parsed successfully-->
         <KDFArchivePath>SMAP</KDFArchivePath>
         
-        <!--never trun on debug mode in production mode, default 0-->
-        <DebugMode>0</DebugMode>
+        
         
         <!--comma separated filters, case sensitive-->
         <FilterOut></FilterOut><!--filter out kdf whose name contains sbo-->
@@ -540,17 +565,13 @@ and open the template in the editor.
         <FileOpenTimeIndex>6,7</FileOpenTimeIndex>
         
         <!--if enabled, the file name will be added in the unit level doc, default 0-->
-        <AddFileNameInUnit>1</AddFileNameInUnit>
-        
+        <AddFileNameInUnit>1</AddFileNameInUnit>    
     </SourceType>
+    
     <SourceType name= "CAMSTAR" enabled = "1" >
-        <LotIndex>cam-lot-*</LotIndex>
-        <FileExtension>xls.</FileExtension>
+        <DataType>CAMSTAR</DataType>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
         <ProductionMode>1</ProductionMode>
-        <DataType>CAMSTAR</DataType>
-        <DebugMode>0</DebugMode>
-        
         <!--LogToFile means save the kdf raw data in the log file, default 1-->
         <LogToFile>1</LogToFile>
         <!--this flag is to generate the mapping file to skip the repeat kdf file, default 1-->
@@ -558,14 +579,19 @@ and open the template in the editor.
         <!--if this a lot file, the mapping path is date/lot/file, else is just use date/file-->
         <IsLotFile>0</IsLotFile>
         
+        <LotIndex>cam-lot</LotIndex>
+        <FileExtension>xls.</FileExtension>
+        
+        <DebugMode>0</DebugMode>
+        
         <!--comma separated filters, case sensitive-->
         <FilterOut></FilterOut><!--filter out kdf whose name contains sbo-->
         <!--comma separated selectors, case sensitive-->
         <Selector>xls,TMP</Selector> <!--select kdf whose name contains GFDRS-->
         
         <KDFDate>
-            <Start>20180125</Start>
-            <End>20181128</End>
+            <Start></Start>
+            <End></End>
         </KDFDate>
         <LatestDays></LatestDays>
         <FileLimit>1000</FileLimit>
