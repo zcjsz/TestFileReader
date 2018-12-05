@@ -12,9 +12,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -57,8 +55,6 @@ final public
     private static
         CamstarReader instance = null;
 
-    private Map<String, Map<String, String>> camRecords = new HashMap<>();
-    
     private
         CamstarReader(DataFormat format) {
         super(format);
@@ -66,14 +62,14 @@ final public
 
     public static
         CamstarReader getInstance(DataFormat dataFormat) {
-        if((dataFormat == null) ||(!dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR))){
+        if ((dataFormat == null) || (!dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR))) {
             System.out.println("Fatal Error: CamstarReader only should be initilized with Camstar Data Type DataFormat");
             return null;
         }
         if (instance == null && dataFormat.isEnabled()) {
             instance = new CamstarReader(dataFormat);
         }
-        else if(instance != null && instance.getFormat() != dataFormat ){
+        else if (instance != null && instance.getFormat() != dataFormat) {
             instance.setFormat(dataFormat);
         }
         return instance;
@@ -164,7 +160,7 @@ final public
             Row row = sheet.getRow(rowNo);
 
             Map<String, String> camRecord = new HashMap<>();
-            
+
             for (XmlNode xmlNode : this.getFormat().getLotHead().values()) {
                 if (xmlNode.isEnabled() && xmlNode.isEnabledLog() && xmlNode.getCamColumnName() != null) {
                     xmlNode.resetValue();
@@ -208,8 +204,8 @@ final public
                 camRecord.put(FieldType.CamMonth, camMonth);
             }
 
-            camRecords.put(camLot + "_" + kdfOper, camRecord);
-            
+            this.getFormat().getCamRecords().putIfAbsent(LotInfo.getDocID(camLot, camOper), camRecord);
+
             this.goodLotCnt++;
             String docIdKVString = "," + FieldType.Lot_Doc_id + "=" + LotInfo.getDocID(camLot, camOper);
             String docValue = this.generateLotHeadKVStr() + docIdKVString + camDateKVString + camMonthKVString + "\n";
@@ -218,15 +214,6 @@ final public
             }
         }
         return true;
-    }
-
-    private
-        String getCamDocId(String lotNumber, String oper) {
-        return lotNumber + "_" + oper;
-    }
-
-    public Map<String, Map<String, String>> getCamRecords() {
-        return camRecords;
     }
 
     private
@@ -246,7 +233,7 @@ final public
 
             case "NUMERIC":
                 if (isTimeNode) {
-                    cellValue = fmtDateTime1.format(cell.getDateCellValue()).toString();
+                    cellValue = fmtDateTime1.format(cell.getDateCellValue());
                 }
                 else {
                     cellValue = String.valueOf(cell.getNumericCellValue());
@@ -363,32 +350,13 @@ final public
         }
 
         ESHelper es = ESHelper.getInstance();
-        if (!es.init()) {
-            es.closeConn();
+        if (es == null) {
             return;
         }
-        
-        Map<String, Map<String, String>> camRecords = CamstarReader.getInstance(Config.camFormat).getCamRecords();
-        for(Entry<String, Map<String, String>> entry : camRecords.entrySet()) {
-            String docID = entry.getKey();
-            Map<String, String> dataMap = entry.getValue();
-            String camOper = dataMap.getOrDefault("camOper", "unknow");
-            String docIndex = null;
-            switch(camOper) {
-                case "6820" : { docIndex = Config.getFTFormat().getLotIndexName();  break; }
-                case "6824" : { docIndex = Config.getFTFormat().getLotIndexName();  break; }
-                case "7903" : { docIndex = Config.getFTFormat().getLotIndexName();  break; }
-                case "6905" : { docIndex = Config.getSLTFormat().getLotIndexName(); break; }
-                case "6911" : { docIndex = Config.getSLTFormat().getLotIndexName(); break; }
-                default: break;
-            }
-            if(docIndex!=null && docID!=null) {
-                es.updateCamData(docIndex, docID, dataMap);
-            }
-        }
-        
+        es.initDataForamt(Config.camFormat);
+        es.upsertCamDataToLot();
         es.closeConn();
-        
+
         System.out.println("total time = " + (System.currentTimeMillis() - startTime));
 
     }

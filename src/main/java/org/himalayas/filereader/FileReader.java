@@ -93,9 +93,16 @@ public
                     System.out.println("*****************************************************************");
                 }
             }
-            if (dataFormat.isKdfData() && (!dataFormat.getLotList().isEmpty())) {
-                esHelper.initDataForamt(dataFormat);
-                esHelper.updateIsCalFlag2N(dataFormat.getLotList());
+            if (esHelper != null) {
+                if (dataFormat.isKdfData() && (!dataFormat.getLotList().isEmpty())) {
+                    esHelper.initDataForamt(dataFormat);
+                    esHelper.updateIsCalFlag2N(dataFormat.getLotList());
+                    esHelper.proceedUncaledLot();
+                }
+                else if (dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)) {
+                    esHelper.initDataForamt(dataFormat);
+                    esHelper.upsertCamDataToLot();
+                }
             }
         }
     }

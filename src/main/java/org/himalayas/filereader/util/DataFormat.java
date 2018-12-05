@@ -13,11 +13,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.dom4j.Element;
 import org.himalayas.filereader.es.LotInfo;
 
 public
     class DataFormat {
+
+    private
+        Map<String, Map<String, String>> camRecords = new HashMap<>();
 
     private
         boolean kdfData = false;
@@ -1645,10 +1649,14 @@ public
             || this.dataType.equals(Config.DataTypes.WaferSort));
     }
 
-    public HashMap<String, String> getCamstarOperMappings() {
+    public
+        HashMap<String, String> getCamstarOperMappings() {
         return camstarOperMappings;
     }
-    
-    
-    
+
+    public
+        Map<String, Map<String, String>> getCamRecords() {
+        return camRecords;
+    }
+
 }

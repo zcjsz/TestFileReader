@@ -99,10 +99,9 @@ public
 
     private
         ESHelper() {
-//        if (!this.init()) {
-//            instance = null;
-//        }
-
+        if (!this.init()) {
+            instance = null;
+        }
     }
 
     public static
@@ -113,7 +112,7 @@ public
         return ESHelper.instance;
     }
 
-    public
+    private
         boolean init() {
         if (!initProductionClient()) {
             System.out.printf("%s: failed to connect production es host!\n", LocalDateTime.now().toString());
@@ -380,14 +379,14 @@ public
             }
 
             int totalHits = 0;
-            
+
             String scrollId = this.searchResponse.getScrollId();
             SearchHit[] searchHits = this.searchResponse.getHits().getHits();
 
             totalHits += searchHits.length;
             System.out.println(this.lotInfo.getLotNumber() + "_" + this.lotInfo.getOperation());
             System.out.println("Search Hits : " + searchHits.length);
-            
+
             if (searchHits == null || searchHits.length < 1) {
                 System.out.printf("%s: there's no any unit data found in this query\n", LocalDateTime.now().toString());
                 return false;
@@ -403,15 +402,15 @@ public
 
                 searchHits = this.searchResponse.getHits().getHits();
                 this.fillUnitData(searchHits);
-                
-                if(searchHits.length > 0) {
+
+                if (searchHits.length > 0) {
                     totalHits += searchHits.length;
                     System.out.println("Search Hits : " + searchHits.length);
                 }
             }
 
             System.out.println("Total Hits : " + totalHits);
-            
+
             ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
             clearScrollRequest.addScrollId(scrollId);
             ClearScrollResponse clearScrollResponse = this.productionClient.clearScroll(clearScrollRequest, RequestOptions.DEFAULT);
@@ -476,7 +475,7 @@ public
 
         this.searchLotRequest.source().query(QueryBuilders.boolQuery()
             .must(QueryBuilders.termQuery(FieldType.IsCaled, "N"))
-            //.must(QueryBuilders.termQuery(FieldType.DataType, this.dataFormat.getDataType().toString()))
+        //.must(QueryBuilders.termQuery(FieldType.DataType, this.dataFormat.getDataType().toString()))
         );
         try {
             this.searchResponse = this.productionClient.search(this.searchLotRequest, RequestOptions.DEFAULT);
@@ -574,7 +573,9 @@ public
     private
         void fillLotGrossTimeData() {
         Aggregations aggregations = this.searchResponse.getAggregations();
-        if(aggregations == null) { return; }
+        if (aggregations == null) {
+            return;
+        }
         for (Aggregation agg : aggregations) {
             String name = agg.getName();
             if (name.equals(FieldType.GrossTime)) {
@@ -586,7 +587,9 @@ public
     private
         void fillLotListFromFile() {
         Aggregations aggregations = this.searchResponse.getAggregations();
-        if(aggregations == null) { return; }
+        if (aggregations == null) {
+            return;
+        }
         Terms lotNumberAgg = aggregations.get(this.dataFormat.getLotNumberNode().getName());
         for (Bucket bucket : lotNumberAgg.getBuckets()) {
             String lotNumber = (String) bucket.getKey();
@@ -725,25 +728,37 @@ public
             UpdateResponse updateResponse = this.productionClient.update(request, RequestOptions.DEFAULT);
 
             if (null != updateResponse.getResult()) {
-                switch (updateResponse.getResult()) {
-                    case CREATED : System.out.println("Lot Created : " + this.getLotInfo().getDoc_Id()); break; 
-                    case UPDATED : System.out.println("Lot Updated : " + this.getLotInfo().getDoc_Id()); break;
-                    case DELETED : System.out.println("Lot Deleted : " + this.getLotInfo().getDoc_Id()); break;
-                    case NOOP    : System.out.println("Lot Noop : "    + this.getLotInfo().getDoc_Id()); break;
-                    default: break;
-                }
+                System.out.printf("successed to %s, %s = %s, %s =%s\n",
+                    updateResponse.getResult(),
+                    this.dataFormat.getLotNumberNode().getName(),
+                    this.getLotInfo().getLotNumber(),
+                    this.dataFormat.getOperationNode().getName(),
+                    this.getLotInfo().getOperation()
+                );
             }
-            System.out.println("Update Lot Data PASS : " + this.getLotInfo().toString());
-        } catch (Exception ex) {
-            System.out.println("Update Lot Data FAIL : " + this.getLotInfo().toString());
-            ex.printStackTrace();
+            else {
+                System.out.printf("Warning: failed to upsert the lot data, no response.  %s = %s, %s =%s\n",
+                    this.dataFormat.getLotNumberNode().getName(),
+                    this.getLotInfo().getLotNumber(),
+                    this.dataFormat.getOperationNode().getName(),
+                    this.getLotInfo().getOperation()
+                );
+            }
+        }
+        catch (Exception ex) {
+            System.out.printf("Error: failed to upsert the lot data. %s = %s, %s =%s\n",
+                this.dataFormat.getLotNumberNode().getName(),
+                this.getLotInfo().getLotNumber(),
+                this.dataFormat.getOperationNode().getName(),
+                this.getLotInfo().getOperation()
+            );
             return false;
         }
         return true;
     }
-        
-        
-    public boolean updateCamData(String docIndex, String docID, Map<String, String> jsonMap) {
+
+    private
+        boolean updateCamData(String docIndex, String docID, Map<String, String> jsonMap) {
         try {
             //jsonMap.put("IsMatched", "Y");
 
@@ -754,23 +769,22 @@ public
             UpdateResponse updateResponse = this.productionClient.update(request, RequestOptions.DEFAULT);
 
             if (null != updateResponse.getResult()) {
-                switch (updateResponse.getResult()) {
-                    case CREATED : System.out.println("Cam Created : " + docID); break; 
-                    case UPDATED : System.out.println("Cam Updated : " + docID); break;
-                    case DELETED : System.out.println("Cam Deleted : " + docID); break;
-                    case NOOP    : System.out.println("Cam Noop : "    + docID); break;
-                    default: break;
-                }
+                System.out.printf("successed to %s, docID = %s\n",
+                    updateResponse.getResult(),
+                    docID
+                );
             }
-            System.out.println("Update Cam Data PASS : " + jsonMap.toString());
-        } catch (Exception ex) {
-            System.out.println("Update Cam Data FAIL : " + jsonMap.toString());
+            else {
+                System.out.printf("Warning: failed to upsert the lot data no response, docID = %s\n", docID);
+            }
+        }
+        catch (Exception ex) {
+            System.out.printf("Error: failed to upsert the lot data, docID = %s\n", docID);
             ex.printStackTrace();
             return false;
         }
         return true;
     }
-        
 
     public
         void proceedUncaledLot() {
@@ -892,7 +906,6 @@ public
 //        if (!updateUnitData()) {
 //            return false;
 //        }
-
         if (!updateLotData()) {
             return false;
         }
@@ -912,79 +925,6 @@ public
         return queryBuilder;
     }
 
-    /**
-     * public QueryBuilder getFTQueryBuilder(String lotNumber, String operation,
-     * String nodeType) { QueryBuilder queryBuilder = QueryBuilders.boolQuery()
-     * // .must(QueryBuilders.termsQuery("date",
-     * LocalDate.now().minusDays(1).toString(DateTimeFormat.forPattern("yyyyMMdd")),
-     * LocalDate.now().toString(DateTimeFormat.forPattern("yyyyMMdd"))))
-     * .must(QueryBuilders.termQuery(Config.getFTFormat().getLotNumberNode().getName(),
-     * lotNumber))
-     * .must(QueryBuilders.termQuery(Config.getFTFormat().getOperationNode().getName(),
-     * operation)) //	.must(QueryBuilders.termQuery(FieldType.DieType,
-     * FieldType.MasterDie)) .must(QueryBuilders.termQuery(FieldType.Type,
-     * nodeType)); return queryBuilder; }
-     *
-     * public QueryBuilder getSLTQueryBuilder(String lotNumber, String
-     * operation, String nodeType) { QueryBuilder queryBuilder =
-     * QueryBuilders.boolQuery() // .must(QueryBuilders.termsQuery("date",
-     * LocalDate.now().minusDays(1).toString(DateTimeFormat.forPattern("yyyyMMdd")),
-     * LocalDate.now().toString(DateTimeFormat.forPattern("yyyyMMdd"))))
-     * .must(QueryBuilders.termQuery(Config.getSLTFormat().getLotNumberNode().getName(),
-     * lotNumber))
-     * .must(QueryBuilders.termQuery(Config.getSLTFormat().getOperationNode().getName(),
-     * operation)) //	.must(QueryBuilders.termQuery(FieldType.DieType,
-     * FieldType.MasterDie)) .must(QueryBuilders.termQuery(FieldType.Type,
-     * nodeType)); return queryBuilder; }
-     *
-     * public QueryBuilder getSORTQueryBuilder(String lotNumber, String
-     * operation, String nodeType) { QueryBuilder queryBuilder =
-     * QueryBuilders.boolQuery() // .must(QueryBuilders.termsQuery("date",
-     * LocalDate.now().minusDays(1).toString(DateTimeFormat.forPattern("yyyyMMdd")),
-     * LocalDate.now().toString(DateTimeFormat.forPattern("yyyyMMdd"))))
-     * .must(QueryBuilders.termQuery(Config.watFormat.getLotNumberNode().getName(),
-     * lotNumber))
-     * .must(QueryBuilders.termQuery(Config.watFormat.getOperationNode().getName(),
-     * operation)) .must(QueryBuilders.termQuery(FieldType.Type, nodeType));
-     * return queryBuilder; }
-     *
-     * public QueryBuilder getFTAggQueryBuilder(String lotNumber, String
-     * operation, String nodeType) { QueryBuilder queryBuilder =
-     * QueryBuilders.boolQuery() // .must(QueryBuilders.termsQuery("date",
-     * LocalDate.now().minusDays(1).toString(DateTimeFormat.forPattern("yyyyMMdd")),
-     * LocalDate.now().toString(DateTimeFormat.forPattern("yyyyMMdd"))))
-     * .must(QueryBuilders.termQuery(Config.getFTFormat().getLotNumberNode().getName(),
-     * lotNumber)) //
-     * .must(QueryBuilders.termQuery(Config.getFTFormat().getOperationNode().getName(),
-     * operation)) .must(QueryBuilders.termQuery("MfgStep", operation)) //
-     * .must(QueryBuilders.termQuery(FieldType.DieType, FieldType.MasterDie))
-     * .must(QueryBuilders.termQuery(FieldType.Type, nodeType)); return
-     * queryBuilder; }
-     *
-     * public QueryBuilder getSLTAggQueryBuilder(String lotNumber, String
-     * operation, String nodeType) { QueryBuilder queryBuilder =
-     * QueryBuilders.boolQuery() // .must(QueryBuilders.termsQuery("date",
-     * LocalDate.now().minusDays(1).toString(DateTimeFormat.forPattern("yyyyMMdd")),
-     * LocalDate.now().toString(DateTimeFormat.forPattern("yyyyMMdd"))))
-     * .must(QueryBuilders.termQuery(Config.getSLTFormat().getLotNumberNode().getName(),
-     * lotNumber))
-     * .must(QueryBuilders.termQuery(Config.getSLTFormat().getOperationNode().getName(),
-     * operation)) //	.must(QueryBuilders.termQuery(FieldType.DieType,
-     * FieldType.MasterDie)) .must(QueryBuilders.termQuery(FieldType.Type,
-     * nodeType)); return queryBuilder; }
-     *
-     * public QueryBuilder getSORTAggQueryBuilder(String lotNumber, String
-     * operation, String nodeType) { QueryBuilder queryBuilder =
-     * QueryBuilders.boolQuery() // .must(QueryBuilders.termsQuery("date",
-     * LocalDate.now().minusDays(1).toString(DateTimeFormat.forPattern("yyyyMMdd")),
-     * LocalDate.now().toString(DateTimeFormat.forPattern("yyyyMMdd"))))
-     * .must(QueryBuilders.termQuery(Config.watFormat.getLotNumberNode().getName(),
-     * lotNumber))
-     * .must(QueryBuilders.termQuery(Config.watFormat.getOperationNode().getName(),
-     * operation)) .must(QueryBuilders.termQuery(FieldType.Type, nodeType));
-     * return queryBuilder; }
-     *
-     */
     private
         QueryBuilder getAggQueryBuilder(String lotNumber, String operation, String nodeType) {
         QueryBuilder queryBuilder = QueryBuilders.boolQuery()
@@ -1000,51 +940,70 @@ public
         return lotInfo;
     }
 
+    public
+        void upsertCamDataToLot() {
+
+        Map<String, Map<String, String>> camRecords = this.dataFormat.getCamRecords();
+        if (camRecords.isEmpty()) {
+            return;
+        }
+        for (Map.Entry<String, Map<String, String>> entry : camRecords.entrySet()) {
+            String docID = entry.getKey();
+            Map<String, String> dataMap = entry.getValue();
+            String camOper = dataMap.getOrDefault("camOper", "unknow");
+            String docIndex = null;
+            switch (camOper) {
+                case "6820": {
+                    docIndex = Config.getFTFormat().getLotIndexName();
+                    break;
+                }
+                case "6824": {
+                    docIndex = Config.getFTFormat().getLotIndexName();
+                    break;
+                }
+                case "7903": {
+                    docIndex = Config.getFTFormat().getLotIndexName();
+                    break;
+                }
+                case "6905": {
+                    docIndex = Config.getSLTFormat().getLotIndexName();
+                    break;
+                }
+                case "6911": {
+                    docIndex = Config.getSLTFormat().getLotIndexName();
+                    break;
+                }
+                default:
+                    break;
+            }
+            if (docIndex != null && docID != null) {
+                this.updateCamData(docIndex, docID, dataMap);
+            }
+        }
+    }
+
     public static
         void main(String[] args) {
         new Config("config/dataformat.xml");
         ESHelper es = ESHelper.getInstance();
-        if (!es.init()) {
-            es.closeConn();
+        if (es == null) {
             return;
         }
 
         // to generate all the lot doc in one time
-//        for (DataFormat dataFormat : Config.dataFormats.values()) {
-//
-//            if (dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)
-//                || dataFormat.getDataType().equals(Config.DataTypes.SMAP)
-//                || dataFormat.getDataType().equals(Config.DataTypes.WAT) || dataFormat.getDataType().equals(Config.DataTypes.ATE) || dataFormat.getDataType().equals(Config.DataTypes.SLT)) {
-//                continue;
-//            }
-//            else {
-//                es.initDataForamt(dataFormat);
-//                if (es.getLotListDataFromFile()) {
-//                    for (LotInfo lotInfo : es.lotList) {
-//                        es.upsertLotIsCalFlag2N(lotInfo.getLotNumber(), lotInfo.getOperation());
-//                    }
-//                }
-//            }
-//        }
-//        es.closeConn();
-        
-//        System.exit(1);
-//        String lotNumber = null;
-//        String operation = null;
-//        DataFormat format = null;
-//        es.calLot(lotNumber, operation, format);
-
         for (DataFormat dataFormat : Config.dataFormats.values()) {
-            if (dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)
-                || dataFormat.getDataType().equals(Config.DataTypes.SMAP)
-                || dataFormat.getDataType().equals(Config.DataTypes.WAT) || dataFormat.getDataType().equals(Config.DataTypes.ATE) || dataFormat.getDataType().equals(Config.DataTypes.SLT)) {
-                continue;
+            if (dataFormat.isKdfData()) {
+                es.initDataForamt(dataFormat);
+                if (es.getLotListDataFromFile()) {
+                    for (LotInfo lotInfo : es.lotList) {
+                        es.upsertLotIsCalFlag2N(lotInfo);
+                    }
+                }
+                es.proceedUncaledLot();
             }
-            es.initDataForamt(dataFormat);
-            es.proceedUncaledLot();
         }
-        
         es.closeConn();
+        System.exit(1);
     }
 
 }
