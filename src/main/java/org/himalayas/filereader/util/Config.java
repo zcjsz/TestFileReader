@@ -7,9 +7,11 @@ package org.himalayas.filereader.util;
 
 import com.amd.kdf.KDFFieldData;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.dom4j.Document;
@@ -18,10 +20,11 @@ import org.dom4j.Element;
 import org.dom4j.ElementHandler;
 import org.dom4j.ElementPath;
 import org.dom4j.io.SAXReader;
+import org.himalayas.filereader.es.ESHelper;
 
 public
     class Config {
-    
+
     public static
         String productionHostName = "tdexample01";
 
@@ -129,7 +132,7 @@ public
             public
                 void onEnd(ElementPath path) {
                 Element row = path.getCurrent();
-                if(!row.getTextTrim().isEmpty()){
+                if (!row.getTextTrim().isEmpty()) {
                     productionHostName = row.getTextTrim().toLowerCase();
                 }
                 row.detach();
@@ -870,6 +873,38 @@ public
             }
         }
         return null;
+    }
+
+    public static
+        boolean isProductionHost() {
+        if (isWindows()) {
+            return false;
+        }
+        else {
+            try {
+//                System.out.println("Unix-like computer name through env:\"" + System.getenv("HOSTNAME") + "\"");
+//                System.out.println("Unix-like computer name through exec:\"" + execReadToString("hostname") + "\"");
+//                System.out.println("Unix-like computer name through /etc/hostname:\"" + execReadToString("cat /etc/hostname") + "\"");
+                return execReadToString("hostname").toLowerCase().contains(Config.productionHostName);
+            }
+            catch (IOException ex) {
+                Logger.getLogger(ESHelper.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
+            }
+        }
+    }
+
+    private static
+        String execReadToString(String execCommand) throws IOException {
+        try (Scanner s = new Scanner(Runtime.getRuntime().exec(execCommand).getInputStream()).useDelimiter("\\A")) {
+            return s.hasNext() ? s.next() : "";
+        }
+    }
+
+    private static
+        boolean isWindows() {
+        String os = System.getProperty("os.name").toLowerCase();
+        return os.contains("win");
     }
 
     public static
