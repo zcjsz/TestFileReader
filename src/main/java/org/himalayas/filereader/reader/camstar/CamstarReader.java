@@ -119,6 +119,7 @@ final public
 
         // write the file
         String docValue = FieldType.Type + "=" + FieldType.File
+            + "," + FieldType.FileTime + "=" + this.formatTimeStr(this.getFileOpenTime())
             + "," + FieldType.CamGoodCnt + "=" + this.goodLotCnt
             + "," + FieldType.CamBadCnt + "=" + this.badLotCnt
             + "," + FieldType.KdfName + "=" + this.getFileName()
@@ -253,64 +254,72 @@ final public
     @Override
     protected
         void logRepeatFileToES() {
-        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFRepeat,
+            FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
             FieldType.KdfName, this.getFileName(),
             FieldType.KdfMonth, this.getFileMonth(),
             FieldType.KdfDate, this.getFileDate(),
             FieldType.TransferTime, this.getTransferTime(),
             FieldType.DataType, this.getFormat().getDataType(),
-            FieldType.SourceType, this.getFormat().getSourceType()
+            FieldType.SourceType, this.getFormat().getSourceType(),
+            FieldType.CATEGORY, FieldType.CATEGORY_READER
         );
     }
 
     @Override
     protected
         void logOpenFailureToES() {
-        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFOpenFailure,
+            FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
             FieldType.KdfName, this.getFileName(),
             FieldType.KdfMonth, this.getFileMonth(),
             FieldType.KdfDate, this.getFileDate(),
             FieldType.TransferTime, this.getTransferTime(),
             FieldType.DataType, this.getFormat().getDataType(),
-            FieldType.SourceType, this.getFormat().getSourceType()
+            FieldType.SourceType, this.getFormat().getSourceType(),
+            FieldType.CATEGORY, FieldType.CATEGORY_READER
         );
     }
 
     @Override
     protected
         void logIoErrorToES(String error) {
-        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.IOError,
+            FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
             FieldType.Failure, error,
             FieldType.KdfName, this.getFileName(),
             FieldType.KdfMonth, this.getFileMonth(),
             FieldType.KdfDate, this.getFileDate(),
             FieldType.TransferTime, this.getTransferTime(),
             FieldType.DataType, this.getFormat().getDataType(),
-            FieldType.SourceType, this.getFormat().getSourceType()
+            FieldType.SourceType, this.getFormat().getSourceType(),
+            FieldType.CATEGORY, FieldType.CATEGORY_READER
         );
     }
 
     @Override
     protected
         void logExceptionToES() {
-        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFException,
+            FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
             FieldType.KdfName, this.getFileName(),
             FieldType.KdfMonth, this.getFileMonth(),
             FieldType.KdfDate, this.getFileDate(),
             FieldType.TransferTime, this.getTransferTime(),
             FieldType.DataType, this.getFormat().getDataType(),
-            FieldType.SourceType, this.getFormat().getSourceType()
+            FieldType.SourceType, this.getFormat().getSourceType(),
+            FieldType.CATEGORY, FieldType.CATEGORY_READER
         );
     }
 
     @Override
     protected
         void logFileDoneToES() {
-        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%d,%s=%d,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%d,%s=%d,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFDone,
             FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
             FieldType.KdfName, this.getFileName(),
@@ -320,7 +329,8 @@ final public
             FieldType.KdfDate, this.getFileDate(),
             FieldType.TransferTime, this.getTransferTime(),
             FieldType.DataType, this.getFormat().getDataType(),
-            FieldType.SourceType, this.getFormat().getSourceType()
+            FieldType.SourceType, this.getFormat().getSourceType(),
+            FieldType.CATEGORY, FieldType.CATEGORY_READER
         );
     }
 
