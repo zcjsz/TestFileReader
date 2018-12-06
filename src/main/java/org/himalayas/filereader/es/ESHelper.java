@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -97,11 +96,13 @@ public
         Map<String, Object> jsonMap = new HashMap<>();
     private final
         UpdateRequest updateRequest = new UpdateRequest();
+    private
+        boolean initilized = false;
 
     private
         ESHelper() {
         if (!this.init()) {
-            instance = null;
+            this.initilized = false;
         }
     }
 
@@ -115,21 +116,21 @@ public
 
     private
         boolean init() {
-        if(this.isProductionHost()){
+        if (Config.isProductionHost()) {
             if (!initProductionClient()) {
                 System.out.printf("%s: failed to connect production es host!\n", LocalDateTime.now().toString());
                 System.out.printf("Please make sure those host are available: %s\n", Arrays.toString(Config.productionHost.toArray()));
                 return false;
             }
         }
-        else{
+        else {
             if (!initTestClient()) {
                 System.out.printf("%s: failed to connect test es host!\n", LocalDateTime.now().toString());
                 System.out.printf("Please make sure those host are available: %s\n", Config.testHost);
                 return false;
             }
         }
-        if(!this.isProductionHost()){
+        if (!Config.isProductionHost()) {
             this.productionClient = this.testClient;
         }
         return true;
@@ -147,19 +148,15 @@ public
             }
             RestClientBuilder builder = RestClient.builder(httpHosts);
             builder.setMaxRetryTimeoutMillis(6 * 60 * 1000);
-            builder.setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
-                @Override
-                public
-                    HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
-                    //return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-                    RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
-                        .setConnectTimeout(2 * 60 * 1000)
-                        .setSocketTimeout(2 * 60 * 1000)
-                        .setConnectionRequestTimeout(1 * 60 * 1000);
-                    httpClientBuilder.setDefaultRequestConfig(requestConfigBuilder.build())
-                        .setDefaultCredentialsProvider(credentialsProvider);
-                    return httpClientBuilder;
-                }
+            builder.setHttpClientConfigCallback((HttpAsyncClientBuilder httpClientBuilder) -> {
+                //return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+                RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
+                    .setConnectTimeout(2 * 60 * 1000)
+                    .setSocketTimeout(2 * 60 * 1000)
+                    .setConnectionRequestTimeout(1 * 60 * 1000);
+                httpClientBuilder.setDefaultRequestConfig(requestConfigBuilder.build())
+                    .setDefaultCredentialsProvider(credentialsProvider);
+                return httpClientBuilder;
             });
             this.productionClient = new RestHighLevelClient(builder);
             return productionClient.ping(RequestOptions.DEFAULT);
@@ -193,10 +190,13 @@ public
                 }
             });
             this.testClient = new RestHighLevelClient(builder);
-            return this.testClient.ping(RequestOptions.DEFAULT);
+            if (this.testClient.ping(RequestOptions.DEFAULT)) {
+                return true;
+            }
+            return false;
 
         }
-        catch (Exception ex) {
+        catch (IOException ex) {
             ex.printStackTrace();
             return false;
         }
@@ -215,7 +215,7 @@ public
             }
             return true;
         }
-        catch (Exception ex) {
+        catch (IOException ex) {
             System.out.printf("%s:%s\n", LocalDateTime.now().toString(), "failed to close the client");
             ex.printStackTrace();
             return false;
@@ -423,7 +423,8 @@ public
             ClearScrollResponse clearScrollResponse = this.productionClient.clearScroll(clearScrollRequest, RequestOptions.DEFAULT);
             boolean succeeded = clearScrollResponse.isSucceeded();
         }
-        catch (Exception ex) {
+        catch (IOException ex) {
+            this.logFailAggEvent2ES(FieldType.ES_AGG_Unit_DATA_ERROR, this.getLotInfo().getDoc_Id());
             ex.printStackTrace();
             return false;
         }
@@ -464,7 +465,8 @@ public
             this.getLotInfo().setTotalFileCnt(totalHits);
             this.fillLotGrossTimeData();
         }
-        catch (Exception ex) {
+        catch (IOException ex) {
+            this.logFailAggEvent2ES(FieldType.ES_AGG_GROSS_TIME_ERROR, this.getLotInfo().getDoc_Id());
             ex.printStackTrace();
             return false;
         }
@@ -530,6 +532,7 @@ public
             boolean succeeded = clearScrollResponse.isSucceeded();
         }
         catch (IOException ex) {
+            this.logFailAggEvent2ES(FieldType.ES_AGG_LOT_LIST_ERROR, null);
             ex.printStackTrace();
             return false;
         }
@@ -711,7 +714,7 @@ public
                 return true;
             }
         }
-        catch (Exception ex) {
+        catch (IOException ex) {
             ex.printStackTrace();
             return false;
         }
@@ -735,6 +738,7 @@ public
             UpdateResponse updateResponse = this.productionClient.update(request, RequestOptions.DEFAULT);
 
             if (null != updateResponse.getResult()) {
+                this.logUpsertEvent2ES(updateResponse.getResult().toString(), this.dataFormat.getLotIndexName(), this.getLotInfo().getDoc_Id(), FieldType.ES_EVENT_LOT);
                 System.out.printf("successed to %s, %s = %s, %s =%s\n",
                     updateResponse.getResult(),
                     this.dataFormat.getLotNumberNode().getName(),
@@ -744,6 +748,7 @@ public
                 );
             }
             else {
+                this.logUpsertEvent2ES(FieldType.ES_No_Response, this.dataFormat.getLotIndexName(), this.getLotInfo().getDoc_Id(), FieldType.ES_EVENT_LOT);
                 System.out.printf("Warning: failed to upsert the lot data, no response.  %s = %s, %s =%s\n",
                     this.dataFormat.getLotNumberNode().getName(),
                     this.getLotInfo().getLotNumber(),
@@ -752,7 +757,8 @@ public
                 );
             }
         }
-        catch (Exception ex) {
+        catch (IOException ex) {
+            this.logUpsertEvent2ES(FieldType.ES_UPSERT_ERROR, this.dataFormat.getLotIndexName(), this.getLotInfo().getDoc_Id(), FieldType.ES_EVENT_LOT);
             System.out.printf("Error: failed to upsert the lot data. %s = %s, %s =%s\n",
                 this.dataFormat.getLotNumberNode().getName(),
                 this.getLotInfo().getLotNumber(),
@@ -776,17 +782,14 @@ public
             UpdateResponse updateResponse = this.productionClient.update(request, RequestOptions.DEFAULT);
 
             if (null != updateResponse.getResult()) {
-                System.out.printf("successed to %s, docID = %s\n",
-                    updateResponse.getResult(),
-                    docID
-                );
+                this.logUpsertEvent2ES(updateResponse.getResult().toString(), docIndex, docID, FieldType.ES_EVENT_CAMSTAR);
             }
             else {
-                System.out.printf("Warning: failed to upsert the lot data no response, docID = %s\n", docID);
+                this.logUpsertEvent2ES(FieldType.ES_No_Response, docIndex, docID, FieldType.ES_EVENT_CAMSTAR);
             }
         }
-        catch (Exception ex) {
-            System.out.printf("Error: failed to upsert the lot data, docID = %s\n", docID);
+        catch (IOException ex) {
+            this.logUpsertEvent2ES(FieldType.ES_UPSERT_ERROR, docIndex, docID, FieldType.ES_EVENT_CAMSTAR);
             ex.printStackTrace();
             return false;
         }
@@ -795,7 +798,10 @@ public
 
     public
         void proceedUncaledLot() {
-        this.getLotListData();
+        this.lotList.clear();
+        if (!this.getLotListData()) {
+            return;
+        }
         for (LotInfo lot : this.lotList) {
             logLotCalEvent2ES(this.calLot(lot), lot);
         }
@@ -813,16 +819,6 @@ public
         for (LotInfo lot : lotInfos.values()) {
             this.upsertLotIsCalFlag2N(lot);
         }
-    }
-
-    private
-        void logLotCalEvent2ES(boolean result, LotInfo lot) {
-        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
-            FieldType.EventType, (result ? Config.EventType.KDFException : Config.EventType.KDFException),
-            FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
-            this.dataFormat.getLotNumberNode().getName(), lot.getLotNumber(),
-            this.dataFormat.getOperationNode().getName(), lot.getOperation(),
-            FieldType.DataType, this.dataFormat.getDataType().toString());
     }
 
     /**
@@ -855,22 +851,14 @@ public
             UpdateResponse updateResponse = this.productionClient.update(this.updateRequest, RequestOptions.DEFAULT);
 
             if (null != updateResponse.getResult()) {
-                System.out.printf("%s = %s, %s = %s, upsert lot result: %s\n",
-                    this.dataFormat.getLotNumberNode().getName(),
-                    lot.getLotNumber(),
-                    this.dataFormat.getOperationNode().getName(),
-                    lot.getOperation(),
-                    updateResponse.getResult());
-                /*
-                 * switch (updateResponse.getResult()) { case CREATED:
-                 * System.out.println("successed to creat lot"); break; case
-                 * DELETED: System.out.println("successed to delete lot");
-                 * break; case NOOP: System.out.println("noop"); break; default:
-                 * break; }
-                 */
+                this.logUpsertEvent2ES(updateResponse.getResult().toString(), this.dataFormat.getLotIndexName(), lot.getDoc_Id(), FieldType.ES_EVENT_LOTCAL_FLAG);
+            }
+            else {
+                this.logUpsertEvent2ES(FieldType.ES_No_Response, this.dataFormat.getLotIndexName(), lot.getDoc_Id(), FieldType.ES_EVENT_LOTCAL_FLAG);
             }
         }
         catch (IOException ex) {
+            this.logUpsertEvent2ES(FieldType.ES_UPSERT_ERROR, this.dataFormat.getLotIndexName(), lot.getDoc_Id(), FieldType.ES_EVENT_LOTCAL_FLAG);
             Logger.getLogger(ESHelper.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
@@ -946,6 +934,11 @@ public
     }
 
     public
+        boolean isInitilized() {
+        return initilized;
+    }
+
+    public
         void upsertCamDataToLot() {
 
         Map<String, Map<String, String>> camRecords = this.dataFormat.getCamRecords();
@@ -986,36 +979,65 @@ public
             }
         }
     }
-        
+
     private
-        boolean isProductionHost(){
-            if(isWindows()){
-                return false;
-            }
-            else{
-                try {
-//                System.out.println("Unix-like computer name through env:\"" + System.getenv("HOSTNAME") + "\"");
-//                System.out.println("Unix-like computer name through exec:\"" + execReadToString("hostname") + "\"");
-//                System.out.println("Unix-like computer name through /etc/hostname:\"" + execReadToString("cat /etc/hostname") + "\"");
-                    return execReadToString("hostname").toLowerCase().contains(Config.productionHostName);
-                } catch (IOException ex) {
-                    Logger.getLogger(ESHelper.class.getName()).log(Level.SEVERE, null, ex);
-                    return false;
-                }
-            }
+        void logLotCalEvent2ES(boolean result, LotInfo lot) {
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+            FieldType.EventType, (result ? FieldType.ES_Lot_CAL_DONE : FieldType.ES_LOT_CAL_ERR),
+            FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
+            this.dataFormat.getLotNumberNode().getName(), lot.getLotNumber(),
+            this.dataFormat.getOperationNode().getName(), lot.getOperation(),
+            FieldType.DataType, this.dataFormat.getDataType().toString(),
+            FieldType.SourceType, this.dataFormat.getSourceType(),
+            FieldType.CATEGORY, FieldType.CATEGORY_ES,
+            FieldType.ES_EVENT, FieldType.ES_EVENT_LOT);
+    }
+
+    private
+        void logFailAggEvent2ES(String eventType, String docID) {
+        if (docID == null || docID.isEmpty()) {
+            System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+                FieldType.EventType, eventType,
+                FieldType.SourceType, this.dataFormat.getSourceType(),
+                FieldType.DataType, this.dataFormat.getDataType(),
+                FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
+                FieldType.CATEGORY, FieldType.CATEGORY_ES,
+                FieldType.ES_EVENT, FieldType.ES_EVENT_LOT);
         }
-    private
-        String execReadToString(String execCommand) throws IOException {
-        try (Scanner s = new Scanner(Runtime.getRuntime().exec(execCommand).getInputStream()).useDelimiter("\\A")) {
-            return s.hasNext() ? s.next() : "";
+        else {
+            System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+                FieldType.EventType, eventType,
+                FieldType.SourceType, this.dataFormat.getSourceType(),
+                FieldType.DataType, this.dataFormat.getDataType(),
+                FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
+                FieldType.Lot_Doc_id, docID,
+                FieldType.CATEGORY, FieldType.CATEGORY_ES,
+                FieldType.ES_EVENT, FieldType.ES_EVENT_LOT
+            );
         }
     }
-        
+
+    /**
+     *
+     * @param eventType
+     * @param docIndex
+     * @param docID
+     */
     private
-        boolean isWindows(){
-            String os = System.getProperty("os.name").toLowerCase();
-            return os.contains("win");
+        void logUpsertEvent2ES(String eventType, String docIndex, String docID, String esEvent) {
+        if (eventType == null || eventType.isEmpty()) {
+            return;
         }
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+            FieldType.EventType, eventType,
+            FieldType.Lot_Doc_index, docIndex,
+            FieldType.Lot_Doc_id, docID,
+            FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
+            FieldType.SourceType, this.dataFormat.getSourceType(),
+            FieldType.DataType, this.dataFormat.getDataType(),
+            FieldType.CATEGORY, FieldType.CATEGORY_ES,
+            FieldType.ES_EVENT, esEvent);
+    }
 
     public static
         void main(String[] args) {
