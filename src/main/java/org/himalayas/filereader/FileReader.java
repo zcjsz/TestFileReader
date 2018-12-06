@@ -94,8 +94,8 @@ public final
                         Logger.getLogger(FileReader.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-                totalFileCnt += Reader.kdfDoneCnt;
-                logAppEvent2ES(dataFormat.getSourceType(), Reader.kdfDoneCnt, ZonedDateTime.now().toOffsetDateTime().toString(), reader.getRunningTime());
+                totalFileCnt += reader.getKdfDoneCnt();
+                logAppEvent2ES(dataFormat.getSourceType(), reader.getKdfDoneCnt(), ZonedDateTime.now().toOffsetDateTime().toString(), reader.getRunningTime());
 
                 System.out.println("*****************************************************************");
                 System.out.println("**********                                     ******************");

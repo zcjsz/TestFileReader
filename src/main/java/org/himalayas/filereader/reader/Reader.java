@@ -65,7 +65,7 @@ public abstract
         DataFormat format = null;
     private
         int unitCnt = 0;
-    public static
+    private
         int kdfDoneCnt = 0;
     private
         int docCnt = 0;
@@ -836,6 +836,11 @@ public abstract
     protected
         void setFormat(DataFormat format) {
         this.format = format;
+    }
+
+    public
+        int getKdfDoneCnt() {
+        return kdfDoneCnt;
     }
 
     /**

@@ -321,8 +321,6 @@ final public
 
         LotInfo lotInfo = new LotInfo(this.getLotNumber(), this.mfgStp);
         this.getFormat().getLotList().putIfAbsent(lotInfo.getDoc_Id(), lotInfo);
-
-        kdfDoneCnt++;
         return true;
     }
 
