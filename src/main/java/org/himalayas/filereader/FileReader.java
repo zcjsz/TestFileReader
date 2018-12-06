@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,14 +18,18 @@ import org.himalayas.filereader.reader.Reader;
 import org.himalayas.filereader.reader.ReaderFactory;
 import org.himalayas.filereader.util.Config;
 import org.himalayas.filereader.util.DataFormat;
+import org.himalayas.filereader.util.FieldType;
 
 /**
  *
  * @author ghfan
  */
-public
+public final
+
     class FileReader {
 
+    private
+        int totalFileCnt = 0;
     private
         Reader reader = null;
     private
@@ -39,18 +44,26 @@ public
 
         System.out.println(LocalDateTime.now().toString() + ": Task start...");
         this.readFile();
+        esHelper.closeConn();
         System.out.println();
+        this.logAppEvent2ES(FieldType.CATEGORY_APP, totalFileCnt, ZonedDateTime.now().toOffsetDateTime().toString(), (System.currentTimeMillis() - startTime));
         System.out.println(LocalDateTime.now().toString() + ": All task completed,total time = " + (System.currentTimeMillis() - startTime));
     }
 
     private
         void readFile() {
+
         for (DataFormat dataFormat : Config.dataFormats.values()) {
             if (dataFormat.isEnabled()) {
                 reader = ReaderFactory.creatReader(dataFormat);
                 if (reader == null) {
                     continue;
                 }
+                System.out.println("*****************************************************************");
+                System.out.println("**********                                     ******************");
+                System.out.printf("**********        start to proceed %s        ******************\n", dataFormat.getDataType());
+                System.out.println("**********                                     ******************");
+                System.out.println("*****************************************************************");
 
                 File rootFile = new File(dataFormat.getKdfPath());
                 for (File dateFile : rootFile.listFiles()) {
@@ -58,11 +71,6 @@ public
                         System.out.printf("Warning: skip %s since minDate is %s\n", dateFile.getName(), dataFormat.getMinDateString());
                         continue;
                     }
-                    System.out.println("*****************************************************************");
-                    System.out.println("**********                                     ******************");
-                    System.out.printf("**********        start to proceed %s        ******************\n", dataFormat.getDataType());
-                    System.out.println("**********                                     ******************");
-                    System.out.println("*****************************************************************");
 
                     try {
                         Files.walk(rootFile.toPath(), 3)
@@ -85,15 +93,18 @@ public
                     catch (IOException ex) {
                         Logger.getLogger(FileReader.class.getName()).log(Level.SEVERE, null, ex);
                     }
-
-                    System.out.println("*****************************************************************");
-                    System.out.println("**********                                     ******************");
-                    System.out.printf("**********      complete to proceed %s       ******************\n", dataFormat.getDataType());
-                    System.out.println("**********                                     ******************");
-                    System.out.println("*****************************************************************");
                 }
+                totalFileCnt += Reader.kdfDoneCnt;
+                logAppEvent2ES(dataFormat.getSourceType(), Reader.kdfDoneCnt, ZonedDateTime.now().toOffsetDateTime().toString(), reader.getRunningTime());
+
+                System.out.println("*****************************************************************");
+                System.out.println("**********                                     ******************");
+                System.out.printf("**********      complete to proceed %s       ******************\n", dataFormat.getDataType());
+                System.out.println("**********                                     ******************");
+                System.out.println("*****************************************************************");
+
             }
-            if (esHelper != null) {
+            if (esHelper.isInitilized()) {
                 if (dataFormat.isKdfData() && (!dataFormat.getLotList().isEmpty())) {
                     esHelper.initDataForamt(dataFormat);
                     esHelper.updateIsCalFlag2N(dataFormat.getLotList());
@@ -105,6 +116,26 @@ public
                 }
             }
         }
+    }
+
+    /**
+     *
+     * @param readerType
+     * @param cnt
+     * @param startTime
+     * @param runTime
+     */
+    public
+        void logAppEvent2ES(String readerType, int cnt, String startTime, long runTime) {
+        System.out.printf("%s=%s,%s=%d,%s=%s,%s=%s,%s=%s,%s=%d\n",
+            FieldType.EventType, readerType,
+            FieldType.FILE_CNT, cnt,
+            FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
+            FieldType.START_TIME, startTime,
+            FieldType.CATEGORY, FieldType.CATEGORY_APP,
+            FieldType.RUN_TIME, runTime
+        );
+
     }
 
     public
