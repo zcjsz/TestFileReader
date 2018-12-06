@@ -69,6 +69,8 @@ public abstract
         int kdfDoneCnt = 0;
     private
         int docCnt = 0;
+    private
+        long initTime = 0;
 
     private
         void resetAll() {
@@ -96,6 +98,7 @@ public abstract
         Reader(DataFormat format) {
         this.format = format;
         this.debugMode = this.format.isDebugMode();
+        this.initTime = System.currentTimeMillis();
     }
 
     public final
@@ -576,11 +579,13 @@ public abstract
 
     private
         void logBadFormatFileToES() {
-        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s\n",
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFBadFormat,
+            FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
             FieldType.KdfName, this.file.getName(),
             FieldType.DataType, this.getFormat().getDataType(),
-            FieldType.SourceType, this.getFormat().getSourceType()
+            FieldType.SourceType, this.getFormat().getSourceType(),
+            FieldType.CATEGORY, FieldType.CATEGORY_READER
         );
     }
 
@@ -595,36 +600,41 @@ public abstract
 
     protected
         void logRepeatFileToES() {
-        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFRepeat,
+            FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
             this.getFormat().getLotNumberNode().getName(), this.lotNumber,
             FieldType.KdfMonth, this.kdfMonth,
             FieldType.KdfDate, this.kdfDate,
             FieldType.TransferTime, this.transferTime,
             FieldType.KdfName, this.fileName,
             FieldType.DataType, this.getFormat().getDataType(),
-            FieldType.SourceType, this.getFormat().getSourceType()
+            FieldType.SourceType, this.getFormat().getSourceType(),
+            FieldType.CATEGORY, FieldType.CATEGORY_READER
         );
     }
 
     protected
         void logOpenFailureToES() {
-        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFOpenFailure,
+            FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
             this.getFormat().getLotNumberNode().getName(), this.lotNumber,
             FieldType.KdfMonth, this.kdfMonth,
             FieldType.KdfDate, this.kdfDate,
             FieldType.TransferTime, this.transferTime,
             FieldType.KdfName, this.fileName,
             FieldType.DataType, this.getFormat().getDataType(),
-            FieldType.SourceType, this.getFormat().getSourceType()
+            FieldType.SourceType, this.getFormat().getSourceType(),
+            FieldType.CATEGORY, FieldType.CATEGORY_READER
         );
     }
 
     protected
         void logIoErrorToES(String error) {
-        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.IOError,
+            FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
             FieldType.Failure, error,
             this.getFormat().getLotNumberNode().getName(), this.lotNumber,
             FieldType.KdfMonth, this.kdfMonth,
@@ -632,13 +642,14 @@ public abstract
             FieldType.TransferTime, this.transferTime,
             FieldType.KdfName, this.fileName,
             FieldType.DataType, this.getFormat().getDataType(),
-            FieldType.SourceType, this.getFormat().getSourceType()
+            FieldType.SourceType, this.getFormat().getSourceType(),
+            FieldType.CATEGORY, FieldType.CATEGORY_READER
         );
     }
 
     protected
         void logFileDoneToES() {
-        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%d,%s=%d,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%d,%s=%d,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFDone,
             FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
             FieldType.KdfName, this.fileName,
@@ -649,21 +660,24 @@ public abstract
             FieldType.KdfDate, this.kdfDate,
             FieldType.TransferTime, this.transferTime,
             FieldType.DataType, this.getFormat().getDataType(),
-            FieldType.SourceType, this.getFormat().getSourceType()
+            FieldType.SourceType, this.getFormat().getSourceType(),
+            FieldType.CATEGORY, FieldType.CATEGORY_READER
         );
     }
 
     protected
         void logExceptionToES() {
-        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
+        System.out.printf("%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFException,
+            FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
             this.getFormat().getLotNumberNode().getName(), this.lotNumber,
             FieldType.KdfMonth, this.kdfMonth,
             FieldType.KdfDate, this.kdfDate,
             FieldType.TransferTime, this.transferTime,
             FieldType.KdfName, this.fileName,
             FieldType.DataType, this.getFormat().getDataType(),
-            FieldType.SourceType, this.getFormat().getSourceType()
+            FieldType.SourceType, this.getFormat().getSourceType(),
+            FieldType.CATEGORY, FieldType.CATEGORY_READER
         );
     }
 
@@ -862,6 +876,11 @@ public abstract
         }
         return result;
 
+    }
+
+    public
+        long getRunningTime() {
+        return (System.currentTimeMillis() - this.initTime);
     }
 
     protected abstract
