@@ -257,12 +257,12 @@ public abstract
         boolean validateKDFDate() {
         if (this.getFormat().getKdfStartDate() != null
             && this.kdfDate.compareTo(this.getFormat().getKdfStartDate()) < 0) {
-            System.out.printf("Warnning: this file is skipped, KDFDate = %s since KDFDate Start Date filter = %s\n", this.kdfDate, this.getFormat().getKdfStartDate());
+            System.out.printf("Warnning: this file is skipped, FileDate = %s since FileDate Start Date filter = %s\n", this.kdfDate, this.getFormat().getKdfStartDate());
             return false;
         }
         if (this.getFormat().getKdfEndData() != null
             && this.getFormat().getKdfEndData().compareTo(this.kdfDate) < 0) {
-            System.out.printf("Warnning: this file is skipped, KDFDate = %s since KDFDate End Date filter = %s\n", this.kdfDate, this.getFormat().getKdfEndData());
+            System.out.printf("Warnning: this file is skipped, FileDate = %s since FileDate End Date filter = %s\n", this.kdfDate, this.getFormat().getKdfEndData());
             return false;
         }
         return true;
