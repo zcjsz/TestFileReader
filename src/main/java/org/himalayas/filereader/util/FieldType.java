@@ -144,7 +144,7 @@ public
         String Lot_Doc_id = "_id";
     public final static
         String Lot_Doc_index = "_index";
-    
+
     public final static
         String Lot_LotStartTime = "LotStartTime";
     public final static
@@ -174,4 +174,42 @@ public
         String SlaveDie = "SalveDie";
     public static
         String Group = "Group";
+    public static
+        String ES_EVENT_CAMSTAR = "UpdateCamstar";
+    public static
+        String ES_EVENT_LOT = "UpdateLotInfo";
+    public static
+        String ES_EVENT_LOTCAL_FLAG = "UpdateCalFlag";
+    public static
+        String ES_No_Response = "NoResponse";
+    public static
+        String ES_UPSERT_ERROR = "ESUpsertErr";
+    public static
+        String ES_AGG_LOT_LIST_ERROR = "ESLotListAggErr";
+    public static
+        String ES_AGG_GROSS_TIME_ERROR = "ESGrossTimeAggErr";
+    public static
+        String ES_AGG_Unit_DATA_ERROR = "ESUnitDataAggErr";
+    public static
+        String ES_LOT_CAL_ERR = "ESLotCalErr";
+    public static
+        String ES_Lot_CAL_DONE = "ESLotCalDone";
+    public static
+        String CATEGORY_ES = "ES";
+    public static
+        String CATEGORY_READER = "Reader";
+    public static
+        String CATEGORY = "Category";
+    public static
+        String ES_EVENT = "ESEvent";
+    public static
+        String CATEGORY_APP = "App";
+    public static
+        String FILE_CNT = "FileCnt";
+    public static
+        String RUN_TIME = "RunningTime";
+    public static
+        String START_TIME = "StartTime";
+    public static
+        String END_TIME = "EndTime";
 }
