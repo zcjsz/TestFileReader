@@ -836,13 +836,10 @@ public
 
     private
         boolean validatePath() {
-        if ((!this.isFileExist(Config.sourcePath))
+        return !((!this.isFileExist(Config.sourcePath))
             || (!this.isFileExist(Config.datalogPath))
             || (!this.isFileExist(Config.mappingPath))
-            || (!this.isFileExist(Config.archivePath))) {
-            return false;
-        }
-        return true;
+            || (!this.isFileExist(Config.archivePath)));
     }
 
     private
@@ -877,7 +874,10 @@ public
 
     public static
         void main(String[] args) {
-        new Config("./config/dataformat.xml");
+        File prodConfig = new File("./config/fileReader/config/dataformat.xml");
+        File engConfig = new File("./config/dataformat.xml");
+        Config config1 = new Config(prodConfig.getAbsolutePath());
+        Config config2 = new Config(prodConfig.getAbsolutePath());
         System.out.println("");
 
     }
