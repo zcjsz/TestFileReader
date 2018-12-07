@@ -1387,7 +1387,7 @@ PUT _template/cam-data
          },
          {
           "cam_key_word_15": {
-            "match": "camTEST PHASE",
+            "match": "camTestPhase",
             "mapping": {
               "type": "keyword"
             }
