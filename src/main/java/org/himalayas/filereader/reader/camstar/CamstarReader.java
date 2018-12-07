@@ -199,10 +199,12 @@ final public
             if ((!camTime.isEmpty()) && camTime.length() == 14) {
                 String camDate = camTime.substring(0, 8);
                 String camMonth = camTime.substring(0, 6);
+                camTime = this.formatTimeStr(camTime);
                 camDateKVString = "," + FieldType.CamDate + "=" + camDate;
                 camMonthKVString = "," + FieldType.CamMonth + "=" + camMonth;
                 camRecord.put(FieldType.CamDate, camDate);
                 camRecord.put(FieldType.CamMonth, camMonth);
+                camRecord.put(camTimeNode.getName(), camTime);
             }
 
             this.getFormat().getCamRecords().putIfAbsent(LotInfo.getDocID(camLot, camOper), camRecord);
