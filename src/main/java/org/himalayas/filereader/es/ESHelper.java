@@ -103,6 +103,8 @@ public
         ESHelper() {
         if (!this.init()) {
             this.initilized = false;
+        } else {
+            this.initilized = true;
         }
     }
 
@@ -225,11 +227,12 @@ public
     public
         void initDataForamt(DataFormat dataFormat) {
         this.dataFormat = dataFormat;
-        this.initSearchUnitRequest();
-        this.initSearchFileRequest();
-        this.initSearchLotRequest();
-        this.initSearchLotRequestFromFile();
-
+        if(!dataFormat.getDataType().equals(Config.DataTypes.CAMSTAR)) {
+            this.initSearchUnitRequest();
+            this.initSearchFileRequest();
+            this.initSearchLotRequest();
+            this.initSearchLotRequestFromFile();            
+        }
     }
 
     /**
@@ -946,10 +949,10 @@ public
             return;
         }
         for (Map.Entry<String, Map<String, String>> entry : camRecords.entrySet()) {
-            String docID = entry.getKey();
             Map<String, String> dataMap = entry.getValue();
             String camOper = dataMap.getOrDefault("camOper", "unknow");
             String docIndex = null;
+            String kdfOper = dataFormat.getCamstarOperMappings().getOrDefault(camOper, camOper);
             switch (camOper) {
                 case "6820": {
                     docIndex = Config.getFTFormat().getLotIndexName();
@@ -974,6 +977,7 @@ public
                 default:
                     break;
             }
+            String docID = dataMap.getOrDefault("camLot", "unknow") + "_" + kdfOper;
             if (docIndex != null && docID != null) {
                 this.updateCamData(docIndex, docID, dataMap);
             }
