@@ -30,7 +30,7 @@ and open the template in the editor.
     <ESHostProduction>10.72.1.237,10.72.1.238,10.72.1.239</ESHostProduction>
     <!--ESHostProduction>localhost</ESHostProduction-->
     <!--es host names of testing only env-->
-    <ESHostTest>192.168.52.100</ESHostTest>
+    <ESHostTest>localhost</ESHostTest>
     
     <SourcePath>testdata/extend/hygon_source_data</SourcePath>
     <DatalogPath>testdata/extend/data_log</DatalogPath>
@@ -51,7 +51,7 @@ and open the template in the editor.
         <GenerateMappingFile>0</GenerateMappingFile>
         
         <KDFDate>
-            <Start>20181201</Start>
+            <Start>20180101</Start>
             <End>20181204</End>
         </KDFDate>
         <LatestDays></LatestDays>
@@ -145,7 +145,7 @@ and open the template in the editor.
     
     <!--GFDRS_S6310A1AB0PG_P_ATC607_H800S.00_WS1_BBIYG148MVB1_1_-5_180905_051627.kdf.20190909090909-->
     <!--NEVER try to change the SourceType name here-->
-    <SourceType name= "GFDRS" enabled = "1" >
+    <SourceType name= "GFDRS" enabled = "0" >
         <LotIndex>test-sort-lot</LotIndex>
         <TestIndex>wafer-sort-test-*</TestIndex>
         <FileExtension>kdf.</FileExtension>
@@ -249,7 +249,7 @@ and open the template in the editor.
         
     <!--HG00058.1.1_6310_H800D0007101504_SLT_AXFNCP_DS2000DBABC01_20180823_052611_suzamdaslt086_006_MAIN.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
-    <SourceType name= "SLT" enabled = "1" >
+    <SourceType name= "SLT" enabled = "0" >
         <LotIndex>test-slt-lot</LotIndex>
         <TestIndex>slt-test-*</TestIndex>
         <FileExtension>kdf.</FileExtension>
@@ -340,7 +340,7 @@ and open the template in the editor.
         <!--slave unit id will append to test level doc if enabled, default false-->
         <AppendSlaveUnitId2Test>1</AppendSlaveUnitId2Test>
     </SourceType>
-    <SourceType name= "WAT" enabled = "1" >
+    <SourceType name= "WAT" enabled = "0" >
         <TestIndex>wat-test-*</TestIndex>
         <FileExtension>dis.</FileExtension>
         <DataType>WAT</DataType>
@@ -392,7 +392,7 @@ and open the template in the editor.
         <AddFileNameInUnit>1</AddFileNameInUnit>
         
     </SourceType>
-    <SourceType name= "SMAP" enabled = "1" >
+    <SourceType name= "SMAP" enabled = "0" >
         <DataType>SMAP</DataType>
         <FileExtension>smap.</FileExtension>
         <TestIndex>smap-test-*</TestIndex>
