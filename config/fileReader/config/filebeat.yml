@@ -209,7 +209,7 @@ filebeat.inputs:
   clean_inactive: 3h
   harvester_limit: 1
   
-  pipeline: Camstart-report
+  pipeline: camstart-report
   
   
 #============================= Filebeat modules ===============================
