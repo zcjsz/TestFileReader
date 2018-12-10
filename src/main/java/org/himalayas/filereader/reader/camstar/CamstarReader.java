@@ -322,7 +322,7 @@ final public
         System.out.printf("%s=%s,%s=%s,%s=%s,%s=%d,%s=%d,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFDone,
             FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
-            FieldType.KdfName, this.getFileName(),
+            FieldType.FileName, this.getFileName(),
             FieldType.CamGoodCnt, this.goodLotCnt,
             FieldType.CamBadCnt, this.badLotCnt,
             FieldType.KdfMonth, this.getFileMonth(),
