@@ -104,6 +104,9 @@ public
         if (!this.init()) {
             this.initilized = false;
         }
+        else {
+            this.initilized = true;
+        }
     }
 
     public static
