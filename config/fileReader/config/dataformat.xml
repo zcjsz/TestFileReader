@@ -29,7 +29,7 @@ and open the template in the editor.
     <ESHostProduction>10.72.1.237,10.72.1.238,10.72.1.239</ESHostProduction>
     <!--ESHostProduction>localhost</ESHostProduction-->
     <!--es host names of testing only env-->
-    <ESHostTest>192.168.52.100</ESHostTest>
+    <ESHostTest>localhost</ESHostTest>
     
     <SourcePath>testdata/extend/hygon_source_data</SourcePath>
     <DatalogPath>testdata/extend/data_log</DatalogPath>
@@ -111,7 +111,7 @@ and open the template in the editor.
         
         <!--comma separated Node Type filters, , case sensitive-->
         <!--ULSD,PinMeasure,Evaluation,StructureMeasure,Flow,Test,BitString,PatternFailInfo,PatternPinFail,PatternResult,Unit,File-->
-        <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
+        <NodeTypeFilter>ULSD,FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
         <!--comma separated Node Type selectors-->
         <NodeTypeSelector></NodeTypeSelector>
         
@@ -218,7 +218,7 @@ and open the template in the editor.
         <SubClasSelector></SubClasSelector>
         <!--comma separated Node Type filters, case sensitive-->
         <!--PinMeasure,StructureMeasure,Flow,Test,Evaluation,BitString,PatternFailInfo,PatternPinFail,PatternResult,BistFailArray-->
-        <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
+        <NodeTypeFilter>ULSD,FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
         <!--comma separated Node Type selectors, case sensitive-->
         <NodeTypeSelector></NodeTypeSelector>
         
@@ -241,7 +241,7 @@ and open the template in the editor.
         <!--this filter only apply to below kdf Node Types which extend the Test Type node-->
         <!--comma separated node types, PinMeasure , StructureMeasure,Evaluation-->
         <!--Evaluation has not result, and it inherit the test level result-->
-        <!--if skil a Node, it means all the child nodes will be ignored too-->
+        <!--if skil a Node, it means all the child nodes will be ignored too, PinMeasure,StructureMeasure,Evaluation -->
         <LogFailOnlyNodeSelector>PinMeasure,StructureMeasure,Evaluation</LogFailOnlyNodeSelector>
         
         <!--only log fail for those base class in the filter, it only works on Test Type child node-->
@@ -351,7 +351,7 @@ and open the template in the editor.
         <!--comma separated node types, PinMeasure , StructureMeasure,Evaluation-->
         <!--Evaluation has not result, and it inherit the test level result-->
         <!--if skil a Node, it means all the child nodes will be ignored too-->
-        <LogFailOnlyNodeSelector>PinMeasure,StructureMeasure,Evaluation</LogFailOnlyNodeSelector>
+        <LogFailOnlyNodeSelector></LogFailOnlyNodeSelector>
         
         <!--only log fail for those base class in the filter, it only works on Test Type child node-->
         <!--RINGOSC , CONTINUITY , HSIO ,IOSPEC ,PWRDOMAIN,PLL,TCC,SCAN,SETUPINFO,PSSHORTS,PSCURRENT,FUSE,DIODE,MISCIO,CREST,DATARIVER,JTAG,MBIST,EVV,DIECRACKMON,COMPONENT-->
@@ -432,7 +432,7 @@ and open the template in the editor.
         <SubClasFilter>DEFAULT</SubClasFilter>
         <SubClasSelector></SubClasSelector>
         <!--comma separated Node Type filters, case sensitive-->
-        <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
+        <NodeTypeFilter>ULSD,FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
         <!--comma separated Node Type selectors, case sensitive-->
         <NodeTypeSelector></NodeTypeSelector>
         
