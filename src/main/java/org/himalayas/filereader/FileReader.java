@@ -38,8 +38,10 @@ public final
     public
         FileReader(File configFile) {
         long startTime = System.currentTimeMillis();
-        new Config(configFile.getAbsolutePath());
-
+        if (Config.dataFormats.isEmpty()) {
+            new Config(configFile.getAbsolutePath());
+            Config.readLotList();
+        }
         esHelper = ESHelper.getInstance();
 
         System.out.println(LocalDateTime.now().toString() + ": Task start...");
@@ -167,8 +169,15 @@ public final
                 System.out.println("please set the config file path");
             }
             if (debug) {
-                File configFile = new File("config/dataformat.xml");
-                new FileReader(configFile);
+                File engConfigFile = new File("config/dataformat.xml");
+                File prodConfigFile = new File("config/fileReader/config/dataformat.xml");
+                new Config(prodConfigFile.getAbsolutePath());
+                for (DataFormat format : Config.dataFormats.values()) {
+                    format.setLatestDays(200);
+                    format.setGenerateMappingFile(false);
+                    format.setProductionMode(false);
+                }
+                new FileReader(prodConfigFile);
             }
             else {
                 System.exit(1);

@@ -106,6 +106,9 @@ public
         } else {
             this.initilized = true;
         }
+        else {
+            this.initilized = true;
+        }
     }
 
     public static

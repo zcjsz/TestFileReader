@@ -21,7 +21,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.himalayas.filereader.es.ESHelper;
 import org.himalayas.filereader.es.LotInfo;
 import org.himalayas.filereader.reader.Reader;
 import org.himalayas.filereader.util.Config;
@@ -129,8 +128,7 @@ final public
             + "," + FieldType.KdfMonth + "=" + this.getFileMonth()
             + "," + FieldType.TransferTime + "=" + this.getTransferTime()
             + "\n";
-        return (this.writeKVString(camDocs.toString())
-            && this.writeKVString(docValue));
+        return this.writeKVString(camDocs.toString());
     }
 
     private
@@ -171,7 +169,7 @@ final public
                         if (cell != null) {
                             String cellValue = getCellValue(cell, rowNo, colNo, xmlNode.isTimeNode());
                             xmlNode.setValue(cellValue);
-                            camRecord.put(xmlNode.getName(), cellValue);
+                            camRecord.put("cam" + xmlNode.getName(), cellValue);
                         }
                     }
                     else {
@@ -189,29 +187,9 @@ final public
                 this.badLotCnt++;
                 continue;
             }
-            // add 2 additinal field camDate and camMonth
-            // add camDate to terms by Date and camMonth to terms by Month
-            // date is renamed to camTime
-            String camDateKVString = "";
-            String camMonthKVString = "";
-            XmlNode camTimeNode = this.getFormat().getCamDateNode();
-            String camTime = camTimeNode.getXmlValue();
-            if ((!camTime.isEmpty()) && camTime.length() == 14) {
-                String camDate = camTime.substring(0, 8);
-                String camMonth = camTime.substring(0, 6);
-                camTime = this.formatTimeStr(camTime);
-                camDateKVString = "," + FieldType.CamDate + "=" + camDate;
-                camMonthKVString = "," + FieldType.CamMonth + "=" + camMonth;
-                camRecord.put(FieldType.CamDate, camDate);
-                camRecord.put(FieldType.CamMonth, camMonth);
-                camRecord.put(camTimeNode.getName(), camTime);
-            }
-
             this.getFormat().getCamRecords().putIfAbsent(LotInfo.getDocID(camLot, camOper), camRecord);
-
             this.goodLotCnt++;
-            String docIdKVString = "," + FieldType.Lot_Doc_id + "=" + LotInfo.getDocID(camLot, camOper);
-            String docValue = this.generateLotHeadKVStr() + docIdKVString + camDateKVString + camMonthKVString + "\n";
+            String docValue = this.generateLotHeadKVStr() + "\n";
             if (Reader.validateFullForamtString(docValue)) {
                 this.camDocs.append(docValue);
             }
@@ -324,7 +302,7 @@ final public
         System.out.printf("%s=%s,%s=%s,%s=%s,%s=%d,%s=%d,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s,%s=%s\n",
             FieldType.EventType, Config.EventType.KDFDone,
             FieldType.DoneTime, ZonedDateTime.now().toOffsetDateTime(),
-            FieldType.KdfName, this.getFileName(),
+            FieldType.FileName, this.getFileName(),
             FieldType.CamGoodCnt, this.goodLotCnt,
             FieldType.CamBadCnt, this.badLotCnt,
             FieldType.KdfMonth, this.getFileMonth(),
@@ -353,24 +331,12 @@ final public
         File testDataFile = new File(Config.camFormat.getKdfPath());
         //TODO camstar
 
-        for (File shiftFile : testDataFile.listFiles()) {
-            for (File dateFile : shiftFile.listFiles()) {
-                for (File xlsFile : dateFile.listFiles()) {
-                    CamstarReader.getInstance(Config.camFormat).loadFile(xlsFile);
-                }
+        for (File dateFile : testDataFile.listFiles()) {
+            for (File xlsFile : dateFile.listFiles()) {
+                CamstarReader.getInstance(Config.camFormat).loadFile(xlsFile);
             }
         }
-
-        ESHelper es = ESHelper.getInstance();
-        if (es == null) {
-            return;
-        }
-        es.initDataForamt(Config.camFormat);
-        es.upsertCamDataToLot();
-        es.closeConn();
-
-        System.out.println("total time = " + (System.currentTimeMillis() - startTime));
-
+        System.out.println(
+            "total time = " + (System.currentTimeMillis() - startTime));
     }
-
 }

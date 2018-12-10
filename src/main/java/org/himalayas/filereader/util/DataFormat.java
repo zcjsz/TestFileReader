@@ -1614,6 +1614,16 @@ public
     }
 
     public
+        void setLatestDays(int latestDays) {
+        this.latestDays = latestDays;
+    }
+
+    public
+        void setGenerateMappingFile(boolean generateMappingFile) {
+        this.generateMappingFile = generateMappingFile;
+    }
+
+    public
         ArrayList<XmlNode> getWatFieldNode() {
         ArrayList<XmlNode> watNode = new ArrayList();
         this.getLotHead().values().stream().filter((xmlNode) -> (xmlNode.getCamColumnName() != null)).forEachOrdered((xmlNode) -> {

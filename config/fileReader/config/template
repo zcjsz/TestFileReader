@@ -1162,7 +1162,7 @@ PUT _ingest/pipeline/smap-test
   
 }
 
-PUT _ingest/pipeline/Camstar-report
+PUT _ingest/pipeline/camstart-report
 {
   "description": "to parse the filebeat message",
   "processors": [
@@ -1180,16 +1180,23 @@ PUT _ingest/pipeline/Camstar-report
           "source",
           "offset",
           "prospector",
-          "beat"
+          "beat",
+          "Time",
+          "Month"
         ]
       }
     },
     {
-      "date_index_name": {
-        "field": "FileTime",
-        "index_name_prefix": "camstar-data-",
-        "date_rounding": "y",
-        "index_name_format": "yyyy"
+      "set" : {
+        "field": "_id",
+        "value": "{{camLot}}_{{camOper}}"
+      }
+    },
+
+    {
+      "set" : {
+        "field": "_index",
+        "value": "camstar-data-v3"
       }
     }
   ]
@@ -1227,13 +1234,17 @@ PUT _ingest/pipeline/wat-test
   
 }
 
-PUT _template/cam-data
+PUT _template/all-lot
 {
   "order": 0,
     "version": 1001,
     "index_patterns": [
-      "camstar-data-*",
-      "test-camstar-data"
+      "ft-lot*",
+      "slt-lot*",
+      "sort-lot*",
+      "test-ft-lot",
+      "test-slt-lot",
+      "test-sort-lot"
     ],
     "settings": {
       "index": {
@@ -1256,902 +1267,1090 @@ PUT _template/cam-data
           }
         },
         "dynamic_templates": [
-         {
-          "cam_date_1": {
-            "match": "camTime",
-            "mapping": {
-              "type": "date"
-            }
-          }
-         },
-         {
-          "cam_date_2": {
-            "match": "FileTime",
-            "mapping": {
-              "type": "date"
-            }
-          }
-         },
-		 
-         {
-          "cam_key_word_1": {
-            "match": "camAV",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_2": {
-            "match": "camAspen",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_3": {
-            "match": "camAspen_Rev",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_4": {
-            "match": "camAssembly_Part",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_5": {
-            "match": "camDatecode",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_6": {
-            "match": "camDevice",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_7": {
-            "match": "camFablotnumber",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_8": {
-            "match": "camHandler",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_9": {
-            "match": "camLot",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_10": {
-            "match": "camMother",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_11": {
-            "match": "camMtype",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_12": {
-            "match": "camOper",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_13": {
-            "match": "camPackage",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_14": {
-            "match": "camPline",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_15": {
-            "match": "camTestPhase",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_16": {
-            "match": "camTcode",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_17": {
-            "match": "camTemp",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_18": {
-            "match": "camTester",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_19": {
-            "match": "camTprog",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_20": {
-            "match": "camTrev",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_21": {
-            "match": "camType",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_22": {
-            "match": "camowner",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_23": {
-            "match": "IsLotMatched",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_24": {
-            "match": "IsCaled",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_25": {
-            "match": "CamKey",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_26": {
-            "match": "FileName",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_27": {
-            "match": "camDate",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_28": {
-            "match": "camMonth",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_29": {
-            "match": "KDFName",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-         {
-          "cam_key_word_30": {
-            "match": "SourceType",
-            "mapping": {
-              "type": "keyword"
-            }
-          }
-         },
-		 
-		 
-         {
-          "cam_integer_1": {
-            "match": "camInsert",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_2": {
-            "match": "camB1",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_3": {
-            "match": "camB2",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_4": {
-            "match": "camB3",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_5": {
-            "match": "camB4",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_6": {
-            "match": "camB5",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_7": {
-            "match": "camB6",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_8": {
-            "match": "camB7",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_9": {
-            "match": "camB8",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_10": {
-            "match": "camB9",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_11": {
-            "match": "camB10",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_12": {
-            "match": "camB11",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_13": {
-            "match": "camB12",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_14": {
-            "match": "camB13",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_15": {
-            "match": "camB14",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_16": {
-            "match": "camB15",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_17": {
-            "match": "camB16",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_18": {
-            "match": "camNR1",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_19": {
-            "match": "camNR2",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_20": {
-            "match": "camNR3",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_21": {
-            "match": "camNR4",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_22": {
-            "match": "camNR5",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_23": {
-            "match": "camNR6",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_24": {
-            "match": "camNR7",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_25": {
-            "match": "camNR8",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_26": {
-            "match": "camNR9",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_27": {
-            "match": "camNR10",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_28": {
-            "match": "camNR11",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_29": {
-            "match": "camNR12",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_30": {
-            "match": "camNR13",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_31": {
-            "match": "camNR14",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_32": {
-            "match": "camNR15",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_33": {
-            "match": "camNR16",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_34": {
-            "match": "camRC1",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_35": {
-            "match": "camRC2",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_36": {
-            "match": "camRC3",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_37": {
-            "match": "camRC4",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_38": {
-            "match": "camRC5",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_39": {
-            "match": "camRC6",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_40": {
-            "match": "camRC7",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_41": {
-            "match": "camRC8",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_42": {
-            "match": "camRC9",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_43": {
-            "match": "camRC10",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_44": {
-            "match": "camRC11",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_45": {
-            "match": "camRC12",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_46": {
-            "match": "camRC13",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_47": {
-            "match": "camRC14",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_48": {
-            "match": "camRC15",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_49": {
-            "match": "camRC16",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_50": {
-            "match": "camRej1",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_51": {
-            "match": "camRej2",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_52": {
-            "match": "camRej3",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_53": {
-            "match": "camRej4",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_54": {
-            "match": "camRej5",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_55": {
-            "match": "camRej6",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_56": {
-            "match": "camRej7",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_57": {
-            "match": "camRej8",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_58": {
-            "match": "camRej9",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_59": {
-            "match": "camRej10",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_60": {
-            "match": "camRej11",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_61": {
-            "match": "camRej12",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_62": {
-            "match": "camRej13",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_63": {
-            "match": "camRej14",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_64": {
-            "match": "camRej15",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_65": {
-            "match": "camRej16",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_66": {
-            "match": "camVM1",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },		 
-         {
-          "cam_integer_67": {
-            "match": "camVM2",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_68": {
-            "match": "camVM3",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_69": {
-            "match": "camVM4",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_70": {
-            "match": "camVM5",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_71": {
-            "match": "camVM6",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_72": {
-            "match": "camQtyIn",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_73": {
-            "match": "camQtyout",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_74": {
-            "match": "camReclaimCount",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-
-
-         {
-          "cam_integer_75": {
-            "match": "CamGoodLotCnt",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-         {
-          "cam_integer_76": {
-            "match": "CamBadLotCnt",
-            "mapping": {
-              "type": "integer"
-            }
-          }
-         },
-		 
-		 
-         {
-          "cam_float_1": {
-            "match": "camYield",
-            "mapping": {
-              "type": "float"
-            }
-          }
-         },
-         {
-          "integers": {
-            "match_mapping_type": "long",
-            "mapping": {
-              "type": "text"
-            }
-          }
-         },
-         {
-          "float": {
-            "match_mapping_type": "double",
-            "mapping": {
-              "type": "float"
-            }
-          }
-         },
-         {
+          {
+            "lot_date_1": {
+              "match": "LotStartTime",
+              "mapping": {
+                "type": "date"
+              }
+            }
+          },
+          {
+            "lot_date_2": {
+              "match": "LotEndTime",
+              "mapping": {
+                "type": "date"
+              }
+            }
+          },
+          {
+            "lot_keyword_1": {
+              "match": "Type",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "lot_keyword_2": {
+              "match": "LotNumber",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "lot_keyword_3": {
+              "match": "Operation",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "lot_keyword_4": {
+              "match": "IsMatched",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "lot_keyword_5": {
+              "match": "IsCaled",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "lot_keyword_6": {
+              "match": "DataType",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "lot_float_1": {
+              "match": "kdfAvgFailTestTime",
+              "mapping": {
+                "type": "float"
+              }
+            }
+          },
+          {
+            "lot_float_2": {
+              "match": "kdfAvgPassTestTime",
+              "mapping": {
+                "type": "float"
+              }
+            }
+          },
+          {
+            "lot_float_3": {
+              "match": "kdfAvgTestTime",
+              "mapping": {
+                "type": "float"
+              }
+            }
+          },
+          {
+            "lot_float_4": {
+              "match": "kdfGrossTestTime",
+              "mapping": {
+                "type": "float"
+              }
+            }
+          },
+          {
+            "lot_float_5": {
+              "match": "kdfFinalYield",
+              "mapping": {
+                "type": "float"
+              }
+            }
+          },
+          {
+            "lot_float_6": {
+              "match": "kdfFirstYield",
+              "mapping": {
+                "type": "float"
+              }
+            }
+          },
+          {
+            "lot_float_7": {
+              "match": "kdfFTRd",
+              "mapping": {
+                "type": "float"
+              }
+            }
+          }
+         },
+         {
+            "lot_float_8": {
+              "match": "kdfIR",
+              "mapping": {
+                "type": "float"
+              }
+            }
+          },
+          {
+            "lot_float_9": {
+              "match": "kdfTotalFailTestTime",
+              "mapping": {
+                "type": "float"
+              }
+            }
+          },
+          {
+            "lot_float_10": {
+              "match": "kdfTotalPassTestTime",
+              "mapping": {
+                "type": "float"
+              }
+            }
+          },
+          {
+            "lot_float_11": {
+              "match": "kdfTotalTestTime",
+              "mapping": {
+                "type": "float"
+              }
+            }
+          },
+          {
+            "lot_integer_1": {
+              "match": "FileCnt",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "lot_integer_2": {
+              "match": "kdfFirstFailCount",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "lot_integer_3": {
+              "match": "kdfFirstPassCount",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "lot_integer_4": {
+              "match": "kdfLastFailCount",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "lot_integer_5": {
+              "match": "kdfLastPassCount",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "lot_integer_6": {
+              "match": "kdfTotalFailCount",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "lot_integer_7": {
+              "match": "kdfTotalPassCount",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "lot_integer_8": {
+              "match": "kdfTotalTestedCount",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "lot_integer_9": {
+              "match": "kdfQtyIn",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "lot_integer_10": {
+              "match": "kdfUPH",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "lot_integer_11": {
+              "match": "kdfUPHGood",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_date_1": {
+              "match": "camTime",
+              "mapping": {
+                "type": "date"
+              }
+            }
+          },
+          {
+            "cam_date_2": {
+              "match": "camDate",
+              "mapping": {
+                "type": "date",
+                "format": "yyyyMMdd"
+              }
+            }
+          },
+          {
+            "cam_date_3": {
+              "match": "camMonth",
+              "mapping": {
+                "type": "date",
+                "format": "yyyyMM"
+              }
+            }
+          },
+          {
+            "cam_date_4": {
+              "match": "camFileTime",
+              "mapping": {
+                "type": "date"
+              }
+            }
+          },
+          {
+            "cam_keyword_1": {
+              "match": "camAV",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_keyword_2": {
+              "match": "camAspen",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_keyword_3": {
+              "match": "camAspen_Rev",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_keyword_4": {
+              "match": "camAssembly_Part",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_keyword_5": {
+              "match": "camDatecode",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_keyword_6": {
+              "match": "camDevice",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_keyword_7": {
+              "match": "camFablotnumber",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_keyword_8": {
+              "match": "camHandler",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_keyword_9": {
+              "match": "camLot",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_keyword_10": {
+              "match": "camMother",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_keyword_11": {
+              "match": "camMtype",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_keyword_12": {
+              "match": "camOper",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_keyword_13": {
+              "match": "camPackage",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_keyword_14": {
+              "match": "camPline",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_keyword_15": {
+              "match": "camTestPhase",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_keyword_16": {
+              "match": "camTcode",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_keyword_17": {
+              "match": "camTemp",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_keyword_18": {
+              "match": "camTester",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_keyword_19": {
+              "match": "camTprog",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_keyword_20": {
+              "match": "camTrev",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_keyword_21": {
+              "match": "camType",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_keyword_22": {
+              "match": "camOwner",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_keyword_23": {
+              "match": "CamKey",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_integer_1": {
+              "match": "camInsert",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_2": {
+              "match": "camB1",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_3": {
+              "match": "camB2",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_4": {
+              "match": "camB3",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_5": {
+              "match": "camB4",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_6": {
+              "match": "camB5",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_7": {
+              "match": "camB6",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_8": {
+              "match": "camB7",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_9": {
+              "match": "camB8",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_10": {
+              "match": "camB9",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_11": {
+              "match": "camB10",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_12": {
+              "match": "camB11",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_13": {
+              "match": "camB12",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_14": {
+              "match": "camB13",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_15": {
+              "match": "camB14",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_16": {
+              "match": "camB15",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_17": {
+              "match": "camB16",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_18": {
+              "match": "camNR1",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_19": {
+              "match": "camNR2",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_20": {
+              "match": "camNR3",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_21": {
+              "match": "camNR4",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_22": {
+              "match": "camNR5",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_23": {
+              "match": "camNR6",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_24": {
+              "match": "camNR7",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_25": {
+              "match": "camNR8",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_26": {
+              "match": "camNR9",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_27": {
+              "match": "camNR10",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_28": {
+              "match": "camNR11",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_29": {
+              "match": "camNR12",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_30": {
+              "match": "camNR13",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_31": {
+              "match": "camNR14",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_32": {
+              "match": "camNR15",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_33": {
+              "match": "camNR16",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_34": {
+              "match": "camRC1",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_35": {
+              "match": "camRC2",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_36": {
+              "match": "camRC3",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_37": {
+              "match": "camRC4",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_38": {
+              "match": "camRC5",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_39": {
+              "match": "camRC6",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_40": {
+              "match": "camRC7",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_41": {
+              "match": "camRC8",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_42": {
+              "match": "camRC9",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_43": {
+              "match": "camRC10",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_44": {
+              "match": "camRC11",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_45": {
+              "match": "camRC12",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_46": {
+              "match": "camRC13",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_47": {
+              "match": "camRC14",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_48": {
+              "match": "camRC15",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_49": {
+              "match": "camRC16",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_50": {
+              "match": "camRej1",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_51": {
+              "match": "camRej2",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_52": {
+              "match": "camRej3",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_53": {
+              "match": "camRej4",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_54": {
+              "match": "camRej5",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_55": {
+              "match": "camRej6",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_56": {
+              "match": "camRej7",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_57": {
+              "match": "camRej8",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_58": {
+              "match": "camRej9",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_59": {
+              "match": "camRej10",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_60": {
+              "match": "camRej11",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_61": {
+              "match": "camRej12",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_62": {
+              "match": "camRej13",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_63": {
+              "match": "camRej14",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_64": {
+              "match": "camRej15",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_65": {
+              "match": "camRej16",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_66": {
+              "match": "camVM1",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_67": {
+              "match": "camVM2",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_68": {
+              "match": "camVM3",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_69": {
+              "match": "camVM4",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_70": {
+              "match": "camVM5",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_71": {
+              "match": "camVM6",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_72": {
+              "match": "camQtyIn",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_73": {
+              "match": "camQtyOut",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_74": {
+              "match": "camReclaimCount",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_float_1": {
+              "match": "camYield",
+              "mapping": {
+                "type": "float"
+              }
+            }
+          },
+          {
+            "cam_text_1": {
+              "match": "CamFileName",
+              "mapping": {
+                "type": "text"
+              }
+            }
+          },
+          {
+            "integers": {
+              "match_mapping_type": "long",
+              "mapping": {
+                "type": "text"
+              }
+            }
+          },
+          {
+            "float": {
+              "match_mapping_type": "double",
+              "mapping": {
+                "type": "float"
+              }
+            }
+          },
+          {
             "string_fields": {
               "match_mapping_type": "string",
               "mapping": {
@@ -2159,9 +2358,867 @@ PUT _template/cam-data
               }
             }
           }
-         
         ]
       }
     },
     "aliases": {}
   }
+PUT _template/cam-data
+{
+    "order": 0,
+    "version": 1001,
+    "index_patterns": [
+      "camstar-data-*",
+      "test-camstar-data"
+    ],
+    "settings": {
+      "index": {
+        "number_of_shards": "5",
+        "number_of_replicas": "2",
+        "refresh_interval": "30s"
+      }
+    },
+    "mappings": {
+      "doc": {
+        "date_detection": false,
+        "numeric_detection": true,
+        "dynamic": true,
+        "properties": {
+          "@timestamp": {
+            "type": "date"
+          },
+          "@version": {
+            "type": "keyword"
+          }
+        },
+        "dynamic_templates": [
+          {
+            "cam_date_1": {
+              "match": "Date",
+              "mapping": {
+                "type": "date"
+              }
+            }
+          },
+          {
+            "cam_key_word_1": {
+              "match": "AV",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_2": {
+              "match": "Aspen",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_3": {
+              "match": "Aspen_Rev",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_4": {
+              "match": "Assembly_Part",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_5": {
+              "match": "Datecode",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_6": {
+              "match": "Device",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_7": {
+              "match": "Fablotnumber",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_8": {
+              "match": "Handler",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_9": {
+              "match": "Lot",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_10": {
+              "match": "Mother",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_11": {
+              "match": "Mtype",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_12": {
+              "match": "Oper",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_13": {
+              "match": "Package",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_14": {
+              "match": "Pline",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_15": {
+              "match": "TEST PHASE",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_16": {
+              "match": "Tcode",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_17": {
+              "match": "Temp",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_18": {
+              "match": "Tester",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_19": {
+              "match": "Tprog",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_20": {
+              "match": "Trev",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_21": {
+              "match": "Type",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_22": {
+              "match": "owner",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_23": {
+              "match": "IsLotMatched",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_key_word_24": {
+              "match": "CamKey",
+              "mapping": {
+                "type": "keyword"
+              }
+            }
+          },
+          {
+            "cam_integer_1": {
+              "match": "Insert",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_2": {
+              "match": "B1",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_3": {
+              "match": "B2",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_4": {
+              "match": "B3",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_5": {
+              "match": "B4",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_6": {
+              "match": "B5",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_7": {
+              "match": "B6",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_8": {
+              "match": "B7",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_9": {
+              "match": "B8",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_10": {
+              "match": "B9",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_11": {
+              "match": "B10",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_12": {
+              "match": "B11",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_13": {
+              "match": "B12",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_14": {
+              "match": "B13",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_15": {
+              "match": "B14",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_16": {
+              "match": "B15",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_17": {
+              "match": "B16",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_18": {
+              "match": "NR1",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_19": {
+              "match": "NR2",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_20": {
+              "match": "NR3",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_21": {
+              "match": "NR4",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_22": {
+              "match": "NR5",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_23": {
+              "match": "NR6",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_24": {
+              "match": "NR7",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_25": {
+              "match": "NR8",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_26": {
+              "match": "NR9",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_27": {
+              "match": "NR10",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_28": {
+              "match": "NR11",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_29": {
+              "match": "NR12",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_30": {
+              "match": "NR13",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_31": {
+              "match": "NR14",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_32": {
+              "match": "NR15",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_33": {
+              "match": "NR16",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_34": {
+              "match": "RC1",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_35": {
+              "match": "RC2",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_36": {
+              "match": "RC3",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_37": {
+              "match": "RC4",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_38": {
+              "match": "RC5",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_39": {
+              "match": "RC6",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_40": {
+              "match": "RC7",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_41": {
+              "match": "RC8",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_42": {
+              "match": "RC9",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_43": {
+              "match": "RC10",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_44": {
+              "match": "RC11",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_45": {
+              "match": "RC12",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_46": {
+              "match": "RC13",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_47": {
+              "match": "RC14",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_48": {
+              "match": "RC15",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_49": {
+              "match": "RC16",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_50": {
+              "match": "Rej1",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_51": {
+              "match": "Rej2",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_52": {
+              "match": "Rej3",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_53": {
+              "match": "Rej4",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_54": {
+              "match": "Rej5",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_55": {
+              "match": "Rej6",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_56": {
+              "match": "Rej7",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_57": {
+              "match": "Rej8",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_58": {
+              "match": "Rej9",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_59": {
+              "match": "Rej10",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_60": {
+              "match": "Rej11",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_61": {
+              "match": "Rej12",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_62": {
+              "match": "Rej13",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_63": {
+              "match": "Rej14",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_64": {
+              "match": "Rej15",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_65": {
+              "match": "Rej16",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_66": {
+              "match": "VM1",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_67": {
+              "match": "VM2",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_68": {
+              "match": "VM3",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_69": {
+              "match": "VM4",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_70": {
+              "match": "VM5",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_71": {
+              "match": "VM6",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_72": {
+              "match": "QtyIn",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_73": {
+              "match": "Qtyout",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_integer_74": {
+              "match": "ReclaimCount",
+              "mapping": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "cam_float_1": {
+              "match": "Yield",
+              "mapping": {
+                "type": "float"
+              }
+            }
+          },
+          {
+            "integers": {
+              "match_mapping_type": "long",
+              "mapping": {
+                "type": "text"
+              }
+            }
+          },
+          {
+            "float": {
+              "match_mapping_type": "double",
+              "mapping": {
+                "type": "float"
+              }
+            }
+          },
+          {
+            "string_fields": {
+              "match_mapping_type": "string",
+              "mapping": {
+                "type": "text"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "aliases": {}
+
+}

@@ -29,12 +29,14 @@ and open the template in the editor.
     <ESHostProduction>10.72.1.237,10.72.1.238,10.72.1.239</ESHostProduction>
     <!--ESHostProduction>localhost</ESHostProduction-->
     <!--es host names of testing only env-->
-    <ESHostTest>192.168.52.100</ESHostTest>
+    <ESHostTest>localhost</ESHostTest>
     
     <SourcePath>testdata/extend/hygon_source_data</SourcePath>
     <DatalogPath>testdata/extend/data_log</DatalogPath>
     <MappingPath>testdata/extend/data_mapping</MappingPath>
     <ArchivePath>testdata/data/data_archive</ArchivePath>
+    
+    <LotListPath>testdata/tdni/hygon_apps/beat/log</LotListPath>
 
     <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
@@ -111,7 +113,7 @@ and open the template in the editor.
         
         <!--comma separated Node Type filters, , case sensitive-->
         <!--ULSD,PinMeasure,Evaluation,StructureMeasure,Flow,Test,BitString,PatternFailInfo,PatternPinFail,PatternResult,Unit,File-->
-        <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
+        <NodeTypeFilter>ULSD,FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
         <!--comma separated Node Type selectors-->
         <NodeTypeSelector></NodeTypeSelector>
         
@@ -218,7 +220,7 @@ and open the template in the editor.
         <SubClasSelector></SubClasSelector>
         <!--comma separated Node Type filters, case sensitive-->
         <!--PinMeasure,StructureMeasure,Flow,Test,Evaluation,BitString,PatternFailInfo,PatternPinFail,PatternResult,BistFailArray-->
-        <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
+        <NodeTypeFilter>ULSD,FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
         <!--comma separated Node Type selectors, case sensitive-->
         <NodeTypeSelector></NodeTypeSelector>
         
@@ -241,7 +243,7 @@ and open the template in the editor.
         <!--this filter only apply to below kdf Node Types which extend the Test Type node-->
         <!--comma separated node types, PinMeasure , StructureMeasure,Evaluation-->
         <!--Evaluation has not result, and it inherit the test level result-->
-        <!--if skil a Node, it means all the child nodes will be ignored too-->
+        <!--if skil a Node, it means all the child nodes will be ignored too, PinMeasure,StructureMeasure,Evaluation -->
         <LogFailOnlyNodeSelector>PinMeasure,StructureMeasure,Evaluation</LogFailOnlyNodeSelector>
         
         <!--only log fail for those base class in the filter, it only works on Test Type child node-->
@@ -351,7 +353,7 @@ and open the template in the editor.
         <!--comma separated node types, PinMeasure , StructureMeasure,Evaluation-->
         <!--Evaluation has not result, and it inherit the test level result-->
         <!--if skil a Node, it means all the child nodes will be ignored too-->
-        <LogFailOnlyNodeSelector>PinMeasure,StructureMeasure,Evaluation</LogFailOnlyNodeSelector>
+        <LogFailOnlyNodeSelector></LogFailOnlyNodeSelector>
         
         <!--only log fail for those base class in the filter, it only works on Test Type child node-->
         <!--RINGOSC , CONTINUITY , HSIO ,IOSPEC ,PWRDOMAIN,PLL,TCC,SCAN,SETUPINFO,PSSHORTS,PSCURRENT,FUSE,DIODE,MISCIO,CREST,DATARIVER,JTAG,MBIST,EVV,DIECRACKMON,COMPONENT-->
@@ -432,7 +434,7 @@ and open the template in the editor.
         <SubClasFilter>DEFAULT</SubClasFilter>
         <SubClasSelector></SubClasSelector>
         <!--comma separated Node Type filters, case sensitive-->
-        <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
+        <NodeTypeFilter>ULSD,FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
         <!--comma separated Node Type selectors, case sensitive-->
         <NodeTypeSelector></NodeTypeSelector>
         
@@ -1500,7 +1502,7 @@ and open the template in the editor.
         
         
         <!--items starting from this is for camstar lot only-->
-        <XmlNode name= "camPline" >
+        <XmlNode name= "Pline" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -1526,7 +1528,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camType" >
+        <XmlNode name= "Type" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -1552,7 +1554,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camInsert" >
+        <XmlNode name= "Insert" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -1602,9 +1604,10 @@ and open the template in the editor.
                 <Name>Device</Name>
                 <Type>String</Type>
                 <AllowEmpty>N</AllowEmpty>
+                <AliasName>Device</AliasName>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camPackage" >
+        <XmlNode name= "Package" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -1630,7 +1633,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camLot" >
+        <XmlNode name= "Lot" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -1657,7 +1660,7 @@ and open the template in the editor.
             </SourceType>
             <LotNumber>1</LotNumber>
         </XmlNode>
-        <XmlNode name= "camTime" >
+        <XmlNode name= "Date" >
             <Time>1</Time>
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
@@ -1684,7 +1687,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camOper" >
+        <XmlNode name= "Oper" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -1711,7 +1714,7 @@ and open the template in the editor.
             </SourceType>
             <Operation>1</Operation>
         </XmlNode>
-        <XmlNode name= "camTemp" >
+        <XmlNode name= "Temp" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -1737,7 +1740,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camMother" >
+        <XmlNode name= "Mother" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -1763,7 +1766,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camDatecode" >
+        <XmlNode name= "Datecode" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -1813,9 +1816,10 @@ and open the template in the editor.
                 <Name>Tester</Name>
                 <Type>String</Type>
                 <AllowEmpty>Y</AllowEmpty>
+                <AliasName>Tester</AliasName>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camTcode" >
+        <XmlNode name= "Tcode" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -1841,7 +1845,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camTprog" >
+        <XmlNode name= "Tprog" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -1867,7 +1871,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camTrev" >
+        <XmlNode name= "Trev" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -1893,7 +1897,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camQtyIn" >
+        <XmlNode name= "QtyIn" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -1919,7 +1923,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camQtyOut" >
+        <XmlNode name= "QtyOut" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -1945,7 +1949,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camYield" >
+        <XmlNode name= "Yield" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -1971,7 +1975,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRej1" >
+        <XmlNode name= "Rej1" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -1997,7 +2001,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRej2" >
+        <XmlNode name= "Rej2" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2023,7 +2027,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRej3" >
+        <XmlNode name= "Rej3" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2049,7 +2053,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRej4" >
+        <XmlNode name= "Rej4" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2075,7 +2079,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRej5" >
+        <XmlNode name= "Rej5" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2101,7 +2105,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRej6" >
+        <XmlNode name= "Rej6" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2127,7 +2131,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRej7" >
+        <XmlNode name= "Rej7" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2153,7 +2157,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRej8" >
+        <XmlNode name= "Rej8" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2179,7 +2183,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRej9" >
+        <XmlNode name= "Rej9" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2205,7 +2209,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRej10" >
+        <XmlNode name= "Rej10" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2231,7 +2235,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRej11" >
+        <XmlNode name= "Rej11" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2257,7 +2261,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRej12" >
+        <XmlNode name= "Rej12" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2283,7 +2287,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRej13" >
+        <XmlNode name= "Rej13" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2309,7 +2313,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRej14" >
+        <XmlNode name= "Rej14" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2335,7 +2339,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRej15" >
+        <XmlNode name= "Rej15" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2361,7 +2365,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRej16" >
+        <XmlNode name= "Rej16" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2387,7 +2391,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRejOth" >
+        <XmlNode name= "RejOth" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2413,7 +2417,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camB1" >
+        <XmlNode name= "B1" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2439,7 +2443,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camB2" >
+        <XmlNode name= "B2" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2465,7 +2469,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camB3" >
+        <XmlNode name= "B3" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2491,7 +2495,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camB4" >
+        <XmlNode name= "B4" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2517,7 +2521,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camB5" >
+        <XmlNode name= "B5" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2543,7 +2547,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camB6" >
+        <XmlNode name= "B6" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2569,7 +2573,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camB7" >
+        <XmlNode name= "B7" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2595,7 +2599,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camB8" >
+        <XmlNode name= "B8" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2621,7 +2625,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camB9" >
+        <XmlNode name= "B9" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2647,7 +2651,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camB10" >
+        <XmlNode name= "B10" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2673,7 +2677,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camB11" >
+        <XmlNode name= "B11" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2699,7 +2703,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camB12" >
+        <XmlNode name= "B12" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2725,7 +2729,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camB13" >
+        <XmlNode name= "B13" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2751,7 +2755,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camB14" >
+        <XmlNode name= "B14" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2777,7 +2781,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camB15" >
+        <XmlNode name= "B15" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2803,7 +2807,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camB16" >
+        <XmlNode name= "B16" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2829,7 +2833,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camSpeed" >
+        <XmlNode name= "Speed" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2855,7 +2859,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camHandler" >
+        <XmlNode name= "Handler" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2881,7 +2885,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camWafer" >
+        <XmlNode name= "Wafer" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2907,7 +2911,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camDIB" >
+        <XmlNode name= "DIB" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2933,7 +2937,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camAV" >
+        <XmlNode name= "AV" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2959,7 +2963,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camTFI" >
+        <XmlNode name= "TFI" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -2985,7 +2989,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camPart" >
+        <XmlNode name= "Part" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3011,7 +3015,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camVenc" >
+        <XmlNode name= "Venc" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3037,7 +3041,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camPARTName" >
+        <XmlNode name= "PARTName" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3063,7 +3067,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camOPN" >
+        <XmlNode name= "OPN" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3089,7 +3093,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camOwner" >
+        <XmlNode name= "Owner" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3115,7 +3119,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camSample" >
+        <XmlNode name= "Sample" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3141,7 +3145,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camMtype" >
+        <XmlNode name= "Mtype" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3167,7 +3171,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRC1" >
+        <XmlNode name= "RC1" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3193,7 +3197,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRC2" >
+        <XmlNode name= "RC2" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3219,7 +3223,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRC3" >
+        <XmlNode name= "RC3" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3245,7 +3249,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRC4" >
+        <XmlNode name= "RC4" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3271,7 +3275,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRC5" >
+        <XmlNode name= "RC5" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3297,7 +3301,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRC6" >
+        <XmlNode name= "RC6" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3323,7 +3327,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRC7" >
+        <XmlNode name= "RC7" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3349,7 +3353,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRC8" >
+        <XmlNode name= "RC8" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3375,7 +3379,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRC9" >
+        <XmlNode name= "RC9" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3401,7 +3405,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRC10" >
+        <XmlNode name= "RC10" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3427,7 +3431,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRC11" >
+        <XmlNode name= "RC11" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3453,7 +3457,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRC12" >
+        <XmlNode name= "RC12" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3479,7 +3483,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRC13" >
+        <XmlNode name= "RC13" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3505,7 +3509,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRC14" >
+        <XmlNode name= "RC14" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3531,7 +3535,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRC15" >
+        <XmlNode name= "RC15" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3557,7 +3561,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camRC16" >
+        <XmlNode name= "RC16" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3583,7 +3587,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camFablotnumber" >
+        <XmlNode name= "Fablotnumber" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3609,7 +3613,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camAssembly_Part" >
+        <XmlNode name= "Assembly_Part" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3635,7 +3639,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camTrackIn" >
+        <XmlNode name= "TrackIn" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3661,7 +3665,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camAspen" >
+        <XmlNode name= "Aspen" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3687,7 +3691,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camAspen_Rev" >
+        <XmlNode name= "Aspen_Rev" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3713,7 +3717,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camNR1" >
+        <XmlNode name= "NR1" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3739,7 +3743,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camNR2" >
+        <XmlNode name= "NR2" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3765,7 +3769,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camNR3" >
+        <XmlNode name= "NR3" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3791,7 +3795,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camNR4" >
+        <XmlNode name= "NR4" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3817,7 +3821,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camNR5" >
+        <XmlNode name= "NR5" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3843,7 +3847,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camNR6" >
+        <XmlNode name= "NR6" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3869,7 +3873,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camNR7" >
+        <XmlNode name= "NR7" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3895,7 +3899,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camNR8" >
+        <XmlNode name= "NR8" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3921,7 +3925,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camNR9" >
+        <XmlNode name= "NR9" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3947,7 +3951,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camNR10" >
+        <XmlNode name= "NR10" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3973,7 +3977,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camNR11" >
+        <XmlNode name= "NR11" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -3999,7 +4003,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camNR12" >
+        <XmlNode name= "NR12" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -4025,7 +4029,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camNR13" >
+        <XmlNode name= "NR13" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -4051,7 +4055,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camNR14" >
+        <XmlNode name= "NR14" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -4077,7 +4081,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camNR15" >
+        <XmlNode name= "NR15" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -4103,7 +4107,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camNR16" >
+        <XmlNode name= "NR16" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -4129,7 +4133,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camVM1" >
+        <XmlNode name= "VM1" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -4155,7 +4159,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camVM2" >
+        <XmlNode name= "VM2" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -4181,7 +4185,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camVM3" >
+        <XmlNode name= "VM3" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -4207,7 +4211,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camVM4" >
+        <XmlNode name= "VM4" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -4233,7 +4237,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camVM5" >
+        <XmlNode name= "VM5" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -4259,7 +4263,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camVM6" >
+        <XmlNode name= "VM6" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -4285,7 +4289,7 @@ and open the template in the editor.
                 <AllowEmpty>N</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camTestPhase" >
+        <XmlNode name= "TestPhase" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>
@@ -4311,7 +4315,7 @@ and open the template in the editor.
                 <AllowEmpty>Y</AllowEmpty>
             </SourceType>
         </XmlNode>
-        <XmlNode name= "camReclaimCount" >
+        <XmlNode name= "ReclaimCount" >
             <SourceType name= "HTEST1" enabled = "0" >
                 <EnabledLog>0</EnabledLog>
             </SourceType>

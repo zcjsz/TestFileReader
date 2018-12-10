@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.himalayas.filereader.FileReader;
-import org.himalayas.filereader.es.LotInfo;
 import org.himalayas.filereader.reader.Reader;
 import org.himalayas.filereader.util.Config;
 import org.himalayas.filereader.util.DataFormat;
@@ -75,8 +74,6 @@ final public
     private
         int unitLevelDocCnt = 0;
     private
-        int fileLevelDocCnt = 0;
-    private
         String baseClass = null;
     private
         int slaveUnitCnt = 0;
@@ -120,7 +117,6 @@ final public
         //reset all the variables
         this.clearRefs();
         this.mfgStp = null;
-        this.fileLevelDocCnt = 0;
         this.unitLevelDocCnt = 0;
         this.slaveUnitCnt = 0;
         this.baseClass = null;
@@ -307,7 +303,7 @@ final public
                 }
 
             }
-            this.fileLevelDocCnt += this.unitLevelDocCnt;
+            this.setDocCnt(this.getDocCnt() + this.unitLevelDocCnt);
 
             // IO error and exit for this file
             if (!this.writeKVString(dataContent.toString())) {
@@ -319,8 +315,8 @@ final public
             return false;
         }
 
-        LotInfo lotInfo = new LotInfo(this.getLotNumber(), this.mfgStp);
-        this.getFormat().getLotList().putIfAbsent(lotInfo.getDoc_Id(), lotInfo);
+//        LotInfo lotInfo = new LotInfo(this.getLotNumber(), this.mfgStp);
+//        this.getFormat().getLotList().putIfAbsent(lotInfo.getDoc_Id(), lotInfo);
         return true;
     }
 
@@ -1429,7 +1425,7 @@ final public
             + "," + FieldType.KdfDate + "=" + this.getFileDate()
             + "," + FieldType.TransferTime + "=" + this.getTransferTime()
             //			+ "," + FieldType.DataType + "=" + this.getFormat().getDataType()
-            + "," + FieldType.DocCnt + "=" + this.fileLevelDocCnt
+            + "," + FieldType.DocCnt + "=" + this.getDocCnt()
             + "," + FieldType.FileTime + "=" + this.formatTimeStr(this.getFileOpenTime());
         value += this.getFormat().getFileDocTimeKVStr() + "\n";
         if (this.isDebugMode()) {
@@ -1529,7 +1525,7 @@ final public
                 FieldType.DataType, this.getFormat().getDataType(),
                 FieldType.SourceType, this.getFormat().getSourceType(),
                 FieldType.CATEGORY, FieldType.CATEGORY_READER,
-                FieldType.DocCnt, this.fileLevelDocCnt,
+                FieldType.DocCnt, this.getDocCnt(),
                 FieldType.UnitCnt, this.getUnitCnt()
             );
         }
@@ -1545,7 +1541,7 @@ final public
                 FieldType.KdfDate, this.getFileDate(),
                 FieldType.TransferTime, this.getTransferTime(),
                 FieldType.DataType, this.getFormat().getDataType(),
-                FieldType.DocCnt, this.fileLevelDocCnt,
+                FieldType.DocCnt, this.getDocCnt(),
                 FieldType.KdfName, this.getFileName(),
                 FieldType.SourceType, this.getFormat().getSourceType(),
                 FieldType.CATEGORY, FieldType.CATEGORY_READER

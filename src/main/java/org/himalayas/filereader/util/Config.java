@@ -8,6 +8,7 @@ package org.himalayas.filereader.util;
 import com.amd.kdf.KDFFieldData;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,9 +22,13 @@ import org.dom4j.ElementHandler;
 import org.dom4j.ElementPath;
 import org.dom4j.io.SAXReader;
 import org.himalayas.filereader.es.ESHelper;
+import org.himalayas.filereader.es.LotInfo;
 
 public
     class Config {
+
+    public static
+        String lotListPath = null;
 
     public static
         String productionHostName = "tdexample01";
@@ -249,6 +254,25 @@ public
                 String host = row.getTextTrim();
                 if (host.length() > 5) {
                     Config.testHost = host;
+                }
+                row.detach();
+            }
+
+            @Override
+            public
+                void onStart(ElementPath path) {
+            }
+
+        });
+
+        reader.addHandler("/root/LotListPath", new ElementHandler() {
+            @Override
+            public
+                void onEnd(ElementPath path) {
+                Element row = path.getCurrent();
+                String host = row.getTextTrim();
+                if (new File(host).exists()) {
+                    Config.lotListPath = host;
                 }
                 row.detach();
             }
@@ -842,12 +866,17 @@ public
         return !((!this.isFileExist(Config.sourcePath))
             || (!this.isFileExist(Config.datalogPath))
             || (!this.isFileExist(Config.mappingPath))
+            || (!this.isFileExist(Config.lotListPath))
             || (!this.isFileExist(Config.archivePath)));
     }
 
     private
         boolean isFileExist(String filePath) {
-        if (filePath != null && new File(filePath).exists()) {
+        if (filePath == null) {
+            System.out.println("path can not be null");
+            return false;
+        }
+        else if (new File(filePath).exists()) {
             return true;
         }
         System.out.printf("Path: %s doesn't exist\n", filePath);
@@ -908,11 +937,62 @@ public
     }
 
     public static
+        void readLotList() {
+        File listFile = new File(Config.lotListPath);
+        if (listFile.exists()) {
+            File[] files = listFile.listFiles((File pathname) -> pathname.toString().endsWith(".list") && (System.currentTimeMillis() - pathname.lastModified() > 600 * 1000));
+            for (File file : files) {
+                try {
+                    List<String> lines = Files.readAllLines(file.toPath());
+                    if (lines.isEmpty()) {
+                        System.out.println("Warning: there's no data in this file");
+                        return;
+                    }
+                    int lineCnt = lines.size();
+                    int lineNo = -1;
+                    while (++lineNo < lineCnt) {
+                        String content = lines.get(lineNo).trim();
+                        if (content.endsWith(".log")) {
+                            DataFormat format = getDataFormatFromFile(content);
+                            if (format != null && format.isKdfData()) {
+                                String[] names = new File(content).getName().split("_");
+                                if (names.length > format.getLotNumberIndex() && names.length > format.getMfgStepIndex()) {
+                                    LotInfo lot = new LotInfo(names[format.getLotNumberIndex()], names[format.getMfgStepIndex()]);
+                                    format.getLotList().putIfAbsent(lot.getDoc_Id(), lot);
+                                }
+                            }
+                        }
+                    }
+                    file.renameTo(new File(file.getAbsolutePath() + ".done"));
+                }
+                catch (IOException ex) {
+                    Logger.getLogger(Config.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
+        }
+    }
+
+    public static
+        DataFormat getDataFormatFromFile(String path) {
+        for (DataFormat dataFormat : Config.dataFormats.values()) {
+            if (path.contains(dataFormat.getXmlPath())) {
+                return dataFormat;
+            }
+        }
+        return null;
+    }
+
+    public static
         void main(String[] args) {
         File prodConfig = new File("./config/fileReader/config/dataformat.xml");
         File engConfig = new File("./config/dataformat.xml");
-        Config config1 = new Config(prodConfig.getAbsolutePath());
-        Config config2 = new Config(prodConfig.getAbsolutePath());
+        //Config config1 = new Config(prodConfig.getAbsolutePath());
+        //Config config2 = new Config(prodConfig.getAbsolutePath());
+
+        new Config(engConfig.getAbsolutePath());
+        Config.readLotList();
+
         System.out.println("");
 
     }
