@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.himalayas.filereader.FileReader;
-import org.himalayas.filereader.es.LotInfo;
 import org.himalayas.filereader.reader.Reader;
 import org.himalayas.filereader.util.Config;
 import org.himalayas.filereader.util.DataFormat;
@@ -316,8 +315,8 @@ final public
             return false;
         }
 
-        LotInfo lotInfo = new LotInfo(this.getLotNumber(), this.mfgStp);
-        this.getFormat().getLotList().putIfAbsent(lotInfo.getDoc_Id(), lotInfo);
+//        LotInfo lotInfo = new LotInfo(this.getLotNumber(), this.mfgStp);
+//        this.getFormat().getLotList().putIfAbsent(lotInfo.getDoc_Id(), lotInfo);
         return true;
     }
 

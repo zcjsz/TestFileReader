@@ -40,6 +40,7 @@ public final
         long startTime = System.currentTimeMillis();
         if (Config.dataFormats.isEmpty()) {
             new Config(configFile.getAbsolutePath());
+            Config.readLotList();
         }
         esHelper = ESHelper.getInstance();
 

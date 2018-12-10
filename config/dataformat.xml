@@ -36,6 +36,8 @@ and open the template in the editor.
     <DatalogPath>testdata/extend/data_log</DatalogPath>
     <MappingPath>testdata/extend/data_mapping</MappingPath>
     <ArchivePath>testdata/data/data_archive</ArchivePath>
+    
+    <LotListPath>testdata/tdni/hygon_apps/beat/log</LotListPath>
 
     <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
