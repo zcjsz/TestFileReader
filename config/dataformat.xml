@@ -27,7 +27,8 @@ and open the template in the editor.
     
     <ProductionHostName>tdexample01</ProductionHostName>
     <!--es host names of production env-->
-    <ESHostProduction>10.72.1.237,10.72.1.238,10.72.1.239</ESHostProduction>
+    <!--<ESHostProduction>10.72.1.237,10.72.1.238,10.72.1.239</ESHostProduction>-->
+    <ESHostProduction>localhost</ESHostProduction>
     <!--ESHostProduction>localhost</ESHostProduction-->
     <!--es host names of testing only env-->
     <ESHostTest>localhost</ESHostTest>
@@ -39,7 +40,7 @@ and open the template in the editor.
 
     <!--HTEST1_9530SB_P_suz93k43_HG00006.1_FT2_95_180822_020648.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
-    <SourceType name= "HTEST1" enabled = "1" >
+    <SourceType name= "HTEST1" enabled = "0" >
         <LotIndex>test-ft-lot</LotIndex>
         <TestIndex>ft-test-*</TestIndex>
         <FileExtension>kdf.</FileExtension>
@@ -111,7 +112,7 @@ and open the template in the editor.
         
         <!--comma separated Node Type filters, , case sensitive-->
         <!--ULSD,PinMeasure,Evaluation,StructureMeasure,Flow,Test,BitString,PatternFailInfo,PatternPinFail,PatternResult,Unit,File-->
-        <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
+        <NodeTypeFilter>ULSD,FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
         <!--comma separated Node Type selectors-->
         <NodeTypeSelector></NodeTypeSelector>
         
@@ -133,11 +134,11 @@ and open the template in the editor.
         <!--comma separated node types, PinMeasure , StructureMeasure,Evaluation-->
         <!--Evaluation has not result, and it inherit the test level result-->
         <!--if skil a Node, it means all the child nodes will be ignored too-->
-        <LogFailOnlyNodeSelector></LogFailOnlyNodeSelector>
+        <LogFailOnlyNodeSelector>PinMeasure,StructureMeasure,Evaluation</LogFailOnlyNodeSelector>
         
         <!--only log fail for those base class in the filter, it only works on Test Type child node-->
         <!--HSIO,PWRDOMAIN,SETUPINFO,SCAN,FUSE,PSSHORTS,PSCURRENT,DIODE,CONTINUITY,DIECRACKMON,CREST,ULSDQUERY,SETUP,COMPONENT,DATARIVER,UNITINFO-->
-        <LogFailOnlyBaseClassSelector></LogFailOnlyBaseClassSelector>
+        <LogFailOnlyBaseClassSelector>HSIO,PWRDOMAIN,SETUPINFO,SCAN,FUSE,PSSHORTS,PSCURRENT,DIODE,CONTINUITY,DIECRACKMON</LogFailOnlyBaseClassSelector>
         <!--slave unit id will append to test level doc if enabled, default false-->
         <AppendSlaveUnitId2Test>1</AppendSlaveUnitId2Test>
     </SourceType>
@@ -216,7 +217,7 @@ and open the template in the editor.
         <SubClasSelector></SubClasSelector>
         <!--comma separated Node Type filters, case sensitive-->
         <!--PinMeasure,StructureMeasure,Flow,Test,Evaluation,BitString,PatternFailInfo,PatternPinFail,PatternResult,BistFailArray-->
-        <!--NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter-->
+        <NodeTypeFilter>ULSD,FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
         <!--comma separated Node Type selectors, case sensitive-->
         <NodeTypeSelector></NodeTypeSelector>
         
@@ -240,16 +241,16 @@ and open the template in the editor.
         <!--comma separated node types, PinMeasure , StructureMeasure,Evaluation-->
         <!--Evaluation has not result, and it inherit the test level result-->
         <!--if skil a Node, it means all the child nodes will be ignored too-->
-        <LogFailOnlyNodeSelector></LogFailOnlyNodeSelector>
+        <LogFailOnlyNodeSelector>PinMeasure,StructureMeasure,Evaluation</LogFailOnlyNodeSelector>
         
         <!--only log fail for those base class in the filter, it only works on Test Type child node-->
         <!--RINGOSC , CONTINUITY , HSIO ,IOSPEC ,PWRDOMAIN,PLL,TCC,SCAN,SETUPINFO,PSSHORTS,PSCURRENT,FUSE,DIODE,MISCIO,CREST,DATARIVER,JTAG,MBIST,EVV,DIECRACKMON,COMPONENT-->
-        <LogFailOnlyBaseClassSelector></LogFailOnlyBaseClassSelector>
+        <LogFailOnlyBaseClassSelector>RINGOSC , CONTINUITY , HSIO ,IOSPEC ,PWRDOMAIN</LogFailOnlyBaseClassSelector>
     </SourceType>
         
     <!--HG00058.1.1_6310_H800D0007101504_SLT_AXFNCP_DS2000DBABC01_20180823_052611_suzamdaslt086_006_MAIN.kdf.20180909090909-->
     <!--NEVER try to change the SourceType name here-->
-    <SourceType name= "SLT" enabled = "0" >
+    <SourceType name= "SLT" enabled = "1" >
         <LotIndex>test-slt-lot</LotIndex>
         <TestIndex>slt-test-*</TestIndex>
         <FileExtension>kdf.</FileExtension>
@@ -315,7 +316,7 @@ and open the template in the editor.
         <SubClasFilter>DEFAULT</SubClasFilter>
         <SubClasSelector></SubClasSelector>
         <!--comma separated Node Type filters, case sensitive-->
-        <NodeTypeFilter>FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
+        <NodeTypeFilter>ULSD,FuseState,FunctionalComponents,Exception,Timer</NodeTypeFilter>
         <!--comma separated Node Type selectors, case sensitive-->
         <NodeTypeSelector></NodeTypeSelector>
         
@@ -441,7 +442,7 @@ and open the template in the editor.
         <AddFileNameInUnit>1</AddFileNameInUnit>
         
     </SourceType>
-    <SourceType name= "CAMSTAR" enabled = "1" >
+    <SourceType name= "CAMSTAR" enabled = "0" >
         <LotIndex>cam-lot-*</LotIndex>
         <FileExtension>xls.</FileExtension>
         <!--ProductionMode means the kdf file will be renamed or move to archive, default 1-->
