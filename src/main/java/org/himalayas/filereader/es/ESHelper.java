@@ -318,7 +318,7 @@ public
         String operationName = this.dataFormat.getOperationNode().getName();
         String camLotName = Config.camFormat.getLotNumberNode().getName();
 
-        String[] includeFields = new String[]{lotNumberName, operationName, camLotName};
+        String[] includeFields = new String[]{lotNumberName, operationName, camLotName, FieldType.IsCaled};
         String[] excludeFields = new String[]{"_type"};
 
         if (this.searchLotRequest.source() == null) {
@@ -661,7 +661,7 @@ public
             String lotNumber = (String) sourceAsMap.get(this.dataFormat.getLotNumberNode().getName());
             String operation = (String) sourceAsMap.get(this.dataFormat.getOperationNode().getName());
             String camLot = (String) sourceAsMap.get(Config.camFormat.getLotNumberNode().getName());
-
+            String isCaled = (String) sourceAsMap.get(FieldType.IsCaled);
 //            // missmatch camstar lot case here
 //            if (camLot == null || camLot.isEmpty() || camLot.equalsIgnoreCase("null") && this.dataFormat.isDebugMode()) {
 //                System.out.printf("Warnings: there's no camstar lot for this kdf lot, %s=%s, %s=%s\n",
@@ -677,6 +677,7 @@ public
             lot.setOperation(operation);
             lot.setDoc_Index(index);
             lot.setDoc_Id(id);
+            lot.setCaled(isCaled.equalsIgnoreCase("Y"));
             this.lotList.add(lot);
         }
     }
@@ -892,7 +893,7 @@ public
             return false;
         }
 
-        if(!lotInfo.isEmptyRank()) {
+        if(!lotInfo.isEmptyRank() || lotInfo.isCaled()) {
             return true;
         }
         

@@ -100,6 +100,8 @@ public
     private
         String lotEndTime = "1";
     
+    private boolean caled = false;
+
     public
         LotInfo() {
     }
@@ -677,6 +679,14 @@ public
     public
         String getOperation() {
         return operation;
+    }
+
+    public void setCaled(boolean caled) {
+        this.caled = caled;
+    }
+
+    public boolean isCaled() {
+        return caled;
     }
 
 }
