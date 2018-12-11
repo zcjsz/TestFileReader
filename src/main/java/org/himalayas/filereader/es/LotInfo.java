@@ -99,7 +99,7 @@ public
         String lotStartTime = "3";
     private
         String lotEndTime = "1";
-
+    
     public
         LotInfo() {
     }
@@ -311,6 +311,18 @@ public
         this.lotEndTime = lotEndTime;
     }
 
+        
+    public boolean isEmptyRank() {
+        for(DataSet dataSet : this.getDataSets().values()) {
+            for(Doc doc : dataSet.getUnitData()) {
+                if(doc.getRank()==null || doc.getRank().equalsIgnoreCase("N")) {
+                    return  true;
+                }
+            }
+        }
+        return false;
+    }
+        
     public
         void calInsertion() {
         for (DataSet dataSet : this.getDataSets().values()) {

@@ -278,7 +278,7 @@ public
         String startTimeName = this.dataFormat.getUnit().getStartTimeNode().getName();
         String endTimeName = this.dataFormat.getUnit().getEndTimeNode().getName();
         String testTimeName = this.dataFormat.getUnit().getTestTimeNode().getName();
-        String[] includeFields = new String[]{unitIDName, FieldType.BinType, startTimeName, endTimeName, testTimeName, FieldType.DieType};
+        String[] includeFields = new String[]{unitIDName, FieldType.BinType, startTimeName, endTimeName, testTimeName, FieldType.DieType, FieldType.Rank};
         String[] excludeFields = new String[]{"_type"};
 
         if (this.searchUnitRequest.source() == null) {
@@ -633,7 +633,8 @@ public
             int binType = Integer.valueOf((String) sourceAsMap.get(FieldType.BinType));
             boolean masterDie = ((String) sourceAsMap.get(FieldType.DieType)).equals(FieldType.MasterDie);
             double testTime = Double.valueOf((String) sourceAsMap.get(this.dataFormat.getUnit().getTestTimeNode().getName()));
-
+            String rank = (String) sourceAsMap.get(FieldType.Rank);
+            
             // no unit id case here
             if (unitID == null) {
                 unitID = id;
@@ -646,7 +647,7 @@ public
                 this.getLotInfo().getDataSets().put(unitID, dataSet);
                 dataSet.setMasterDie(masterDie);
             }
-            dataSet.getUnitData().add(new Doc(id, binType, startTime, endTime, index, testTime));
+            dataSet.getUnitData().add(new Doc(id, binType, startTime, endTime, index, testTime, rank));
         }
     }
 
@@ -732,7 +733,7 @@ public
         boolean updateLotData() {
         try {
             Map<String, Object> lotInfoMap = this.getLotInfo().getJsonMap();
-            //jsonMap.put("IsCaled", "Y");
+            lotInfoMap.put("IsCaled", "Y");
 
             UpdateRequest request = new UpdateRequest(this.getLotInfo().getDoc_Index(), "doc", this.getLotInfo().getDoc_Id()).doc(lotInfoMap);
             request.timeout(TimeValue.timeValueSeconds(20));
@@ -891,22 +892,25 @@ public
             return false;
         }
 
+        if(!lotInfo.isEmptyRank()) {
+            return true;
+        }
+        
         if (!getLotGrossTimeAggData()) {
             return false;
         }
 
-        //camData.put("IsLotMatched", "Y");
         this.getLotInfo().calInsertion();
         this.getLotInfo().calKPI();
 
-//        if (!updateUnitData()) {
-//            return false;
-//        }
+        if (!updateUnitData()) {
+            return false;
+        }
+        
         if (!updateLotData()) {
             return false;
         }
 
-        //camData.put("IsLotCal", "Y");
         return true;
     }
 

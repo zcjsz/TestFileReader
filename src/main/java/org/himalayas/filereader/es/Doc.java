@@ -31,6 +31,8 @@ public
         String motherLotInsertion = null;
     private
         double testTime = 0;
+    
+    private String rank = null;
 
     /**
      *
@@ -42,13 +44,14 @@ public
      * @param testTime
      */
     public
-        Doc(String id, int binType, String startTime, String endTime, String index, double testTime) {
+        Doc(String id, int binType, String startTime, String endTime, String index, double testTime, String rank) {
         this.id = id;
         this.binType = binType;
         this.startTime = startTime;
         this.endTime = endTime;
         this.index = index;
         this.testTime = testTime;
+        this.rank = rank;
     }
 
     public
@@ -96,6 +99,10 @@ public
         return waferNumber;
     }
 
+    public String getRank() {
+        return rank;
+    }
+        
     public
         void setWaferNumber(String waferNumber) {
         this.waferNumber = waferNumber;
