@@ -893,7 +893,7 @@ public
             return false;
         }
 
-        if(!lotInfo.isEmptyRank() || lotInfo.isCaled()) {
+        if(!lotInfo.isEmptyRank() && lotInfo.isCaled()) {
             return true;
         }
         
